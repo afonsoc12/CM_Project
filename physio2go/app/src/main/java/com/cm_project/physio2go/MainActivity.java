@@ -3,21 +3,25 @@ package com.cm_project.physio2go;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.cm_project.physio2go.classes.Plan;
+import com.cm_project.physio2go.databaseDrivers.LocalDatabase;
 import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private String loggedInUsername;
+
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String LOGIN_NAME = "loggedin_username";
     final int REQ_LOGIN = 1;
-    private String loggedInUsername;
+    LocalDatabase local;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,14 +47,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
-        switch (requestCode) {
+        switch (requestCode){
             case REQ_LOGIN:
-                if (resultCode == 1) { // If login successfull
-                    if (intent != null) {
+                if (resultCode == 1){ // If login successfull
+                    if (intent!= null) {
                         this.loggedInUsername = intent.getStringExtra("username");
                         saveLoggedInUsername(this.loggedInUsername);
                         inflateMainActivity();
                         updateLocalDatabase(this.loggedInUsername);
+                        getLocalDatabase();
                     }
                 }
                 break;
@@ -84,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
         return loggedInUsername;
     }
 
-
-    public void deleteLoggedInUsername() {
+    public void deleteLoggedInUsername(){
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
@@ -94,16 +98,21 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Extracts information from the server database and updates the local database
-     *
      * @param username
      */
-    public void updateLocalDatabase(String username) {
+    public void updateLocalDatabase(String username){
         ServerDatabaseDriver server = new ServerDatabaseDriver();
 
         ArrayList<Plan> plansFromServer = server.getPlansOfUser(username);
-        //TODO descomentar
-        //LocalDatabase local = new LocalDatabase();
-        //local.updatePlans(plansFromServer);
+
+        local = new LocalDatabase(getApplicationContext());
+
+        local.updatePlans(plansFromServer);
 
     }
+
+    public void getLocalDatabase(){
+        ArrayList<Plan> plansFromLocalDatabase = local.getPlansOfUser();
+    }
 }
+
