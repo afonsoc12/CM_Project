@@ -1,68 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="@color/white">
 
-    <ImageView
+
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
-        android:layout_height="127dp"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/logo1">
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/helvetica"
+        android:textSize="18dp"
+        android:text="You are not a member?"
+        android:textColor="@color/gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.977" />
 
-    </ImageView>
+    <TextView
+        android:id="@+id/register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/helvetica_bold"
+        android:text="Register."
+        android:textColor="@color/blue"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.977" />
+
+    <Button
+        android:id="@+id/login"
+        android:layout_width="152dp"
+        android:layout_height="42dp"
+        android:layout_marginBottom="208dp"
+        android:background="@drawable/button"
+        android:fontFamily="@font/helvetica"
+        android:text="Login"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/username"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:background="#ffffff"
-        android:drawableLeft="@android:drawable/ic_menu_gallery"
-        android:hint="@string/username" />
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="112dp"
+        android:background="@drawable/input_field"
+        android:ems="10"
+        android:fontFamily="@font/helvetica"
+        android:hint="Username"
+        android:textColorHint="@color/gray"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toTopOf="@+id/password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.894" />
 
     <EditText
         android:id="@+id/password"
-        android:layout_width="115dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="20dp"
-        android:background="#ffffff"
-        android:drawableLeft="@android:drawable/ic_secure"
-        android:hint="@string/password"
-        android:inputType="textPassword" />
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/input_field"
+        android:ems="10"
+        android:fontFamily="@font/helvetica"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:textColorHint="@color/gray"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toTopOf="@+id/login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/loginPlanos"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/Login" />
-
-    <LinearLayout
+    <ImageView
+        android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        app:layout_constraintBottom_toTopOf="@+id/username"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.584"
+        app:srcCompat="@drawable/physio2go" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="#ffffff"
-            android:text="@string/not_registered" />
-
-        <TextView
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="#ffffff"
-            android:paddingLeft="10dp"
-            android:text="@string/register"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
