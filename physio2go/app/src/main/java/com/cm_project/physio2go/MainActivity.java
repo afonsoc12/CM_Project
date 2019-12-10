@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //TODO logout;
-        //deleteLoggedInUsername();
+        deleteLoggedInUsername();
 
         this.loggedInUsername = checkLoggedInUsername();
 
