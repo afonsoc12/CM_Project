@@ -1,6 +1,9 @@
 package com.cm_project.physio2go.classes;
 
-public class Plan {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class Plan implements Serializable {
 
     private int id;
     private String id_patient;
@@ -10,6 +13,7 @@ public class Plan {
     private int total_reps;
     private int reps_done;
     private String description;
+    private ArrayList<Exercise> exercises;
 
     public Plan() {
 
@@ -77,6 +81,14 @@ public class Plan {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ArrayList<Exercise> getExercises() {
+        return exercises;
+    }
+
+    public void setExercises(ArrayList<Exercise> exercises) {
+        this.exercises = exercises;
     }
 }
 

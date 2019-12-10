@@ -1,6 +1,8 @@
 package com.cm_project.physio2go.classes;
 
-public class Doctor {
+import java.io.Serializable;
+
+public class Doctor implements Serializable {
 
     private String username;
     private String password;

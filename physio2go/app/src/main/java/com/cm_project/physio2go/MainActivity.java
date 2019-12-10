@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //TODO logout;
-        deleteLoggedInUsername();
+        //deleteLoggedInUsername();
 
         this.loggedInUsername = checkLoggedInUsername();
 
@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Define a new toolbar for this activity
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         // Instanciate list fragment
         // TODO instanciar frag

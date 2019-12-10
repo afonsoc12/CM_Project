@@ -3,6 +3,7 @@ package com.cm_project.physio2go.databaseDrivers;
 import android.widget.Toast;
 
 import com.cm_project.physio2go.ExecutarDB;
+import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.classes.Plan;
 
 import java.sql.Connection;
@@ -16,6 +17,7 @@ public class ServerDatabaseDriver implements Runnable {
     private final String DOCTORS = "doctors";
     private final String PLANS = "plans";
     private final String EXERCISES = "exercises";
+    private final String PLAN_EXERCISES = "plan_exercises";
     private Connection conn;
     private String host = "acosta-server.ddns.net";
     private String db = "physio_db";
@@ -115,15 +117,20 @@ public class ServerDatabaseDriver implements Runnable {
         this.conectar();
 
         ArrayList<Plan> plans = new ArrayList<>();
+        ArrayList<Exercise> exercises = new ArrayList<>();
         Plan thisPlan;
 
         String query = String.format("select * from %s where id_patient = '%s'", PLANS, username);
         ResultSet resultSet = this.select(query);
 
+        int id_plan;
         try {
             while (resultSet.next()) {
                 thisPlan = new Plan();
-                thisPlan.setId(resultSet.getInt("id"));
+                id_plan = resultSet.getInt("id");
+                exercises = getExercisesOfPlan(id_plan);
+
+                thisPlan.setId(id_plan);
                 thisPlan.setId_patient(resultSet.getString("id_patient"));
                 thisPlan.setId_doctor(resultSet.getString("id_doctor"));
                 thisPlan.setDate_start(resultSet.getString("date_start"));
@@ -131,11 +138,12 @@ public class ServerDatabaseDriver implements Runnable {
                 thisPlan.setTotal_reps(resultSet.getInt("total_reps"));
                 thisPlan.setReps_done(resultSet.getInt("reps_done"));
                 thisPlan.setDescription(resultSet.getString("description"));
+                thisPlan.setExercises(exercises);
 
                 plans.add(thisPlan);
-
-                this.disconectar();
             }
+
+            this.disconectar();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,5 +151,47 @@ public class ServerDatabaseDriver implements Runnable {
         this.disconectar();
 
         return plans;
+    }
+
+    private ArrayList<Exercise> getExercisesOfPlan(int plan_id) {
+        this.conectar();
+
+        ArrayList<Exercise> exercises = new ArrayList<>();
+        Exercise thisExercise;
+
+        String query = String.format("select pe.id_plan, pe.id_exercise, pe.repetitions, e.* from %s pe " +
+                "join %s as e on pe.id_exercise = e.id " +
+                "where pe.id_plan = %s;", PLAN_EXERCISES, EXERCISES, plan_id);
+
+        ResultSet resultSet = this.select(query);
+
+        try {
+            while (resultSet.next()) {
+                thisExercise = new Exercise();
+
+                thisExercise.setId(resultSet.getInt("id_exercise"));
+                thisExercise.setBody_side(resultSet.getString("body_side"));
+                thisExercise.setName(resultSet.getString("name"));
+                thisExercise.setDescription(resultSet.getString("description"));
+                thisExercise.setRepetitions(resultSet.getInt("repetitions"));
+
+                /*thisExercise.setId_patient(resultSet.getString("id_patient"));
+                thisExercise.setId_doctor(resultSet.getString("id_doctor"));
+                thisExercise.setDate_start(resultSet.getString("date_start"));
+                thisExercise.setDate_end(resultSet.getString("date_end"));
+                thisExercise.setTotal_reps(resultSet.getInt("total_reps"));
+                thisExercise.setReps_done(resultSet.getInt("reps_done"));
+                thisExercise.setDescription(resultSet.getString("description"));
+*/
+                exercises.add(thisExercise);
+            }
+
+            this.disconectar();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return exercises;
     }
 }

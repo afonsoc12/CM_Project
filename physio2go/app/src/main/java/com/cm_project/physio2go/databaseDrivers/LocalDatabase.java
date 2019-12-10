@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.classes.Plan;
 
 import java.sql.ResultSet;
@@ -53,7 +54,6 @@ public class LocalDatabase extends SQLiteOpenHelper {
     SQLiteDatabase database;
 
     private String name;
-    ContentValues cv = new ContentValues();
     Cursor cursor=null;
 
     public LocalDatabase(Context context)
@@ -65,7 +65,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE "+TABLE_PLANS+" ( "+ID+" INTEGER PRIMARY KEY, "+ID_PATIENT+" VARCHAR, "+ID_DOCTOR+" VARCHAR, "+DATE_START+" DATE, "+DATE_END+" DATE, "+TOTAL_REPS+" INTEGER, "+REPS_DONE+" INTEGER, "+DESCRIPTION_PLAN+" VARCHAR)");
-        db.execSQL("CREATE TABLE "+TABLE_PLANS_EXERCISES+" ( "+ID_PLAN+" INTEGER PRIMARY KEY, "+ID_EXERCISE+" INTEGER, "+REPETITIONS+" INTEGER)");
+        db.execSQL("CREATE TABLE " + TABLE_PLANS_EXERCISES + " ( " + ID_PLAN + " INTEGER, " + ID_EXERCISE + " INTEGER, " + REPETITIONS + " INTEGER)");
         db.execSQL("CREATE TABLE "+TABLE_EXERCISES+" ( "+ID_EX+" INTEGER PRIMARY KEY, "+NAME+" VARCHAR, "+BODY_SIDE+" VARCHAR, "+DESCRIPTION_EXERCISE+" VARCHAR)");
     }
 
@@ -77,27 +77,22 @@ public class LocalDatabase extends SQLiteOpenHelper {
 
     public void updatePlans(ArrayList<Plan> plansFromServer){
 
+        ArrayList<Exercise> exercises;
+        ContentValues cv = new ContentValues();
+
         //delete field from table plans
         database.execSQL("delete from "+ TABLE_PLANS);
 
-        // APAGAR
-        cv.put(ID, 1);
-        cv.put(ID_PATIENT, "2");
-        cv.put(ID_DOCTOR, "3");
-        cv.put(DATE_START, "4");
-        cv.put(DATE_END, "5");
-        cv.put(TOTAL_REPS, 10);
-        cv.put(REPS_DONE, 22);
-        cv.put(DESCRIPTION_PLAN, "hi");
-        // ATE AQUI
-
         database = this.getWritableDatabase();
-        database.insert(TABLE_PLANS, null, cv);
+        //todo : delete
+        //database.insert(TABLE_PLANS, null, cv);
 
         // get data from all plans associated to user
         for (Plan plan : plansFromServer) {
 
-            int db_id = plan.getId();
+            int db_id_plan = plan.getId();
+            updateExercisesOfPlan(plan.getExercises(), db_id_plan);
+
             String db_id_patient = plan.getId_patient();
             String db_id_doctor = plan.getId_doctor();
             String db_date_start = plan.getDate_start();
@@ -107,7 +102,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
             String db_description = plan.getDescription();
 
             // insert in content values for update local database table plans
-            cv.put(ID, db_id);
+            cv.put(ID, db_id_plan);
             cv.put(ID_PATIENT, db_id_patient);
             cv.put(ID_DOCTOR, db_id_doctor);
             cv.put(DATE_START, db_date_start);
@@ -118,24 +113,43 @@ public class LocalDatabase extends SQLiteOpenHelper {
 
             database = this.getWritableDatabase();
             database.insert(TABLE_PLANS, null, cv);
-
         }
+    }
 
-        // TODO Destruir a bd local e dar update aos plans
-        /*Estes campos
-            Id
-            Id_patient
-            Id_doctor
-            Date_start
-            Date_end
-            Total_reps
-            reps_done
-            Description
+    private void updateExercisesOfPlan(ArrayList<Exercise> exercises, int id_plan) {
 
-            Mais escrever estes exercises numa tabela exercises
-            ArrayList<Exercise>
-         */
+        ContentValues cvExercises = new ContentValues();
+        ContentValues cvPlanExercises = new ContentValues();
 
+        //delete field from table plans
+        database.execSQL("delete from " + TABLE_PLANS_EXERCISES);
+        database.execSQL("delete from " + TABLE_EXERCISES);
+
+        database = this.getWritableDatabase();
+        //todo: delete
+        //database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercise);
+        //database.insert(TABLE_EXERCISES, null, cvExercise);
+
+        // get data from all plans associated to user
+        for (Exercise thisExercise : exercises) {
+
+            database = this.getWritableDatabase();
+
+            // Insert in table Exercise
+            cvExercises.put(ID_EX, thisExercise.getId());
+            cvExercises.put(NAME, thisExercise.getName());
+            cvExercises.put(BODY_SIDE, thisExercise.getBody_side());
+            cvExercises.put(DESCRIPTION_EXERCISE, thisExercise.getDescription());
+
+            database.insert(TABLE_EXERCISES, null, cvExercises);
+
+            // Insert in table Plan_Exercise
+            cvPlanExercises.put(ID_EXERCISE, thisExercise.getId());
+            cvPlanExercises.put(ID_PLAN, id_plan);
+            cvPlanExercises.put(REPETITIONS, thisExercise.getRepetitions());
+
+            database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercises);
+        }
     }
 
     public ArrayList<Plan> getPlansOfUser(){
@@ -175,5 +189,4 @@ public class LocalDatabase extends SQLiteOpenHelper {
 
         return plans;
     }
-
 }

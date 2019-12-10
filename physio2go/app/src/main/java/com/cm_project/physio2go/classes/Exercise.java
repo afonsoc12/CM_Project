@@ -1,6 +1,8 @@
 package com.cm_project.physio2go.classes;
 
-public class Exercise {
+import java.io.Serializable;
+
+public class Exercise implements Serializable {
 
     private int id;
     private String name;
