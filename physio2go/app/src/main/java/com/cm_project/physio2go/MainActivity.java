@@ -1,13 +1,12 @@
 package com.cm_project.physio2go;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.classes.Plan;
 import com.cm_project.physio2go.databaseDrivers.LocalDatabase;
 import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
@@ -28,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //TODO logout;
-        deleteLoggedInUsername();
+        //deleteLoggedInUsername();
 
         this.loggedInUsername = checkLoggedInUsername();
 
@@ -103,12 +102,20 @@ public class MainActivity extends AppCompatActivity {
     public void updateLocalDatabase(String username){
         ServerDatabaseDriver server = new ServerDatabaseDriver();
 
+        // Retrieve data from server
         ArrayList<Plan> plansFromServer = server.getPlansOfUser(username);
+        Patient patient = server.getPatientDetails(username);
 
+        // Persist on local database
         local = new LocalDatabase(getApplicationContext());
 
+        // Updates plans and exercises
         local.updatePlans(plansFromServer);
+        local.updatePatientDetails(patient);
 
+
+        // Updates patient info and respective doctor
+        local.updatePatientDetails(patient);
     }
 
     public void getLocalDatabase(){

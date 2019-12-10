@@ -17,8 +17,16 @@ public class Doctor implements Serializable {
         this.password = password;
     }
 
+    public Doctor() {
+        
+    }
+
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {

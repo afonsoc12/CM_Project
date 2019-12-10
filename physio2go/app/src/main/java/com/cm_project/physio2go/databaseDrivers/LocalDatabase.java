@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.cm_project.physio2go.classes.Exercise;
+import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.classes.Plan;
 
 import java.sql.ResultSet;
@@ -27,6 +28,8 @@ public class LocalDatabase extends SQLiteOpenHelper {
     static final String TABLE_PLANS = "plans";
     static final String TABLE_PLANS_EXERCISES = "plans_exercises";
     static final String TABLE_EXERCISES = "exercises";
+    static final String TABLE_PATIENT = "patient";
+    static final String TABLE_DOCTOR = "doctor";
 
 
     //Database Fields for Plans Table
@@ -50,6 +53,24 @@ public class LocalDatabase extends SQLiteOpenHelper {
     static final String BODY_SIDE = "body_side";
     static final String DESCRIPTION_EXERCISE= "description_exercise";
 
+    //Database fields for Patient details
+    static final String USERNAME = "username";
+    static final String ID_DOCTOR_PATIENT = "id_doctor";
+    static final String NAME_PATIENT = "name";
+    static final String SURNAME_PATIENT = "surname";
+    static final String DOB = "dob";
+    static final String ADDRESS = "address";
+    static final String HEIGHT = "height";
+    static final String WEIGHT = "weight";
+    static final String CONDITION = "condition";
+
+    //Database fields for Doctor (of the current patient)
+    static final String USERNAME_DOC = "username";
+    static final String NAME_DOC = "name";
+    static final String SURNAME_DOCTOR = "surname";
+    static final String SPECIALITY = "speciality";
+    static final String HOSPITAL = "hospital";
+    static final String BIO = "bio";
 
     SQLiteDatabase database;
 
@@ -64,9 +85,12 @@ public class LocalDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE "+TABLE_PLANS+" ( "+ID+" INTEGER PRIMARY KEY, "+ID_PATIENT+" VARCHAR, "+ID_DOCTOR+" VARCHAR, "+DATE_START+" DATE, "+DATE_END+" DATE, "+TOTAL_REPS+" INTEGER, "+REPS_DONE+" INTEGER, "+DESCRIPTION_PLAN+" VARCHAR)");
+        //todo : Verificar a FOREIGN KEYS
+        db.execSQL("CREATE TABLE " + TABLE_PLANS + " ( " + ID + " INTEGER PRIMARY KEY, " + ID_PATIENT + " VARCHAR, " + ID_DOCTOR + " VARCHAR, " + DATE_START + " DATE, " + DATE_END + " DATE, " + TOTAL_REPS + " INTEGER, " + REPS_DONE + " INTEGER, " + DESCRIPTION_PLAN + " VARCHAR)");
         db.execSQL("CREATE TABLE " + TABLE_PLANS_EXERCISES + " ( " + ID_PLAN + " INTEGER, " + ID_EXERCISE + " INTEGER, " + REPETITIONS + " INTEGER)");
-        db.execSQL("CREATE TABLE "+TABLE_EXERCISES+" ( "+ID_EX+" INTEGER PRIMARY KEY, "+NAME+" VARCHAR, "+BODY_SIDE+" VARCHAR, "+DESCRIPTION_EXERCISE+" VARCHAR)");
+        db.execSQL("CREATE TABLE " + TABLE_EXERCISES + " ( " + ID_EX + " INTEGER PRIMARY KEY, " + NAME + " VARCHAR, " + BODY_SIDE + " VARCHAR, " + DESCRIPTION_EXERCISE + " VARCHAR)");
+        db.execSQL("CREATE TABLE " + TABLE_PATIENT + " ( " + USERNAME + " VARCHAR PRIMARY KEY, " + ID_DOCTOR_PATIENT + " VARCHAR, " + NAME_PATIENT + " VARCHAR, " + SURNAME_PATIENT + " VARCHAR, " + DOB + " VARCHAR, " + ADDRESS + " VARCHAR, " + HEIGHT + " FLOAT4, " + WEIGHT + " FLOAT4, " + CONDITION + " VARCHAR)");
+        db.execSQL("CREATE TABLE " + TABLE_DOCTOR + " ( " + USERNAME_DOC + " VARCHAR PRIMARY KEY, " + NAME_DOC + " VARCHAR, " + SURNAME_DOCTOR + " VARCHAR, " + SPECIALITY + " VARCHAR, " + HOSPITAL + " VARCHAR, " + BIO + " VARCHAR)");
     }
 
     @Override
@@ -188,5 +212,44 @@ public class LocalDatabase extends SQLiteOpenHelper {
         }
 
         return plans;
+    }
+
+    public void updatePatientDetails(Patient patient) {
+        ContentValues cvPatient = new ContentValues();
+        ContentValues cvDoctor = new ContentValues();
+
+        //delete field from table patient
+        database.execSQL("delete from " + TABLE_PATIENT);
+
+        database = this.getWritableDatabase();
+        //todo: delete
+        //database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercise);
+        //database.insert(TABLE_EXERCISES, null, cvExercise);
+
+        // get data from a patient
+        database = this.getWritableDatabase();
+
+        // Insert in table Patient
+        cvPatient.put(USERNAME, patient.getUsername());
+        cvPatient.put(ID_DOCTOR_PATIENT, patient.getDoctor().getUsername());
+        cvPatient.put(NAME_PATIENT, patient.getName());
+        cvPatient.put(SURNAME_PATIENT, patient.getSurname());
+        cvPatient.put(DOB, patient.getDob());
+        cvPatient.put(ADDRESS, patient.getAddress());
+        cvPatient.put(HEIGHT, patient.getHeight());
+        cvPatient.put(WEIGHT, patient.getWeight());
+        cvPatient.put(CONDITION, patient.getCondition());
+
+        database.insert(TABLE_PATIENT, null, cvPatient);
+
+        // Insert in table Doctor
+        cvDoctor.put(USERNAME_DOC, patient.getDoctor().getUsername());
+        cvDoctor.put(NAME_DOC, patient.getDoctor().getName());
+        cvDoctor.put(SURNAME_DOCTOR, patient.getDoctor().getSurname());
+        cvDoctor.put(SPECIALITY, patient.getDoctor().getSpeciality());
+        cvDoctor.put(HOSPITAL, patient.getDoctor().getHospital());
+        cvDoctor.put(BIO, patient.getDoctor().getBio());
+
+        database.insert(TABLE_DOCTOR, null, cvDoctor);
     }
 }

@@ -3,7 +3,9 @@ package com.cm_project.physio2go.databaseDrivers;
 import android.widget.Toast;
 
 import com.cm_project.physio2go.ExecutarDB;
+import com.cm_project.physio2go.classes.Doctor;
 import com.cm_project.physio2go.classes.Exercise;
+import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.classes.Plan;
 
 import java.sql.Connection;
@@ -193,5 +195,73 @@ public class ServerDatabaseDriver implements Runnable {
         }
 
         return exercises;
+    }
+
+    public Patient getPatientDetails(String username) {
+        this.conectar();
+
+        Patient patient = new Patient();
+
+        Doctor doctor;
+
+        String query = String.format("select * from %s where username = '%s'", PATIENTS, username);
+
+        ResultSet resultSet = this.select(query);
+
+        try {
+            while (resultSet.next()) {
+
+                String id_doctor = resultSet.getString("id_doctor");
+                doctor = getThisPatientDoctor(id_doctor);
+
+                patient.setUsername(resultSet.getString("username"));
+                patient.setDoctor(doctor);
+                patient.setName(resultSet.getString("name"));
+                patient.setSurname(resultSet.getString("surname"));
+                patient.setDob(resultSet.getString("dob"));
+                patient.setAddress(resultSet.getString("address"));
+                patient.setHeight(resultSet.getFloat("height"));
+                patient.setWeight(resultSet.getFloat("weight"));
+                patient.setCondition(resultSet.getString("condition"));
+            }
+
+            this.disconectar();
+
+        } catch (Exception e) {
+            patient = null;
+            e.printStackTrace();
+        }
+
+        return patient;
+    }
+
+    private Doctor getThisPatientDoctor(String id_doctor) {
+
+        this.conectar();
+
+        Doctor doctor = new Doctor();
+
+        String query = String.format("select * from %s where username = '%s'", DOCTORS, id_doctor);
+
+        ResultSet resultSet = this.select(query);
+
+        try {
+            while (resultSet.next()) {
+                doctor.setUsername(resultSet.getString("username"));
+                doctor.setName(resultSet.getString("name"));
+                doctor.setSurname(resultSet.getString("surname"));
+                doctor.setSpeciality(resultSet.getString("speciality"));
+                doctor.setHospital(resultSet.getString("hospital"));
+                doctor.setBio(resultSet.getString("bio"));
+            }
+
+            this.disconectar();
+
+        } catch (Exception e) {
+            doctor = null;
+            e.printStackTrace();
+        }
+
+        return doctor;
     }
 }
