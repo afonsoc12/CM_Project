@@ -140,6 +140,7 @@ public class ServerDatabaseDriver implements Runnable {
                 thisPlan.setTotal_reps(resultSet.getInt("total_reps"));
                 thisPlan.setReps_done(resultSet.getInt("reps_done"));
                 thisPlan.setDescription(resultSet.getString("description"));
+                thisPlan.setPlan_name(resultSet.getString("plan_name"));
                 thisPlan.setExercises(exercises);
 
                 plans.add(thisPlan);

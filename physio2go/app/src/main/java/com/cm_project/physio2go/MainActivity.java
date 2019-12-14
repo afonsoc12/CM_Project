@@ -1,9 +1,11 @@
 package com.cm_project.physio2go;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.cm_project.physio2go.classes.Patient;
@@ -27,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //TODO logout;
-        //deleteLoggedInUsername();
+        deleteLoggedInUsername();
 
         this.loggedInUsername = checkLoggedInUsername();
 
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -109,17 +112,19 @@ public class MainActivity extends AppCompatActivity {
         // Persist on local database
         local = new LocalDatabase(getApplicationContext());
 
+        // Delete files from localDatabase
+        local.delete();
+
         // Updates plans and exercises
         local.updatePlans(plansFromServer);
         local.updatePatientDetails(patient);
 
-
-        // Updates patient info and respective doctor
-        local.updatePatientDetails(patient);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void getLocalDatabase(){
         ArrayList<Plan> plansFromLocalDatabase = local.getPlansOfUser();
+
     }
 }
 

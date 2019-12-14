@@ -13,6 +13,7 @@ public class Plan implements Serializable {
     private int total_reps;
     private int reps_done;
     private String description;
+    private String plan_name;
     private ArrayList<Exercise> exercises;
 
     public Plan() {
@@ -85,6 +86,14 @@ public class Plan implements Serializable {
 
     public ArrayList<Exercise> getExercises() {
         return exercises;
+    }
+
+    public String getPlan_name() {
+        return plan_name;
+    }
+
+    public void setPlan_name(String plan_name) {
+        this.plan_name = plan_name;
     }
 
     public void setExercises(ArrayList<Exercise> exercises) {
