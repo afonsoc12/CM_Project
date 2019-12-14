@@ -19,8 +19,8 @@ import java.util.ArrayList;
 
 public class PlansListFragment extends ListFragment {
 
+    public static final String PLAN_LIST_FRAGMENT_TAG = "plans_list_fragment";
     private final static String PLANS_ARG = "plans";
-    private final static String PLANS_BACK_STACK = "plan_backstack";
 
     public PlansListFragment() {
 
@@ -65,7 +65,7 @@ public class PlansListFragment extends ListFragment {
 
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_list_placeholder, planExercise);
-        ft.addToBackStack(PLANS_BACK_STACK);
+        ft.addToBackStack(PlanExerciseListFragment.PLAN_EXERCISE_LIST_FRAGMENT_TAG);
         ft.commit();
     }
 

@@ -2,6 +2,9 @@ package com.cm_project.physio2go;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //TODO logout;
-        deleteLoggedInUsername();
+        //deleteLoggedInUsername();
 
         this.loggedInUsername = checkLoggedInUsername();
 
@@ -39,12 +42,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, REQ_LOGIN);
         } else {
-            inflateMainActivity();
             updateLocalDatabase(this.loggedInUsername);
+            inflateMainActivity();
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -55,9 +57,8 @@ public class MainActivity extends AppCompatActivity {
                     if (intent!= null) {
                         this.loggedInUsername = intent.getStringExtra("username");
                         saveLoggedInUsername(this.loggedInUsername);
-                        inflateMainActivity();
                         updateLocalDatabase(this.loggedInUsername);
-                        getLocalDatabase();
+                        inflateMainActivity();
                     }
                 }
                 break;
@@ -70,11 +71,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Define a new toolbar for this activity
-        //Toolbar toolbar = findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Get plans of user from local DB
+        ArrayList<Plan> plansOfUser = local.getPlansOfUser();
 
         // Instanciate list fragment
-        // TODO instanciar frag
+        Fragment plansFragment = PlansListFragment.newInstance(plansOfUser);
+        FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_list_placeholder, plansFragment);
+        ft.addToBackStack(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
+        ft.commit();
     }
 
     private void saveLoggedInUsername(String username) {
@@ -118,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         // Updates plans and exercises
         local.updatePlans(plansFromServer);
         local.updatePatientDetails(patient);
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

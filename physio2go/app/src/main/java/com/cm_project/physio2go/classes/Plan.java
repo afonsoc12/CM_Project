@@ -8,6 +8,7 @@ public class Plan implements Serializable {
     private int id;
     private String id_patient;
     private String id_doctor;
+    private String planName;
     private String date_start;
     private String date_end;
     private int total_reps;
@@ -42,6 +43,14 @@ public class Plan implements Serializable {
 
     public void setId_doctor(String id_doctor) {
         this.id_doctor = id_doctor;
+    }
+
+    public String getPlanName() {
+        return planName;
+    }
+
+    public void setPlanName(String planName) {
+        this.planName = planName;
     }
 
     public String getDate_start() {

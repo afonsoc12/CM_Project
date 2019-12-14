@@ -105,7 +105,8 @@ public class LocalDatabase extends SQLiteOpenHelper {
     }
 
     public void delete(){
-        database.execSQL("delete from "+ TABLE_PLANS);
+
+        database.execSQL("delete from " + TABLE_PLANS);
         database.execSQL("delete from " + TABLE_PLANS_EXERCISES);
         database.execSQL("delete from " + TABLE_EXERCISES);
         database.execSQL("delete from " + TABLE_PATIENT);
@@ -233,11 +234,10 @@ public class LocalDatabase extends SQLiteOpenHelper {
         database.insert(TABLE_DOCTOR, null, cvDoctor);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public ArrayList<Plan> getPlansOfUser(){
         ArrayList<Plan> plans = new ArrayList<>();
         Plan thisPlan;
-        Cursor  cursor = database.rawQuery("select * from "+ TABLE_PLANS,null);
+        Cursor cursor = database.rawQuery("select * from " + TABLE_PLANS, null);
 
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
@@ -274,11 +274,11 @@ public class LocalDatabase extends SQLiteOpenHelper {
                 cursor.moveToNext();
             }
         }
-        Collections.sort(plans, Comparator.comparingLong(Plan::getId));
+        //fixme: nao esta a dar
+        // Collections.sort(plans, Comparator.comparingLong(Plan::getId));
         return plans;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public ArrayList<Exercise> getExercisesOfPlan(int id_plan){
         ArrayList<Exercise> exercice = new ArrayList<>();
         Exercise thisExercise;
@@ -315,7 +315,8 @@ public class LocalDatabase extends SQLiteOpenHelper {
                 cursor.moveToNext();
             }
         }
-        Collections.sort(exercice, Comparator.comparingLong(Exercise::getId));
+        //fixme : nao funciona
+        //Collections.sort(exercice, Comparator.comparingLong(Exercise::getId));
         return exercice;
     }
 }
