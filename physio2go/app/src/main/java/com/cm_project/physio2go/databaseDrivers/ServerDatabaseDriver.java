@@ -1,8 +1,5 @@
 package com.cm_project.physio2go.databaseDrivers;
 
-import android.widget.Toast;
-
-import com.cm_project.physio2go.ExecutarDB;
 import com.cm_project.physio2go.classes.Doctor;
 import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.classes.Patient;

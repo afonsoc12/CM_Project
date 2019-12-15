@@ -23,6 +23,7 @@ public class PlansListFragment extends ListFragment {
     private final static String PLANS_ARG = "plans";
 
     public PlansListFragment() {
+//        newInstance((ArrayList<Plan>) getArguments().getSerializable(PLANS_ARG));
 
     }
 
@@ -63,7 +64,7 @@ public class PlansListFragment extends ListFragment {
 
         Fragment planExercise = PlanExerciseListFragment.newInstance(chosenPlan);
 
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_list_placeholder, planExercise);
         ft.addToBackStack(PlanExerciseListFragment.PLAN_EXERCISE_LIST_FRAGMENT_TAG);
         ft.commit();

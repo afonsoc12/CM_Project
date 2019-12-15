@@ -1,6 +1,8 @@
 package com.cm_project.physio2go;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -10,6 +12,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.classes.Plan;
@@ -83,6 +90,49 @@ public class MainActivity extends AppCompatActivity {
         ft.replace(R.id.fragment_list_placeholder, plansFragment);
         ft.addToBackStack(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
         ft.commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu items for use in the app bar
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+
+        ActionBar ab = getSupportActionBar();
+
+        //ab.setHomeAsUpIndicator(R.drawable.ic_action_app);
+
+        //Show the icon - selecting "home" returns a single level
+        //ab.setDisplayHomeAsUpEnabled(true);
+        //ab.setTitle("Example");
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    /**
+     * Handles right menu options
+     *
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.logout_btn: // Removes login from sharedprefs and prompts login activity
+                deleteLoggedInUsername();
+                Intent loginAgain = new Intent(getBaseContext(), LoginActivity.class);
+                startActivityForResult(loginAgain, REQ_LOGIN);
+
+                break;
+
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void saveLoggedInUsername(String username) {
