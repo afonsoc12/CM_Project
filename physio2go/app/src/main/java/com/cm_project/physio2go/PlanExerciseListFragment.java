@@ -20,7 +20,7 @@ public class PlanExerciseListFragment extends ListFragment {
 
     public final static String PLAN_EXERCISE_LIST_FRAGMENT_TAG = "plan_exercise_list_fragment";
     private final static String PLAN_ARG = "planChosen";
-    private final String CHOSEN_EXERCISE_ARG = "chosenExercise";
+    public final static String CHOSEN_EXERCISE_ARG = "chosenExercise";
     private final int REQ_DO_EXERCSISE = 1;
 
     public PlanExerciseListFragment() {

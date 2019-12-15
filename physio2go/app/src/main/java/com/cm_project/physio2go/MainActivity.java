@@ -1,13 +1,5 @@
 package com.cm_project.physio2go;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -15,8 +7,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.classes.Plan;
@@ -88,15 +86,15 @@ public class MainActivity extends AppCompatActivity {
         Fragment plansFragment = PlansListFragment.newInstance(plansOfUser);
         FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_list_placeholder, plansFragment);
-        ft.addToBackStack(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
+        //ft.addToBackStack(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
         ft.commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu items for use in the app bar
+        // Inflate the menu_main_activity items for use in the app bar
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_main_activity, menu);
 
         ActionBar ab = getSupportActionBar();
 
@@ -110,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles right menu options
+     * Handles right menu_main_activity options
      *
      * @param item
      * @return
