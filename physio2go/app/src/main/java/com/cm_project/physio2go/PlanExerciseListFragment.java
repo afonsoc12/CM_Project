@@ -9,8 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.ListFragment;
 
 import com.cm_project.physio2go.classes.Exercise;
@@ -18,7 +16,7 @@ import com.cm_project.physio2go.classes.Plan;
 
 import java.util.ArrayList;
 
-class PlanExerciseListFragment extends ListFragment {
+public class PlanExerciseListFragment extends ListFragment {
 
     public final static String PLAN_EXERCISE_LIST_FRAGMENT_TAG = "plan_exercise_list_fragment";
     private final static String PLAN_ARG = "planChosen";
@@ -39,9 +37,8 @@ class PlanExerciseListFragment extends ListFragment {
         return fragment;
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_list_plan_exercises, container, false);
 
@@ -75,7 +72,7 @@ class PlanExerciseListFragment extends ListFragment {
     }
 
     @Override
-    public void onListItemClick(@NonNull ListView l, @NonNull View v, int position, long id) {
+    public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
         Exercise chosenExercise = ((Plan) this.getArguments().getSerializable(PLAN_ARG)).getExercises().get(position);
@@ -88,7 +85,7 @@ class PlanExerciseListFragment extends ListFragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
