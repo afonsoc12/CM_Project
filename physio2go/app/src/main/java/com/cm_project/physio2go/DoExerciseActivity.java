@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.fragmentsExercises.ArmExerciseFragment;
+import com.cm_project.physio2go.fragmentsExercises.BreathingExerciseFragment;
 import com.cm_project.physio2go.fragmentsExercises.LegExerciseFragment;
 
 public class DoExerciseActivity extends AppCompatActivity {
@@ -44,6 +45,7 @@ public class DoExerciseActivity extends AppCompatActivity {
                 break;
 
             case 5:     // Breathing Exercise
+                exerciseFragment = BreathingExerciseFragment.newInstance(exercise);
                 break;
             default:
                 break;
