@@ -1,7 +1,6 @@
 package com.cm_project.physio2go.fragmentsRegister;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import com.cm_project.physio2go.LoginActivity;
 import com.cm_project.physio2go.R;
 import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
 
@@ -55,7 +53,7 @@ public class RegisterBasicInfoFragment extends Fragment {
         String confirmPassword = confirmPassword_et.getText().toString();
         EditText dateOfBirth_et = view.findViewById(R.id.dateOfBirth_et);
         String dateOfBirth = dateOfBirth_et.getText().toString();
-        EditText address_et = view.findViewById(R.id.address);
+        EditText address_et = view.findViewById(R.id.address_et);
         String address = address_et.getText().toString();
 
 

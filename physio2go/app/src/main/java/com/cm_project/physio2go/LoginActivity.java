@@ -29,11 +29,11 @@ public class LoginActivity extends AppCompatActivity {
         // Check connection
         boolean hasConnection = MainActivity.isNetworkAvilable(this);
         if (!hasConnection) {
-            MainActivity.showNoInternetSnackbar(findViewById(R.id.loginLayout), "No internet connection!");
+            MainActivity.showNoInternetSnackbar(findViewById(R.id.login_activity), "No internet connection!");
         }
 
-        TextView register = findViewById(R.id.register);
-        Button login = findViewById(R.id.login);
+        TextView register = findViewById(R.id.register_btn);
+        Button login = findViewById(R.id.login_btn);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,8 +46,8 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = ((EditText) findViewById(R.id.username)).getText().toString();
-                String password = ((EditText) findViewById(R.id.password)).getText().toString();
+                String username = ((EditText) findViewById(R.id.username_et)).getText().toString();
+                String password = ((EditText) findViewById(R.id.password_et)).getText().toString();
 
                 int loginCode = checkLoginCombination(username, password);
                 TextView msgLoginTv = findViewById(R.id.failed_login_tv);
@@ -58,32 +58,32 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                         break;
                     case LOGIN_USER_NOT_FOUND:
-                        ((EditText) findViewById(R.id.username)).getText().clear();
-                        ((EditText) findViewById(R.id.password)).getText().clear();
+                        ((EditText) findViewById(R.id.username_et)).getText().clear();
+                        ((EditText) findViewById(R.id.password_et)).getText().clear();
 
                         // Set message
                         msgLoginTv.setText("User is not registered. Click signup button.");
                         msgLoginTv.setVisibility(View.VISIBLE);
                         break;
                     case LOGIN_WRONG_PASSWORD:
-                        ((EditText) findViewById(R.id.username)).getText().clear();
-                        ((EditText) findViewById(R.id.password)).getText().clear();
+                        ((EditText) findViewById(R.id.username_et)).getText().clear();
+                        ((EditText) findViewById(R.id.password_et)).getText().clear();
 
                         // Set message
                         msgLoginTv.setText("Username or password incorrect.");
                         msgLoginTv.setVisibility(View.VISIBLE);
                         break;
                     case LOGIN_CONNECTION_FAILED:
-                        ((EditText) findViewById(R.id.username)).getText().clear();
-                        ((EditText) findViewById(R.id.password)).getText().clear();
+                        ((EditText) findViewById(R.id.username_et)).getText().clear();
+                        ((EditText) findViewById(R.id.password_et)).getText().clear();
 
                         // Set message
                         msgLoginTv.setText("A problem has occurred");
                         msgLoginTv.setVisibility(View.VISIBLE);
                         break;
                     case LOGIN_NO_INTERNET_CONNECTION:
-                        ((EditText) findViewById(R.id.username)).getText().clear();
-                        ((EditText) findViewById(R.id.password)).getText().clear();
+                        ((EditText) findViewById(R.id.username_et)).getText().clear();
+                        ((EditText) findViewById(R.id.password_et)).getText().clear();
 
                         MainActivity.showNoInternetSnackbar(v, "No internet connection!");
 
@@ -148,8 +148,8 @@ public class LoginActivity extends AppCompatActivity {
 
                         // Autofill login fields
                         if (newUsername != null && newPassword != null) {
-                            ((EditText) findViewById(R.id.username)).setText(newUsername);
-                            ((EditText) findViewById(R.id.password)).setText(newPassword);
+                            ((EditText) findViewById(R.id.username_et)).setText(newUsername);
+                            ((EditText) findViewById(R.id.password_et)).setText(newPassword);
                         }
 
                     }
