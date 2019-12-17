@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
                 String password = ((EditText) findViewById(R.id.password)).getText().toString();
 
                 int loginCode = checkLoginCombination(username, password);
-                TextView msgLoginTv = findViewById(R.id.username);
+                TextView msgLoginTv = findViewById(R.id.failed_login_tv);
                 switch (loginCode) {
                     case LOGIN_OK:
                         getIntent().putExtra("username", username);
@@ -56,7 +56,6 @@ public class LoginActivity extends AppCompatActivity {
                         ((EditText) findViewById(R.id.password)).getText().clear();
 
                         // Set message
-                        msgLoginTv = findViewById(R.id.failed_login_tv);
                         msgLoginTv.setText("User is not registered. Click signup button.");
                         msgLoginTv.setVisibility(View.VISIBLE);
                         break;
@@ -65,7 +64,6 @@ public class LoginActivity extends AppCompatActivity {
                         ((EditText) findViewById(R.id.password)).getText().clear();
 
                         // Set message
-                        msgLoginTv = findViewById(R.id.failed_login_tv);
                         msgLoginTv.setText("Username or password incorrect.");
                         msgLoginTv.setVisibility(View.VISIBLE);
                         break;
@@ -74,7 +72,6 @@ public class LoginActivity extends AppCompatActivity {
                         ((EditText) findViewById(R.id.password)).getText().clear();
 
                         // Set message
-                        msgLoginTv = findViewById(R.id.failed_login_tv);
                         msgLoginTv.setText("A problem has occurred");
                         msgLoginTv.setVisibility(View.VISIBLE);
                         break;

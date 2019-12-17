@@ -1,5 +1,6 @@
 package com.cm_project.physio2go;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -90,8 +91,11 @@ public class PlanExerciseListFragment extends ListFragment {
 
         switch (requestCode) {
             case REQ_DO_EXERCSISE:
-                if (resultCode == 1) { // Exercise finished successfully
+                if (resultCode == Activity.RESULT_OK) { // Exercise finished successfully
                     // TODO PERSIST DB THE EXERCISE RESULT
+
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    // Dont do anything, since the exercise was aborted
                 } else {
                     Toast.makeText(getContext(), "You did no succeed finishing the exercise. Try again soon!", Toast.LENGTH_SHORT).show();
                 }
