@@ -8,11 +8,13 @@ public class Plan implements Serializable {
     private int id;
     private String id_patient;
     private String id_doctor;
+    private String planName;
     private String date_start;
     private String date_end;
     private int total_reps;
     private int reps_done;
     private String description;
+    private String plan_name;
     private ArrayList<Exercise> exercises;
 
     public Plan() {
@@ -41,6 +43,14 @@ public class Plan implements Serializable {
 
     public void setId_doctor(String id_doctor) {
         this.id_doctor = id_doctor;
+    }
+
+    public String getPlanName() {
+        return planName;
+    }
+
+    public void setPlanName(String planName) {
+        this.planName = planName;
     }
 
     public String getDate_start() {
@@ -85,6 +95,14 @@ public class Plan implements Serializable {
 
     public ArrayList<Exercise> getExercises() {
         return exercises;
+    }
+
+    public String getPlan_name() {
+        return plan_name;
+    }
+
+    public void setPlan_name(String plan_name) {
+        this.plan_name = plan_name;
     }
 
     public void setExercises(ArrayList<Exercise> exercises) {

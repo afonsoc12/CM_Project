@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
 
 import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.classes.Patient;
@@ -12,6 +15,8 @@ import com.cm_project.physio2go.classes.Plan;
 
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import static java.sql.Types.INTEGER;
 import static java.sql.Types.NULL;
@@ -40,7 +45,8 @@ public class LocalDatabase extends SQLiteOpenHelper {
     static final String DATE_END = "date_end";
     static final String TOTAL_REPS = "total_reps";
     static final String REPS_DONE = "reps_done";
-    static final String DESCRIPTION_PLAN = "description";
+    static final String DESCRIPTION_PLAN = "description123";
+    static final String PLAN_NAME_PLAN = "plan_name";
 
     //Database Fields for Plans_Exercises Table
     static final String ID_PLAN = "id_plan";
@@ -86,7 +92,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         //todo : Verificar a FOREIGN KEYS
-        db.execSQL("CREATE TABLE " + TABLE_PLANS + " ( " + ID + " INTEGER PRIMARY KEY, " + ID_PATIENT + " VARCHAR, " + ID_DOCTOR + " VARCHAR, " + DATE_START + " DATE, " + DATE_END + " DATE, " + TOTAL_REPS + " INTEGER, " + REPS_DONE + " INTEGER, " + DESCRIPTION_PLAN + " VARCHAR)");
+        db.execSQL("CREATE TABLE " + TABLE_PLANS + " ( " + ID + " INTEGER PRIMARY KEY, " + ID_PATIENT + " VARCHAR, " + ID_DOCTOR + " VARCHAR, " + DATE_START + " DATE, " + DATE_END + " DATE, " + TOTAL_REPS + " INTEGER, " + REPS_DONE + " INTEGER, " + DESCRIPTION_PLAN + " VARCHAR, " + PLAN_NAME_PLAN + " VARCHAR)");
         db.execSQL("CREATE TABLE " + TABLE_PLANS_EXERCISES + " ( " + ID_PLAN + " INTEGER, " + ID_EXERCISE + " INTEGER, " + REPETITIONS + " INTEGER)");
         db.execSQL("CREATE TABLE " + TABLE_EXERCISES + " ( " + ID_EX + " INTEGER PRIMARY KEY, " + NAME + " VARCHAR, " + BODY_SIDE + " VARCHAR, " + DESCRIPTION_EXERCISE + " VARCHAR)");
         db.execSQL("CREATE TABLE " + TABLE_PATIENT + " ( " + USERNAME + " VARCHAR PRIMARY KEY, " + ID_DOCTOR_PATIENT + " VARCHAR, " + NAME_PATIENT + " VARCHAR, " + SURNAME_PATIENT + " VARCHAR, " + DOB + " VARCHAR, " + ADDRESS + " VARCHAR, " + HEIGHT + " FLOAT4, " + WEIGHT + " FLOAT4, " + CONDITION + " VARCHAR)");
@@ -98,6 +104,16 @@ public class LocalDatabase extends SQLiteOpenHelper {
         throw new RuntimeException("How did we get here?");
     }
 
+    public void delete(){
+
+        database = this.getWritableDatabase();
+        database.execSQL("delete from " + TABLE_PLANS);
+        database.execSQL("delete from " + TABLE_PLANS_EXERCISES);
+        database.execSQL("delete from " + TABLE_EXERCISES);
+        database.execSQL("delete from " + TABLE_PATIENT);
+        database.execSQL("delete from " + TABLE_DOCTOR);
+    }
+
 
     public void updatePlans(ArrayList<Plan> plansFromServer){
 
@@ -105,7 +121,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
 
         //delete field from table plans
-        database.execSQL("delete from "+ TABLE_PLANS);
+        //database.execSQL("delete from "+ TABLE_PLANS);
 
         database = this.getWritableDatabase();
         //todo : delete
@@ -124,6 +140,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
             int db_total_reps = plan.getTotal_reps();
             int db_reps_done = plan.getReps_done();
             String db_description = plan.getDescription();
+            String db_plan_name = plan.getPlan_name();
 
             // insert in content values for update local database table plans
             cv.put(ID, db_id_plan);
@@ -134,6 +151,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
             cv.put(TOTAL_REPS, db_total_reps);
             cv.put(REPS_DONE, db_reps_done);
             cv.put(DESCRIPTION_PLAN, db_description);
+            cv.put(PLAN_NAME_PLAN, db_plan_name);
 
             database = this.getWritableDatabase();
             database.insert(TABLE_PLANS, null, cv);
@@ -146,72 +164,52 @@ public class LocalDatabase extends SQLiteOpenHelper {
         ContentValues cvPlanExercises = new ContentValues();
 
         //delete field from table plans
-        database.execSQL("delete from " + TABLE_PLANS_EXERCISES);
-        database.execSQL("delete from " + TABLE_EXERCISES);
+        //database.execSQL("delete from " + TABLE_PLANS_EXERCISES);
+        //database.execSQL("delete from " + TABLE_EXERCISES);
 
         database = this.getWritableDatabase();
         //todo: delete
-        //database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercise);
-        //database.insert(TABLE_EXERCISES, null, cvExercise);
+        //database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercises);
+        //database.insert(TABLE_EXERCISES, null, cvExercises);
 
+        boolean alreadyExists;
         // get data from all plans associated to user
         for (Exercise thisExercise : exercises) {
+            ArrayList<Integer> exercises_ids = new ArrayList<Integer>();
+            alreadyExists = false;
+            Cursor cursor = database.rawQuery("select * from " + TABLE_EXERCISES, null);
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    int id = cursor.getInt(cursor.getColumnIndex(ID_EX));
+                    exercises_ids.add(id);
+                    cursor.moveToNext();
+                }
+            }
+            // Check if exercise is already on database
+            for (int id : exercises_ids){
+                if (id == thisExercise.getId()){
+                    alreadyExists = true;
+                }
+            }
+            if (!alreadyExists) {
+                database = this.getWritableDatabase();
 
-            database = this.getWritableDatabase();
+                // Insert in table Exercise
+                cvExercises.put(ID_EX, thisExercise.getId());
+                cvExercises.put(NAME, thisExercise.getName());
+                cvExercises.put(BODY_SIDE, thisExercise.getBody_side());
+                cvExercises.put(DESCRIPTION_EXERCISE, thisExercise.getDescription());
 
-            // Insert in table Exercise
-            cvExercises.put(ID_EX, thisExercise.getId());
-            cvExercises.put(NAME, thisExercise.getName());
-            cvExercises.put(BODY_SIDE, thisExercise.getBody_side());
-            cvExercises.put(DESCRIPTION_EXERCISE, thisExercise.getDescription());
+                database.insert(TABLE_EXERCISES, null, cvExercises);
 
-            database.insert(TABLE_EXERCISES, null, cvExercises);
+                // Insert in table Plan_Exercise
+                cvPlanExercises.put(ID_EXERCISE, thisExercise.getId());
+                cvPlanExercises.put(ID_PLAN, id_plan);
+                cvPlanExercises.put(REPETITIONS, thisExercise.getRepetitions());
 
-            // Insert in table Plan_Exercise
-            cvPlanExercises.put(ID_EXERCISE, thisExercise.getId());
-            cvPlanExercises.put(ID_PLAN, id_plan);
-            cvPlanExercises.put(REPETITIONS, thisExercise.getRepetitions());
-
-            database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercises);
-        }
-    }
-
-    public ArrayList<Plan> getPlansOfUser(){
-        ArrayList<Plan> plans = new ArrayList<>();
-        Plan thisPlan;
-        Cursor  cursor = database.rawQuery("select * from "+ TABLE_PLANS,null);
-
-        if (cursor.moveToFirst()) {
-            while (!cursor.isAfterLast()) {
-
-                //get the fields from every row in table plans
-                int id_plan = cursor.getInt(cursor.getColumnIndex(ID));
-                String id_patient = cursor.getString(cursor.getColumnIndex(ID_PATIENT));
-                String id_doctor = cursor.getString(cursor.getColumnIndex(ID_DOCTOR));
-                String date_start = cursor.getString(cursor.getColumnIndex(DATE_START));
-                String date_end = cursor.getString(cursor.getColumnIndex(DATE_END));
-                int total_reps = cursor.getInt(cursor.getColumnIndex(TOTAL_REPS));
-                int reps_done = cursor.getInt(cursor.getColumnIndex(REPS_DONE));
-                String description_plan = cursor.getString(cursor.getColumnIndex(DESCRIPTION_PLAN));
-
-                //create a obkect plan with all the fields set
-                thisPlan = new Plan();
-                thisPlan.setId(id_plan);
-                thisPlan.setId_patient(id_patient);
-                thisPlan.setId_doctor(id_doctor);
-                thisPlan.setDate_start(date_start);
-                thisPlan.setDate_end(date_end);
-                thisPlan.setTotal_reps(total_reps);
-                thisPlan.setReps_done(reps_done);
-                thisPlan.setDescription(description_plan);
-
-                plans.add(thisPlan);
-
-                cursor.moveToNext();
+                database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercises);
             }
         }
-
-        return plans;
     }
 
     public void updatePatientDetails(Patient patient) {
@@ -219,7 +217,9 @@ public class LocalDatabase extends SQLiteOpenHelper {
         ContentValues cvDoctor = new ContentValues();
 
         //delete field from table patient
-        database.execSQL("delete from " + TABLE_PATIENT);
+        //database.execSQL("delete from " + TABLE_PATIENT);
+        //database.execSQL("delete from " + TABLE_DOCTOR);
+
 
         database = this.getWritableDatabase();
         //todo: delete
@@ -251,5 +251,91 @@ public class LocalDatabase extends SQLiteOpenHelper {
         cvDoctor.put(BIO, patient.getDoctor().getBio());
 
         database.insert(TABLE_DOCTOR, null, cvDoctor);
+    }
+
+    public ArrayList<Plan> getPlansOfUser(){
+        ArrayList<Plan> plans = new ArrayList<>();
+        Plan thisPlan;
+        Cursor cursor = database.rawQuery("select * from " + TABLE_PLANS, null);
+
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+
+                ArrayList<Exercise> exercises = new ArrayList<>();
+                //get the fields from every row in table plans
+                int id_plan = cursor.getInt(cursor.getColumnIndex(ID));
+                String id_patient = cursor.getString(cursor.getColumnIndex(ID_PATIENT));
+                String id_doctor = cursor.getString(cursor.getColumnIndex(ID_DOCTOR));
+                String date_start = cursor.getString(cursor.getColumnIndex(DATE_START));
+                String date_end = cursor.getString(cursor.getColumnIndex(DATE_END));
+                int total_reps = cursor.getInt(cursor.getColumnIndex(TOTAL_REPS));
+                int reps_done = cursor.getInt(cursor.getColumnIndex(REPS_DONE));
+                String description_plan = cursor.getString(cursor.getColumnIndex(DESCRIPTION_PLAN));
+                String plan_name = cursor.getString(cursor.getColumnIndex(PLAN_NAME_PLAN));
+                exercises = getExercisesOfPlan(id_plan);
+
+
+                //create a obkect plan with all the fields set
+                thisPlan = new Plan();
+                thisPlan.setId(id_plan);
+                thisPlan.setId_patient(id_patient);
+                thisPlan.setId_doctor(id_doctor);
+                thisPlan.setDate_start(date_start);
+                thisPlan.setDate_end(date_end);
+                thisPlan.setTotal_reps(total_reps);
+                thisPlan.setReps_done(reps_done);
+                thisPlan.setDescription(description_plan);
+                thisPlan.setPlan_name(plan_name);
+                thisPlan.setExercises(exercises);
+
+                plans.add(thisPlan);
+
+                cursor.moveToNext();
+            }
+        }
+        //fixme: nao esta a dar
+        // Collections.sort(plans, Comparator.comparingLong(Plan::getId));
+        return plans;
+    }
+
+    public ArrayList<Exercise> getExercisesOfPlan(int id_plan){
+        ArrayList<Exercise> exercice = new ArrayList<>();
+        Exercise thisExercise;
+        Cursor  cursor = database.rawQuery("select * from "+ TABLE_PLANS_EXERCISES + " where " + ID_PLAN + " = " + id_plan ,null);
+
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+
+                //get the field id_exercise and repetitions from Plans_Exercise table
+                int id_exercise = cursor.getInt(cursor.getColumnIndex(ID_EXERCISE));
+                int repetitions = cursor.getInt(cursor.getColumnIndex(REPETITIONS));
+                System.out.println(id_exercise);
+                System.out.println(repetitions);
+
+                //search for every field in exercice table
+                Cursor  cursorExercise = database.rawQuery("select * from "+ TABLE_EXERCISES + " where " + ID_EX + " = " + id_exercise ,null);
+                cursorExercise.moveToFirst();
+                //get the fields from every column in exercise table
+                String name = cursorExercise.getString(cursorExercise.getColumnIndex(NAME));
+                String body_side = cursorExercise.getString(cursorExercise.getColumnIndex(BODY_SIDE));
+                String description_exercise = cursorExercise.getString(cursorExercise.getColumnIndex(DESCRIPTION_EXERCISE));
+
+                //create a object plan with all the fields set
+                thisExercise = new Exercise();
+                thisExercise.setId(id_exercise);
+                thisExercise.setName(name);
+                thisExercise.setBody_side(body_side);
+                thisExercise.setDescription(description_exercise);
+                thisExercise.setRepetitions(repetitions);
+
+                // add elements
+                exercice.add(thisExercise);
+
+                cursor.moveToNext();
+            }
+        }
+        //fixme : nao funciona
+        //Collections.sort(exercice, Comparator.comparingLong(Exercise::getId));
+        return exercice;
     }
 }

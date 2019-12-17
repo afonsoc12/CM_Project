@@ -1,8 +1,5 @@
 package com.cm_project.physio2go.databaseDrivers;
 
-import android.widget.Toast;
-
-import com.cm_project.physio2go.ExecutarDB;
 import com.cm_project.physio2go.classes.Doctor;
 import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.classes.Patient;
@@ -73,6 +70,7 @@ public class ServerDatabaseDriver implements Runnable {
             resultSet = new ExecutarDB(this.conn, query).execute().get();
         } catch (Exception e) {
             e.printStackTrace();
+            this.disconectar();
         }
         this.disconectar();
         return resultSet;
@@ -140,6 +138,7 @@ public class ServerDatabaseDriver implements Runnable {
                 thisPlan.setTotal_reps(resultSet.getInt("total_reps"));
                 thisPlan.setReps_done(resultSet.getInt("reps_done"));
                 thisPlan.setDescription(resultSet.getString("description"));
+                thisPlan.setPlan_name(resultSet.getString("plan_name"));
                 thisPlan.setExercises(exercises);
 
                 plans.add(thisPlan);
