@@ -106,6 +106,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
 
     public void delete(){
 
+        database = this.getWritableDatabase();
         database.execSQL("delete from " + TABLE_PLANS);
         database.execSQL("delete from " + TABLE_PLANS_EXERCISES);
         database.execSQL("delete from " + TABLE_EXERCISES);
@@ -171,25 +172,43 @@ public class LocalDatabase extends SQLiteOpenHelper {
         //database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercises);
         //database.insert(TABLE_EXERCISES, null, cvExercises);
 
+        boolean alreadyExists;
         // get data from all plans associated to user
         for (Exercise thisExercise : exercises) {
+            ArrayList<Integer> exercises_ids = new ArrayList<Integer>();
+            alreadyExists = false;
+            Cursor cursor = database.rawQuery("select * from " + TABLE_EXERCISES, null);
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    int id = cursor.getInt(cursor.getColumnIndex(ID_EX));
+                    exercises_ids.add(id);
+                    cursor.moveToNext();
+                }
+            }
+            // Check if exercise is already on database
+            for (int id : exercises_ids){
+                if (id == thisExercise.getId()){
+                    alreadyExists = true;
+                }
+            }
+            if (!alreadyExists) {
+                database = this.getWritableDatabase();
 
-            database = this.getWritableDatabase();
+                // Insert in table Exercise
+                cvExercises.put(ID_EX, thisExercise.getId());
+                cvExercises.put(NAME, thisExercise.getName());
+                cvExercises.put(BODY_SIDE, thisExercise.getBody_side());
+                cvExercises.put(DESCRIPTION_EXERCISE, thisExercise.getDescription());
 
-            // Insert in table Exercise
-            cvExercises.put(ID_EX, thisExercise.getId());
-            cvExercises.put(NAME, thisExercise.getName());
-            cvExercises.put(BODY_SIDE, thisExercise.getBody_side());
-            cvExercises.put(DESCRIPTION_EXERCISE, thisExercise.getDescription());
+                database.insert(TABLE_EXERCISES, null, cvExercises);
 
-            database.insert(TABLE_EXERCISES, null, cvExercises);
+                // Insert in table Plan_Exercise
+                cvPlanExercises.put(ID_EXERCISE, thisExercise.getId());
+                cvPlanExercises.put(ID_PLAN, id_plan);
+                cvPlanExercises.put(REPETITIONS, thisExercise.getRepetitions());
 
-            // Insert in table Plan_Exercise
-            cvPlanExercises.put(ID_EXERCISE, thisExercise.getId());
-            cvPlanExercises.put(ID_PLAN, id_plan);
-            cvPlanExercises.put(REPETITIONS, thisExercise.getRepetitions());
-
-            database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercises);
+                database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercises);
+            }
         }
     }
 

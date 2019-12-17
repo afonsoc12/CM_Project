@@ -179,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getLocalDatabase(){
         ArrayList<Plan> plansFromLocalDatabase = local.getPlansOfUser();
-
     }
 }
 
