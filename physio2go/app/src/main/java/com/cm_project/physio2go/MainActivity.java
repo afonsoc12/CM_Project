@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
 
         // If server was not update, show Snackbar
         if (!isServerUpdated) {
-            showNoInternetSnackbar(findViewById(R.id.ActivityLayout), "Could not synchronize with the Server.");
+            showNoInternetSnackbar(findViewById(R.id.main_activity), "Could not synchronize with the Server.");
         }
     }
 
