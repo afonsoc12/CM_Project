@@ -19,6 +19,8 @@ import com.cm_project.physio2go.fragmentsExercises.LegExerciseFragment;
 
 public class DoExerciseActivity extends AppCompatActivity {
 
+    private final String DIALOG_TAG = "close_dialog";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,10 +88,9 @@ public class DoExerciseActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.quit_exercise_btn: // Removes login from sharedprefs and prompts login activity
-                //todo prompt DO YOU RLY WANNA QUIT BRO?
-                setResult(RESULT_OK);
-                finish();
+            case R.id.quit_exercise_btn: // Confirms quit exerc
+                CloseExerciseDialogFragment dialog = new CloseExerciseDialogFragment();
+                dialog.show(getSupportFragmentManager(), DIALOG_TAG);
                 break;
 
             default:
