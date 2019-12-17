@@ -21,7 +21,7 @@
         app:layout_constraintVertical_bias="0.97" />
 
     <TextView
-        android:id="@+id/login"
+        android:id="@+id/login_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/helvetica_bold"
@@ -65,7 +65,7 @@
         app:layout_constraintVertical_bias="0.012" />
 
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/name_et"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="31dp"
@@ -80,7 +80,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <EditText
-        android:id="@+id/surname"
+        android:id="@+id/surname_et"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
@@ -92,10 +92,10 @@
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name" />
+        app:layout_constraintTop_toBottomOf="@+id/name_et" />
 
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/username_et"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
@@ -107,10 +107,10 @@
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/surname" />
+        app:layout_constraintTop_toBottomOf="@+id/surname_et" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/password_et"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
@@ -123,10 +123,10 @@
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username" />
+        app:layout_constraintTop_toBottomOf="@+id/username_et" />
 
     <EditText
-        android:id="@+id/confirmPassword"
+        android:id="@+id/confirmPassword_et"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
@@ -139,10 +139,10 @@
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password" />
+        app:layout_constraintTop_toBottomOf="@+id/password_et" />
 
     <EditText
-        android:id="@+id/dateOfBirth"
+        android:id="@+id/dateOfBirth_et"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="22dp"
@@ -155,10 +155,10 @@
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/confirmPassword" />
+        app:layout_constraintTop_toBottomOf="@+id/confirmPassword_et" />
 
     <EditText
-        android:id="@+id/address"
+        android:id="@+id/address_et"
         android:layout_width="300dp"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
@@ -170,10 +170,10 @@
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dateOfBirth" />
+        app:layout_constraintTop_toBottomOf="@+id/dateOfBirth_et" />
 
     <Button
-        android:id="@+id/next"
+        android:id="@+id/next_btn"
         android:layout_width="81dp"
         android:layout_height="36dp"
         android:background="@drawable/button"
@@ -186,7 +186,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.83"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/address"
+        app:layout_constraintTop_toBottomOf="@+id/address_et"
         app:layout_constraintVertical_bias="0.20" />
 
 

@@ -26,13 +26,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        TextView register = findViewById(R.id.register);
-        Button login = findViewById(R.id.login);
+        TextView register = findViewById(R.id.register_btn);
+        Button login = findViewById(R.id.login_btn);
 
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent registerIntent = new Intent(getBaseContext(), SignupActivity.class);
+                Intent registerIntent = new Intent(getBaseContext(), RegisterActivity.class);
                 startActivityForResult(registerIntent, REQ_SIGNUP);
             }
         });
@@ -40,8 +40,8 @@ public class LoginActivity extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = ((EditText) findViewById(R.id.username)).getText().toString();
-                String password = ((EditText) findViewById(R.id.password)).getText().toString();
+                String username = ((EditText) findViewById(R.id.username_et)).getText().toString();
+                String password = ((EditText) findViewById(R.id.password_et)).getText().toString();
 
                 int loginCode = checkLoginCombination(username, password);
                 TextView msgLoginTv = findViewById(R.id.failed_login_tv);
@@ -52,24 +52,24 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                         break;
                     case LOGIN_USER_NOT_FOUND:
-                        ((EditText) findViewById(R.id.username)).getText().clear();
-                        ((EditText) findViewById(R.id.password)).getText().clear();
+                        ((EditText) findViewById(R.id.username_et)).getText().clear();
+                        ((EditText) findViewById(R.id.password_et)).getText().clear();
 
                         // Set message
                         msgLoginTv.setText("User is not registered. Click signup button.");
                         msgLoginTv.setVisibility(View.VISIBLE);
                         break;
                     case LOGIN_WRONG_PASSWORD:
-                        ((EditText) findViewById(R.id.username)).getText().clear();
-                        ((EditText) findViewById(R.id.password)).getText().clear();
+                        ((EditText) findViewById(R.id.username_et)).getText().clear();
+                        ((EditText) findViewById(R.id.password_et)).getText().clear();
 
                         // Set message
                         msgLoginTv.setText("Username or password incorrect.");
                         msgLoginTv.setVisibility(View.VISIBLE);
                         break;
                     case LOGIN_CONNECTION_FAILED:
-                        ((EditText) findViewById(R.id.username)).getText().clear();
-                        ((EditText) findViewById(R.id.password)).getText().clear();
+                        ((EditText) findViewById(R.id.username_et)).getText().clear();
+                        ((EditText) findViewById(R.id.password_et)).getText().clear();
 
                         // Set message
                         msgLoginTv.setText("A problem has occurred");
@@ -122,7 +122,7 @@ public class LoginActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case REQ_SIGNUP:
-                if (resultCode == 1) {
+                if (resultCode == RESULT_OK) {
                     if (intent != null) {
                         String newUsername = intent.getStringExtra("username");
                         String newPassword = intent.getStringExtra("password");
@@ -130,8 +130,8 @@ public class LoginActivity extends AppCompatActivity {
 
                         // Autofill login fields
                         if (newUsername != null && newPassword != null) {
-                            ((EditText) findViewById(R.id.username)).setText(newUsername);
-                            ((EditText) findViewById(R.id.password)).setText(newPassword);
+                            ((EditText) findViewById(R.id.username_et)).setText(newUsername);
+                            ((EditText) findViewById(R.id.password_et)).setText(newPassword);
                         }
 
                     }

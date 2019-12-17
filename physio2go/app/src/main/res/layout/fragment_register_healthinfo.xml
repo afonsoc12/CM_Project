@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="@color/white">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/helvetica"
+        android:text="I'm already a member."
+        android:textColor="@color/gray"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.97" />
+
+    <TextView
+        android:id="@+id/login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/helvetica_bold"
+        android:text="Login."
+        android:textColor="@color/blue"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.04"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.97" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="44dp"
+        android:fontFamily="@font/helvetica_bold"
+        android:text="New member"
+        android:textColor="@color/blue"
+        android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/helvetica"
+        android:text="Health information"
+        android:textColor="@color/gray"
+        android:textSize="22dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.223"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:layout_constraintVertical_bias="0.012" />
+
+    <EditText
+        android:id="@+id/condition"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="31dp"
+        android:background="@drawable/input_field"
+        android:ems="10"
+        android:fontFamily="@font/helvetica"
+        android:hint="Condition"
+        android:textColorHint="@color/gray"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+    <EditText
+        android:id="@+id/height"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/input_field"
+        android:ems="10"
+        android:fontFamily="@font/helvetica"
+        android:hint="Height (cm)"
+        android:textColorHint="@color/gray"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/condition" />
+
+    <EditText
+        android:id="@+id/weight"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/input_field"
+        android:ems="10"
+        android:fontFamily="@font/helvetica"
+        android:hint="Weight (Kg)"
+        android:textColorHint="@color/gray"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/height" />
+
+    <RadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="300dp"
+        android:layout_height="193dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/input_field"
+        android:ems="10"
+        android:fontFamily="@font/helvetica"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weight" >
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="300dp"
+            android:layout_height="34dp"
+            android:layout_marginTop="16dp"
+            android:text="Choose a doctor: "
+            android:fontFamily="@font/helvetica"
+            android:textSize="18dp"
+            android:textColor="@color/gray" />
+
+        <RadioButton
+            android:id="@+id/dr_name1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dra."
+            android:fontFamily="@font/helvetica"
+            android:textSize="18dp"
+            android:textColor="@color/gray" />
+
+        <RadioButton
+            android:id="@+id/dr_name2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dr."
+            android:fontFamily="@font/helvetica"
+            android:textSize="18dp"
+            android:textColor="@color/gray" />
+
+        <RadioButton
+            android:id="@+id/dr_name3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dr."
+            android:fontFamily="@font/helvetica"
+            android:textSize="18dp"
+            android:textColor="@color/gray" />
+
+        <RadioButton
+            android:id="@+id/dr_name4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dra."
+            android:fontFamily="@font/helvetica"
+            android:textSize="18dp"
+            android:textColor="@color/gray" />
+    </RadioGroup>
+
+
+    <Button
+        android:id="@+id/add"
+        android:layout_width="81dp"
+        android:layout_height="36dp"
+        android:background="@drawable/button"
+        android:fontFamily="@font/helvetica"
+        android:text="Add"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.83"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radiogroup"
+        app:layout_constraintVertical_bias="0.20" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

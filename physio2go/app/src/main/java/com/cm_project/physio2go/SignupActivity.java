@@ -32,8 +32,8 @@ public class SignupActivity extends AppCompatActivity {
         backLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent login = new Intent(SignupActivity.this, MainActivity.class);
-                startActivity(login);
+                setResult(RESULT_CANCELED);
+                finish();
             }
         });
 
