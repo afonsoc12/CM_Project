@@ -70,6 +70,7 @@ public class ServerDatabaseDriver implements Runnable {
             resultSet = new ExecutarDB(this.conn, query).execute().get();
         } catch (Exception e) {
             e.printStackTrace();
+            this.disconectar();
         }
         this.disconectar();
         return resultSet;

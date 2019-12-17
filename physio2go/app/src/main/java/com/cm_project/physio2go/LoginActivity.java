@@ -16,6 +16,10 @@ import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
 public class LoginActivity extends AppCompatActivity {
 
     final int REQ_SIGNUP = 1;
+    public final int LOGIN_OK = 0;
+    public final int LOGIN_USER_NOT_FOUND = 1;
+    public final int LOGIN_WRONG_PASSWORD = 2;
+    public final int LOGIN_CONNECTION_FAILED = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,27 +43,50 @@ public class LoginActivity extends AppCompatActivity {
                 String username = ((EditText) findViewById(R.id.username)).getText().toString();
                 String password = ((EditText) findViewById(R.id.password)).getText().toString();
 
-                boolean loginValid = checkLoginCombination(username, password);
+                int loginCode = checkLoginCombination(username, password);
+                TextView msgLoginTv = findViewById(R.id.username);
+                switch (loginCode) {
+                    case LOGIN_OK:
+                        getIntent().putExtra("username", username);
+                        setResult(RESULT_OK, getIntent());
+                        finish();
+                        break;
+                    case LOGIN_USER_NOT_FOUND:
+                        ((EditText) findViewById(R.id.username)).getText().clear();
+                        ((EditText) findViewById(R.id.password)).getText().clear();
 
-                if (loginValid) {
-                    getIntent().putExtra("username", username);
-                    setResult(1, getIntent());
-                    finish();
-                } else {
-                    // TODO message of not valid login
-                    // Clear username and password fields
-                    ((EditText) findViewById(R.id.username)).getText().clear();
-                    ((EditText) findViewById(R.id.password)).getText().clear();
-                    //setResult(0, getIntent());
-                    //finish();
+                        // Set message
+                        msgLoginTv = findViewById(R.id.failed_login_tv);
+                        msgLoginTv.setText("User is not registered. Click signup button.");
+                        msgLoginTv.setVisibility(View.VISIBLE);
+                        break;
+                    case LOGIN_WRONG_PASSWORD:
+                        ((EditText) findViewById(R.id.username)).getText().clear();
+                        ((EditText) findViewById(R.id.password)).getText().clear();
+
+                        // Set message
+                        msgLoginTv = findViewById(R.id.failed_login_tv);
+                        msgLoginTv.setText("Username or password incorrect.");
+                        msgLoginTv.setVisibility(View.VISIBLE);
+                        break;
+                    case LOGIN_CONNECTION_FAILED:
+                        ((EditText) findViewById(R.id.username)).getText().clear();
+                        ((EditText) findViewById(R.id.password)).getText().clear();
+
+                        // Set message
+                        msgLoginTv = findViewById(R.id.failed_login_tv);
+                        msgLoginTv.setText("A problem has occurred");
+                        msgLoginTv.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        break;
                 }
             }
         });
     }
 
-    private boolean checkLoginCombination(String username, String password) {
-        boolean isLoginValid = false;
-
+    private int checkLoginCombination(String username, String password) {
+        int loginCode;
         ServerDatabaseDriver db = new ServerDatabaseDriver();
 
         try {
@@ -67,19 +94,22 @@ public class LoginActivity extends AppCompatActivity {
             System.out.println(passwordDB);
 
             if (password.equals(passwordDB)) {
-                isLoginValid = true;
+                loginCode = LOGIN_OK;
             } else if (passwordDB == null) {
-                Toast.makeText(this, "User not found", Toast.LENGTH_LONG).show();
+                loginCode = LOGIN_USER_NOT_FOUND;
+            } else if (!password.equals(passwordDB)) {
+                loginCode = LOGIN_WRONG_PASSWORD;
             } else {
-                Toast.makeText(this, "Username or password not matches", Toast.LENGTH_LONG).show();
+                loginCode = LOGIN_CONNECTION_FAILED;
             }
 
         } catch (Exception e) {
+            loginCode = LOGIN_CONNECTION_FAILED;
             e.printStackTrace();
             Toast.makeText(this, "ERRO QUALQUER", Toast.LENGTH_LONG).show();
         }
 
-        return isLoginValid;
+        return loginCode;
     }
 
     /**

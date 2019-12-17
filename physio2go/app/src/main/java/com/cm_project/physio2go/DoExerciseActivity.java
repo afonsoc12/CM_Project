@@ -88,6 +88,8 @@ public class DoExerciseActivity extends AppCompatActivity {
         switch (id) {
             case R.id.quit_exercise_btn: // Removes login from sharedprefs and prompts login activity
                 //todo prompt DO YOU RLY WANNA QUIT BRO?
+                setResult(RESULT_OK);
+                finish();
                 break;
 
             default:

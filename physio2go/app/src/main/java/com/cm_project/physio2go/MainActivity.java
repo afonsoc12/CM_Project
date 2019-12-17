@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //TODO logout;
-        //deleteLoggedInUsername();
+        deleteLoggedInUsername();
 
         this.loggedInUsername = checkLoggedInUsername();
 
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (requestCode){
             case REQ_LOGIN:
-                if (resultCode == 1){ // If login successfull
+                if (resultCode == RESULT_OK) { // If login successfull
                     if (intent!= null) {
                         this.loggedInUsername = intent.getStringExtra("username");
                         saveLoggedInUsername(this.loggedInUsername);
