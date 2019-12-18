@@ -17,7 +17,14 @@ import com.cm_project.physio2go.fragmentsExercises.ArmExerciseFragment;
 import com.cm_project.physio2go.fragmentsExercises.BreathingExerciseFragment;
 import com.cm_project.physio2go.fragmentsExercises.LegExerciseFragment;
 
-public class DoExerciseActivity extends AppCompatActivity {
+import java.util.ArrayList;
+
+public class DoExerciseActivity extends AppCompatActivity implements ArmExerciseFragment.onMessageReadListenner {
+
+    ArrayList<Exercise> exercises;
+    Boolean exerciseDone = true;
+    int positionExercise = 0;
+    int numberExercise = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,35 +34,48 @@ public class DoExerciseActivity extends AppCompatActivity {
         // Inflate toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        showLayouts();
+    }
 
+    public void showLayouts() {
         // Instanciate fragment, depending on the exercise
         Fragment exerciseFragment = null;
-        Exercise exercise = (Exercise) getIntent().getSerializableExtra(PlanExerciseListFragment.CHOSEN_EXERCISE_ARG);
-        int exerciseID = exercise.getId();
+        exercises = (ArrayList<Exercise>) getIntent().getSerializableExtra(PlanExerciseListFragment.CHOSEN_EXERCISE_ARG);
+        numberExercise = exercises.size();
 
-        switch (exerciseID) {
-            case 1:     // Left Arm
-            case 2:     // Right Arm (both grouped in case 2)
-                exerciseFragment = ArmExerciseFragment.newInstance(exercise);
-                break;
+        if (positionExercise < numberExercise) {
 
-            case 3:     // Left Leg
-            case 4:     // Right Leg (both grouped in case 4)
-                exerciseFragment = LegExerciseFragment.newInstance(exercise);
-                break;
+            Exercise thisExercise = exercises.get(positionExercise);
+            int exerciseID = thisExercise.getId();
 
-            case 5:     // Breathing Exercise
-                exerciseFragment = BreathingExerciseFragment.newInstance(exercise);
-                break;
-            default:
-                break;
+            switch (exerciseID) {
+                case 1:     // Left Arm
+                case 2:     // Right Arm (both grouped in case 2)
+                    exerciseFragment = ArmExerciseFragment.newInstance(thisExercise);
+                    break;
+
+                case 3:     // Left Leg
+                case 4:     // Right Leg (both grouped in case 4)
+                    exerciseFragment = LegExerciseFragment.newInstance(thisExercise);
+                    break;
+
+                case 5:     // Breathing Exercise
+                    exerciseFragment = BreathingExerciseFragment.newInstance(thisExercise);
+                    break;
+                default:
+                    break;
+            }
+
+            // Instanciate the fragment
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.fragment_list_placeholder, exerciseFragment);
+            ft.commit();
+        } else {
+            setResult(RESULT_OK);
+            finish();
         }
-
-        // Instanciate the fragment
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_list_placeholder, exerciseFragment);
-        ft.commit();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -97,6 +117,14 @@ public class DoExerciseActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onMessageRead(Boolean message) {
+        positionExercise++;
+        showLayouts();
+        System.out.println(message);
+        System.out.println(positionExercise);
     }
 }
 

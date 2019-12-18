@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -23,6 +24,10 @@ public class PlanExerciseListFragment extends ListFragment {
     private final static String PLAN_ARG = "planChosen";
     public final static String CHOSEN_EXERCISE_ARG = "chosenExercise";
     private final int REQ_DO_EXERCSISE = 1;
+    ArrayList<Exercise> exercises;
+
+    // inicializar btn Start
+    Button start_btn;
 
     public PlanExerciseListFragment() {
 
@@ -38,6 +43,7 @@ public class PlanExerciseListFragment extends ListFragment {
         return fragment;
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -51,7 +57,8 @@ public class PlanExerciseListFragment extends ListFragment {
                     extractPlanExercisesInfo(plan));
             setListAdapter(arrayAdapter);
         }
-
+        start_btn = (Button) v.findViewById(R.id.start_btn);
+        startExercices();
         return v;
     }
 
@@ -63,7 +70,7 @@ public class PlanExerciseListFragment extends ListFragment {
      */
     private ArrayList<String> extractPlanExercisesInfo(Plan plan) {
         ArrayList<String> titles = new ArrayList<>();
-        ArrayList<Exercise> exercises = plan.getExercises();
+        exercises = plan.getExercises();
 
         for (Exercise thisExercise : exercises) {
             titles.add(thisExercise.getName());
@@ -71,6 +78,24 @@ public class PlanExerciseListFragment extends ListFragment {
 
         return titles;
     }
+
+    public void startExercices() {
+        start_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Exercise chosenExercise = ((Plan) getArguments().getSerializable(PLAN_ARG)).getExercises().get(0);
+
+                // Start Exercise Activity
+                Intent intentDoExercise = new Intent(getActivity(), DoExerciseActivity.class);
+                intentDoExercise.putExtra(CHOSEN_EXERCISE_ARG, exercises);
+
+                startActivityForResult(intentDoExercise, REQ_DO_EXERCSISE);
+            }
+        });
+
+    }
+
+
 
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
@@ -93,7 +118,14 @@ public class PlanExerciseListFragment extends ListFragment {
             case REQ_DO_EXERCSISE:
                 if (resultCode == Activity.RESULT_OK) { // Exercise finished successfully
                     // TODO PERSIST DB THE EXERCISE RESULT
-
+                    start_btn.setText("FINISH");
+                    start_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            startActivity(intent);
+                        }
+                    });
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     // Dont do anything, since the exercise was aborted
                 } else {

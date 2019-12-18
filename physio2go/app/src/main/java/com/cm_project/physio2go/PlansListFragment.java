@@ -79,7 +79,7 @@ public class PlansListFragment extends ListFragment {
         ArrayList<String> titles = new ArrayList<>();
 
         for (Plan thisPlan : plans) {
-            titles.add(thisPlan.getDescription());
+            titles.add(thisPlan.getPlan_name());
         }
 
         return titles;

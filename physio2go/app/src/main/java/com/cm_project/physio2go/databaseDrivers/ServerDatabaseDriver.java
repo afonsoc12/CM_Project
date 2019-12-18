@@ -196,6 +196,57 @@ public class ServerDatabaseDriver implements Runnable {
         return exercises;
     }
 
+    public ArrayList<Doctor> listOfDoctors() {
+        ArrayList<Doctor> doctorAvailable = new ArrayList<Doctor>();
+        Doctor thisDoctor;
+
+        String query = String.format("select * from %s", DOCTORS);
+
+        ResultSet resultSet = this.select(query);
+
+        try {
+            while (resultSet.next()) {
+                thisDoctor = new Doctor();
+
+                thisDoctor.setUsername(resultSet.getString("username"));
+                thisDoctor.setSurname(resultSet.getString("surname"));
+                thisDoctor.setName(resultSet.getString("name"));
+                thisDoctor.setSpeciality(resultSet.getString("speciality"));
+                thisDoctor.setHospital(resultSet.getString("hospital"));
+                thisDoctor.setBio(resultSet.getString("bio"));
+
+                doctorAvailable.add(thisDoctor);
+            }
+
+            this.disconectar();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return doctorAvailable;
+    }
+
+    public boolean usernameExist(String username) {
+        boolean exist = false;
+        String username_exist = null;
+        String query = String.format("select * from %s where username = '%s'", PATIENTS, username);
+        ResultSet resultSet = this.select(query);
+        try {
+
+            while (resultSet.next()) {
+                username_exist = resultSet.getString("username");
+                if (username_exist.equals(username)) {
+                    exist = true;
+                    return exist;
+                }
+            }
+            return exist;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return exist;
+    }
+
     public Patient getPatientDetails(String username) {
         this.conectar();
 
