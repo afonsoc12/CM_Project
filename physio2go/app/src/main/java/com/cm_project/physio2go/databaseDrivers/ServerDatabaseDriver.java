@@ -113,7 +113,6 @@ public class ServerDatabaseDriver implements Runnable {
      * @return
      */
     public ArrayList<Plan> getPlansOfUser(String username) {
-
         this.conectar();
 
         ArrayList<Plan> plans = new ArrayList<>();
@@ -197,7 +196,9 @@ public class ServerDatabaseDriver implements Runnable {
     }
 
     public ArrayList<Doctor> listOfDoctors() {
-        ArrayList<Doctor> doctorAvailable = new ArrayList<Doctor>();
+        this.conectar();
+
+        ArrayList<Doctor> doctors = new ArrayList<Doctor>();
         Doctor thisDoctor;
 
         String query = String.format("select * from %s", DOCTORS);
@@ -215,7 +216,7 @@ public class ServerDatabaseDriver implements Runnable {
                 thisDoctor.setHospital(resultSet.getString("hospital"));
                 thisDoctor.setBio(resultSet.getString("bio"));
 
-                doctorAvailable.add(thisDoctor);
+                doctors.add(thisDoctor);
             }
 
             this.disconectar();
@@ -223,24 +224,31 @@ public class ServerDatabaseDriver implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return doctorAvailable;
+
+        return doctors;
     }
 
-    public boolean usernameExist(String username) {
+    public boolean usernameExists(String username) {
+        this.conectar();
+
         boolean exist = false;
-        String username_exist = null;
-        String query = String.format("select * from %s where username = '%s'", PATIENTS, username);
+
+        String query = String.format("select username from %s where username = '%s'", PATIENTS, username);
+
         ResultSet resultSet = this.select(query);
+
         try {
 
             while (resultSet.next()) {
-                username_exist = resultSet.getString("username");
+                String username_exist = resultSet.getString("username");
+
                 if (username_exist.equals(username)) {
                     exist = true;
-                    return exist;
                 }
             }
-            return exist;
+
+            this.disconectar();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -286,7 +294,6 @@ public class ServerDatabaseDriver implements Runnable {
     }
 
     private Doctor getThisPatientDoctor(String id_doctor) {
-
         this.conectar();
 
         Doctor doctor = new Doctor();

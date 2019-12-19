@@ -2,50 +2,48 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:background="@color/white">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
         android:fontFamily="@font/helvetica"
         android:text="I'm already a member."
         android:textColor="@color/gray"
         android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.97" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/login_btn"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/login"
+        android:id="@+id/login_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginBottom="15dp"
         android:fontFamily="@font/helvetica_bold"
         android:text="Login."
         android:textColor="@color/blue"
         android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.04"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.97" />
+        app:layout_constraintStart_toEndOf="@+id/textView" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="44dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="25dp"
         android:fontFamily="@font/helvetica_bold"
         android:text="New member"
         android:textColor="@color/blue"
         android:textSize="30dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.16"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -53,22 +51,21 @@
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="75dp"
         android:fontFamily="@font/helvetica"
         android:text="Health information"
         android:textColor="@color/gray"
         android:textSize="22dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.223"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
-        app:layout_constraintVertical_bias="0.012" />
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <EditText
-        android:id="@+id/condition"
+        android:id="@+id/condition_et"
         android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="31dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="25dp"
         android:background="@drawable/input_field"
         android:ems="10"
         android:fontFamily="@font/helvetica"
@@ -80,100 +77,70 @@
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
     <EditText
-        android:id="@+id/height"
+        android:id="@+id/height_et"
         android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="25dp"
         android:background="@drawable/input_field"
         android:ems="10"
         android:fontFamily="@font/helvetica"
         android:hint="Height (cm)"
+        android:inputType="number"
         android:textColorHint="@color/gray"
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/condition" />
+        app:layout_constraintTop_toBottomOf="@+id/condition_et" />
 
     <EditText
-        android:id="@+id/weight"
+        android:id="@+id/weight_et"
         android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="25dp"
         android:background="@drawable/input_field"
         android:ems="10"
         android:fontFamily="@font/helvetica"
         android:hint="Weight (Kg)"
+        android:inputType="number|numberDecimal"
         android:textColorHint="@color/gray"
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/height" />
+        app:layout_constraintTop_toBottomOf="@+id/height_et" />
 
     <RadioGroup
         android:id="@+id/radiogroup"
         android:layout_width="300dp"
         android:layout_height="193dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="25dp"
         android:background="@drawable/input_field"
         android:ems="10"
         android:fontFamily="@font/helvetica"
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weight" >
+        app:layout_constraintTop_toBottomOf="@+id/weight_et">
 
         <TextView
             android:id="@+id/textView4"
-            android:layout_width="300dp"
-            android:layout_height="34dp"
+            android:layout_width="250dp"
+            android:layout_height="30dp"
             android:layout_marginTop="16dp"
+            android:fontFamily="@font/helvetica"
             android:text="Choose a doctor: "
-            android:fontFamily="@font/helvetica"
-            android:textSize="18dp"
-            android:textColor="@color/gray" />
+            android:textColor="@color/gray"
+            android:textSize="18dp" />
 
-        <RadioButton
-            android:id="@+id/dr_name1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dra."
-            android:fontFamily="@font/helvetica"
-            android:textSize="18dp"
-            android:textColor="@color/gray" />
 
-        <RadioButton
-            android:id="@+id/dr_name2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dr."
-            android:fontFamily="@font/helvetica"
-            android:textSize="18dp"
-            android:textColor="@color/gray" />
-
-        <RadioButton
-            android:id="@+id/dr_name3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dr."
-            android:fontFamily="@font/helvetica"
-            android:textSize="18dp"
-            android:textColor="@color/gray" />
-
-        <RadioButton
-            android:id="@+id/dr_name4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dra."
-            android:fontFamily="@font/helvetica"
-            android:textSize="18dp"
-            android:textColor="@color/gray" />
     </RadioGroup>
 
 
     <Button
-        android:id="@+id/add"
+        android:id="@+id/add_btn"
         android:layout_width="81dp"
         android:layout_height="36dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="52dp"
         android:background="@drawable/button"
         android:fontFamily="@font/helvetica"
         android:text="Add"
@@ -182,10 +149,22 @@
         android:textSize="24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.83"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/radiogroup"
-        app:layout_constraintVertical_bias="0.20" />
+        app:layout_constraintVertical_bias="0.0" />
 
+    <TextView
+        android:id="@+id/failed_empty_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38dp"
+        android:fontFamily="@font/helvetica"
+        android:text="TextView"
+        android:textColor="@color/gray"
+        android:textSize="16dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@+id/add_btn"
+        app:layout_constraintHorizontal_bias="0.126"
+        app:layout_constraintStart_toStartOf="@+id/radiogroup"
+        app:layout_constraintTop_toBottomOf="@+id/radiogroup" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
