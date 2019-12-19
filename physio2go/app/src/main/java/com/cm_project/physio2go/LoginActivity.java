@@ -5,21 +5,23 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
+import com.cm_project.physio2go.AsyncTasks.ILoginAsyncTask;
+import com.cm_project.physio2go.AsyncTasks.LoginAsyncTask;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements ILoginAsyncTask {
 
     final int REQ_SIGNUP = 1;
-    public final int LOGIN_OK = 0;
-    public final int LOGIN_USER_NOT_FOUND = 1;
-    public final int LOGIN_WRONG_PASSWORD = 2;
-    public final int LOGIN_CONNECTION_FAILED = 3;
-    public final int LOGIN_NO_INTERNET_CONNECTION = 4;
+    public final static int LOGIN_OK = 0;
+    public final static int LOGIN_USER_NOT_FOUND = 1;
+    public final static int LOGIN_WRONG_PASSWORD = 2;
+    public final static int LOGIN_CONNECTION_FAILED = 3;
+    public final static int LOGIN_NO_INTERNET_CONNECTION = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,82 +51,59 @@ public class LoginActivity extends AppCompatActivity {
                 String username = ((EditText) findViewById(R.id.username_et)).getText().toString();
                 String password = ((EditText) findViewById(R.id.password_et)).getText().toString();
 
-                int loginCode = checkLoginCombination(username, password);
-                TextView msgLoginTv = findViewById(R.id.failed_login_tv);
-                switch (loginCode) {
-                    case LOGIN_OK:
-                        getIntent().putExtra("username", username);
-                        setResult(RESULT_OK, getIntent());
-                        finish();
-                        break;
-                    case LOGIN_USER_NOT_FOUND:
-                        ((EditText) findViewById(R.id.username_et)).getText().clear();
-                        ((EditText) findViewById(R.id.password_et)).getText().clear();
-
-                        // Set message
-                        msgLoginTv.setText("User is not registered. Click signup button.");
-                        msgLoginTv.setVisibility(View.VISIBLE);
-                        break;
-                    case LOGIN_WRONG_PASSWORD:
-                        ((EditText) findViewById(R.id.username_et)).getText().clear();
-                        ((EditText) findViewById(R.id.password_et)).getText().clear();
-
-                        // Set message
-                        msgLoginTv.setText("Username or password incorrect.");
-                        msgLoginTv.setVisibility(View.VISIBLE);
-                        break;
-                    case LOGIN_CONNECTION_FAILED:
-                        ((EditText) findViewById(R.id.username_et)).getText().clear();
-                        ((EditText) findViewById(R.id.password_et)).getText().clear();
-
-                        // Set message
-                        msgLoginTv.setText("A problem has occurred");
-                        msgLoginTv.setVisibility(View.VISIBLE);
-                        break;
-                    case LOGIN_NO_INTERNET_CONNECTION:
-                        ((EditText) findViewById(R.id.username_et)).getText().clear();
-                        ((EditText) findViewById(R.id.password_et)).getText().clear();
-
-                        MainActivity.showNoInternetSnackbar(v, "No internet connection!");
-
-                        break;
-                    default:
-                        break;
-                }
+                View view = findViewById(R.id.login_activity);
+                new LoginAsyncTask(username, password, LoginActivity.this, view).execute();
             }
         });
+
+        // Disable default Progress Bar
+        ProgressBar spinLogin = findViewById(R.id.spin_login_pb);
+        spinLogin.setVisibility(View.GONE);
     }
 
-    private int checkLoginCombination(String username, String password) {
-        int loginCode;
+    @Override
+    public void loginValidationUIUpdate(int loginCode, String username) {
+        View actView = findViewById(R.id.login_activity);
+        TextView msgLoginTv = findViewById(R.id.failed_login_tv);
+        switch (loginCode) {
+            case LOGIN_OK:
+                getIntent().putExtra("username", username);
+                setResult(RESULT_OK, getIntent());
+                finish();
+                break;
+            case LOGIN_USER_NOT_FOUND:
+                ((EditText) findViewById(R.id.username_et)).getText().clear();
+                ((EditText) findViewById(R.id.password_et)).getText().clear();
 
-        boolean isNetAvailable = MainActivity.isNetworkAvilable(this);
+                // Set message
+                msgLoginTv.setText("User is not registered. Click signup button.");
+                msgLoginTv.setVisibility(View.VISIBLE);
+                break;
+            case LOGIN_WRONG_PASSWORD:
+                ((EditText) findViewById(R.id.username_et)).getText().clear();
+                ((EditText) findViewById(R.id.password_et)).getText().clear();
 
-        if (isNetAvailable) {
-            try {
-                ServerDatabaseDriver db = new ServerDatabaseDriver();
-                String passwordDB = db.getPasswordForUsername(username);
-                System.out.println(passwordDB);
+                // Set message
+                msgLoginTv.setText("Username or password incorrect.");
+                msgLoginTv.setVisibility(View.VISIBLE);
+                break;
+            case LOGIN_CONNECTION_FAILED:
+                ((EditText) findViewById(R.id.username_et)).getText().clear();
+                ((EditText) findViewById(R.id.password_et)).getText().clear();
 
-                if (password.equals(passwordDB)) {
-                    loginCode = LOGIN_OK;
-                } else if (passwordDB == null) {
-                    loginCode = LOGIN_USER_NOT_FOUND;
-                } else if (!password.equals(passwordDB)) {
-                    loginCode = LOGIN_WRONG_PASSWORD;
-                } else {
-                    loginCode = LOGIN_CONNECTION_FAILED;
-                }
+                // Set message
+                msgLoginTv.setText("A problem has occurred");
+                msgLoginTv.setVisibility(View.VISIBLE);
+                break;
+            case LOGIN_NO_INTERNET_CONNECTION:
+                ((EditText) findViewById(R.id.username_et)).getText().clear();
+                ((EditText) findViewById(R.id.password_et)).getText().clear();
 
-            } catch (Exception e) {
-                loginCode = LOGIN_CONNECTION_FAILED;
-                e.printStackTrace();
-            }
-        } else {
-            loginCode = LOGIN_NO_INTERNET_CONNECTION;
+                MainActivity.showNoInternetSnackbar(actView, "No internet connection!");
+                break;
+            default:
+                break;
         }
-
-        return loginCode;
     }
 
     /**

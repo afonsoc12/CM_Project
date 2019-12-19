@@ -1,5 +1,7 @@
 package com.cm_project.physio2go.databaseDrivers;
 
+import com.cm_project.physio2go.AsyncTasks.ServerQueryAsyncTask;
+import com.cm_project.physio2go.LoginActivity;
 import com.cm_project.physio2go.classes.Doctor;
 import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.classes.Patient;
@@ -67,7 +69,24 @@ public class ServerDatabaseDriver implements Runnable {
         this.conectar();
         ResultSet resultSet = null;
         try {
-            resultSet = new ExecutarDB(this.conn, query).execute().get();
+            //new ServerQueryAsyncTask(this.conn, query).execute();
+
+
+            resultSet = this.conn.prepareStatement(query).executeQuery();
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.disconectar();
+        }
+        this.disconectar();
+        return resultSet;
+    }
+
+    public ResultSet selectAsync(String query) {
+        this.conectar();
+        ResultSet resultSet = null;
+        try {
+            resultSet = new ServerQueryAsyncTask(this.conn, query).execute().get();
+
         } catch (Exception e) {
             e.printStackTrace();
             this.disconectar();
@@ -80,12 +99,45 @@ public class ServerDatabaseDriver implements Runnable {
         this.conectar();
         ResultSet resultSet = null;
         try {
-            resultSet = new ExecutarDB(this.conn, query).execute().get();
+            resultSet = new ServerQueryAsyncTask(this.conn, query).execute().get();
         } catch (Exception e) {
             e.printStackTrace();
         }
         this.disconectar();
         return resultSet;
+    }
+
+    public int checkLoginCombination(String username, String password) {
+        int loginCode;
+
+        //todo MUDAR ISTO
+        boolean isNetAvailable = true;
+        //boolean isNetAvailable = MainActivity.isNetworkAvilable(this);
+
+        if (isNetAvailable) {
+            try {
+                String passwordDB = this.getPasswordForUsername(username);
+                System.out.println(passwordDB);
+
+                if (password.equals(passwordDB)) {
+                    loginCode = LoginActivity.LOGIN_OK;
+                } else if (passwordDB == null) {
+                    loginCode = LoginActivity.LOGIN_USER_NOT_FOUND;
+                } else if (!password.equals(passwordDB)) {
+                    loginCode = LoginActivity.LOGIN_WRONG_PASSWORD;
+                } else {
+                    loginCode = LoginActivity.LOGIN_CONNECTION_FAILED;
+                }
+
+            } catch (Exception e) {
+                loginCode = LoginActivity.LOGIN_CONNECTION_FAILED;
+                e.printStackTrace();
+            }
+        } else {
+            loginCode = LoginActivity.LOGIN_NO_INTERNET_CONNECTION;
+        }
+
+        return loginCode;
     }
 
     public String getPasswordForUsername(String username) {
@@ -120,7 +172,7 @@ public class ServerDatabaseDriver implements Runnable {
         Plan thisPlan;
 
         String query = String.format("select * from %s where id_patient = '%s'", PLANS, username);
-        ResultSet resultSet = this.select(query);
+        ResultSet resultSet = this.selectAsync(query);
 
         int id_plan;
         try {
@@ -163,7 +215,7 @@ public class ServerDatabaseDriver implements Runnable {
                 "join %s as e on pe.id_exercise = e.id " +
                 "where pe.id_plan = %s;", PLAN_EXERCISES, EXERCISES, plan_id);
 
-        ResultSet resultSet = this.select(query);
+        ResultSet resultSet = this.selectAsync(query);
 
         try {
             while (resultSet.next()) {
@@ -203,7 +255,7 @@ public class ServerDatabaseDriver implements Runnable {
 
         String query = String.format("select * from %s", DOCTORS);
 
-        ResultSet resultSet = this.select(query);
+        ResultSet resultSet = this.selectAsync(query);
 
         try {
             while (resultSet.next()) {
@@ -235,7 +287,7 @@ public class ServerDatabaseDriver implements Runnable {
 
         String query = String.format("select username from %s where username = '%s'", PATIENTS, username);
 
-        ResultSet resultSet = this.select(query);
+        ResultSet resultSet = this.selectAsync(query);
 
         try {
 
@@ -264,7 +316,7 @@ public class ServerDatabaseDriver implements Runnable {
 
         String query = String.format("select * from %s where username = '%s'", PATIENTS, username);
 
-        ResultSet resultSet = this.select(query);
+        ResultSet resultSet = this.selectAsync(query);
 
         try {
             while (resultSet.next()) {
@@ -300,7 +352,7 @@ public class ServerDatabaseDriver implements Runnable {
 
         String query = String.format("select * from %s where username = '%s'", DOCTORS, id_doctor);
 
-        ResultSet resultSet = this.select(query);
+        ResultSet resultSet = this.selectAsync(query);
 
         try {
             while (resultSet.next()) {

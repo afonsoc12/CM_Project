@@ -37,16 +37,6 @@ public class MainActivity extends AppCompatActivity {
     final int REQ_LOGIN = 1;
     LocalDatabase local;
 
-    protected static boolean isNetworkAvilable(Context context) {
-        boolean isNetworkAvilable = false;
-        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info = manager.getActiveNetworkInfo();
-        if (info != null && info.isAvailable() && info.isConnected()) {
-            isNetworkAvilable = true;
-        }
-        return isNetworkAvilable;
-    }
-
     public static void showNoInternetSnackbar(View v, String message) {
 
         Snackbar snackBar = Snackbar
@@ -58,27 +48,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
         snackBar.show();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        //TODO logout;
-        //deleteLoggedInUsername();
-
-
-        this.loggedInUsername = checkLoggedInUsername();
-
-        // There is no login
-        if (loggedInUsername == null) {
-            // Start login activity
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivityForResult(intent, REQ_LOGIN);
-        } else {
-            boolean serverUpdated = updateLocalDatabase(this.loggedInUsername);
-            inflateMainActivity(serverUpdated);
-        }
     }
 
     @Override
@@ -138,11 +107,14 @@ public class MainActivity extends AppCompatActivity {
         return loggedInUsername;
     }
 
-    public void deleteLoggedInUsername(){
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
+    protected static boolean isNetworkAvilable(Context context) {
+        boolean isNetworkAvilable = false;
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        if (info != null && info.isAvailable() && info.isConnected()) {
+            isNetworkAvilable = true;
+        }
+        return isNetworkAvilable;
     }
 
     @Override
@@ -193,8 +165,36 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        //TODO logout;
+        deleteLoggedInUsername();
+
+        this.loggedInUsername = checkLoggedInUsername();
+
+        // There is no login
+        if (loggedInUsername == null) {
+            // Start login activity
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, REQ_LOGIN);
+        } else {
+            boolean serverUpdated = updateLocalDatabase(this.loggedInUsername);
+            inflateMainActivity(serverUpdated);
+        }
+    }
+
+    public void deleteLoggedInUsername() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
+    }
+
     /**
      * Extracts information from the server database and updates the local database
+     *
      * @param username
      */
     public boolean updateLocalDatabase(String username) {
@@ -223,4 +223,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-

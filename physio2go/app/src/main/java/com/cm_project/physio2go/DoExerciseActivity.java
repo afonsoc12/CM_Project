@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 public class DoExerciseActivity extends AppCompatActivity implements ArmExerciseFragment.onMessageReadListenner {
 
+    private final String DIALOG_TAG = "close_dialog";
     ArrayList<Exercise> exercises;
     Boolean exerciseDone = true;
     int positionExercise = 0;
@@ -106,10 +107,9 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.quit_exercise_btn: // Removes login from sharedprefs and prompts login activity
-                //todo prompt DO YOU RLY WANNA QUIT BRO?
-                setResult(RESULT_OK);
-                finish();
+            case R.id.quit_exercise_btn: // Confirms quit exerc
+                CloseExerciseDialogFragment dialog = new CloseExerciseDialogFragment();
+                dialog.show(getSupportFragmentManager(), DIALOG_TAG);
                 break;
 
             default:

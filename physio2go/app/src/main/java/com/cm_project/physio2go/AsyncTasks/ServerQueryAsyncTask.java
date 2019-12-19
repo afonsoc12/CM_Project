@@ -1,20 +1,16 @@
-package com.cm_project.physio2go.databaseDrivers;
+package com.cm_project.physio2go.AsyncTasks;
 
 import android.os.AsyncTask;
-
-import androidx.annotation.Nullable;
-import androidx.loader.content.AsyncTaskLoader;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 
-public class ExecutarDB extends AsyncTask<String, Void, ResultSet> {
+public class ServerQueryAsyncTask extends AsyncTask<String, Void, ResultSet> {
 
     private Connection connection;
     private String query;
 
-    //todo o que e esta class? apagat??
-    public ExecutarDB(Connection connection, String query) {
+    public ServerQueryAsyncTask(Connection connection, String query) {
         this.connection = connection;
         this.query = query;
     }

@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.fragment.app.ListFragment;
@@ -83,7 +82,7 @@ public class PlanExerciseListFragment extends ListFragment {
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Exercise chosenExercise = ((Plan) getArguments().getSerializable(PLAN_ARG)).getExercises().get(0);
+                //Exercise chosenExercise = ((Plan) getArguments().getSerializable(PLAN_ARG)).getExercises().get(0);
 
                 // Start Exercise Activity
                 Intent intentDoExercise = new Intent(getActivity(), DoExerciseActivity.class);
@@ -97,7 +96,7 @@ public class PlanExerciseListFragment extends ListFragment {
 
 
 
-    @Override
+    /*@Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
@@ -108,7 +107,7 @@ public class PlanExerciseListFragment extends ListFragment {
         intentDoExercise.putExtra(CHOSEN_EXERCISE_ARG, chosenExercise);
 
         startActivityForResult(intentDoExercise, REQ_DO_EXERCSISE);
-    }
+    }*/
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -128,8 +127,9 @@ public class PlanExerciseListFragment extends ListFragment {
                     });
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     // Dont do anything, since the exercise was aborted
-                } else {
                     Toast.makeText(getContext(), "You did no succeed finishing the exercise. Try again soon!", Toast.LENGTH_SHORT).show();
+                } else {
+                    //Toast.makeText(getContext(), "You did no succeed finishing the exercise. Try again soon!", Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:

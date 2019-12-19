@@ -194,6 +194,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         thread.start();
     }
 
+    // todo mudar nome
     public interface onMessageReadListenner {
         public void onMessageRead(Boolean message);
     }
