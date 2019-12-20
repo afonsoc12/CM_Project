@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,13 +12,14 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.cm_project.physio2go.classes.Doctor;
 import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.classes.Plan;
 import com.cm_project.physio2go.databaseDrivers.LocalDatabase;
@@ -78,14 +78,47 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
+        FragmentManager fm;
+        FragmentTransaction ft;
+        Fragment fragment;
+        Fragment repeatedFragment;
+
         switch (id) {
             case R.id.logout_btn: // Removes login from sharedprefs and prompts login activity
                 deleteLoggedInUsername();
                 Intent loginAgain = new Intent(getBaseContext(), LoginActivity.class);
                 startActivityForResult(loginAgain, REQ_LOGIN);
-
                 break;
 
+            case R.id.my_profile_btn:
+                Patient patient = local.getPatient();
+                fragment = ProfileFragment.newInstance(patient);
+                fm = this.getSupportFragmentManager();
+                repeatedFragment = fm.findFragmentByTag(ProfileFragment.PROFILE_FRAGMENT_TAG);
+                ft = fm.beginTransaction();
+                if (repeatedFragment != null) {
+                    ft.remove(repeatedFragment);
+                    fm.popBackStack();
+                }
+                ft.replace(R.id.fragment_list_placeholder, fragment, ProfileFragment.PROFILE_FRAGMENT_TAG);
+                ft.addToBackStack(ProfileFragment.PROFILE_FRAGMENT_TAG);
+                ft.commit();
+                break;
+
+            case R.id.my_doctor_btn:
+                Doctor doctor = local.getPatient().getDoctor();
+                Fragment profileDoctor = DoctorProfileFragment.newInstance(doctor);
+                fm = this.getSupportFragmentManager();
+                repeatedFragment = fm.findFragmentByTag(DoctorProfileFragment.DOCTOR_PROFILE_FRAGMENT_TAG);
+                ft = fm.beginTransaction();
+                if (repeatedFragment != null) {
+                    ft.remove(repeatedFragment);
+                    fm.popBackStack();
+                }
+                ft.replace(R.id.fragment_list_placeholder, profileDoctor, DoctorProfileFragment.DOCTOR_PROFILE_FRAGMENT_TAG);
+                ft.addToBackStack(DoctorProfileFragment.DOCTOR_PROFILE_FRAGMENT_TAG);
+                ft.commit();
+                break;
             default:
                 break;
         }
@@ -137,11 +170,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void getLocalDatabase() {
-        ArrayList<Plan> plansFromLocalDatabase = local.getPlansOfUser();
-    }
-
     private void inflateMainActivity(boolean isServerUpdated) {
         setContentView(R.layout.activity_main);
 
@@ -155,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
         // Instanciate list fragment
         Fragment plansFragment = PlansListFragment.newInstance(plansOfUser);
         FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_list_placeholder, plansFragment);
+        ft.replace(R.id.fragment_list_placeholder, plansFragment, PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
         //ft.addToBackStack(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
         ft.commit();
 
@@ -170,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //TODO logout;
-        deleteLoggedInUsername();
+        //deleteLoggedInUsername();
 
         this.loggedInUsername = checkLoggedInUsername();
 

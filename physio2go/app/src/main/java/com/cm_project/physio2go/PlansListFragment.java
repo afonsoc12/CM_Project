@@ -63,7 +63,7 @@ public class PlansListFragment extends ListFragment {
         Fragment planExercise = PlanExerciseListFragment.newInstance(chosenPlan);
 
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragment_list_placeholder, planExercise);
+        ft.replace(R.id.fragment_list_placeholder, planExercise, PlanExerciseListFragment.PLAN_EXERCISE_LIST_FRAGMENT_TAG);
         ft.addToBackStack(PlanExerciseListFragment.PLAN_EXERCISE_LIST_FRAGMENT_TAG);
         ft.commit();
     }

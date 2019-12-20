@@ -11,10 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.cm_project.physio2go.AsyncTasks.ILoginAsyncTask;
 import com.cm_project.physio2go.AsyncTasks.LoginAsyncTask;
 
-public class LoginActivity extends AppCompatActivity implements ILoginAsyncTask {
+public class LoginActivity extends AppCompatActivity {
 
     final int REQ_SIGNUP = 1;
     public final static int LOGIN_OK = 0;
@@ -52,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginAsyncTask 
                 String password = ((EditText) findViewById(R.id.password_et)).getText().toString();
 
                 View view = findViewById(R.id.login_activity);
-                new LoginAsyncTask(username, password, LoginActivity.this, view).execute();
+                new LoginAsyncTask(LoginActivity.this, view).execute(username, password);
             }
         });
 
@@ -61,50 +60,6 @@ public class LoginActivity extends AppCompatActivity implements ILoginAsyncTask 
         spinLogin.setVisibility(View.GONE);
     }
 
-    @Override
-    public void loginValidationUIUpdate(int loginCode, String username) {
-        View actView = findViewById(R.id.login_activity);
-        TextView msgLoginTv = findViewById(R.id.failed_login_tv);
-        switch (loginCode) {
-            case LOGIN_OK:
-                getIntent().putExtra("username", username);
-                setResult(RESULT_OK, getIntent());
-                finish();
-                break;
-            case LOGIN_USER_NOT_FOUND:
-                ((EditText) findViewById(R.id.username_et)).getText().clear();
-                ((EditText) findViewById(R.id.password_et)).getText().clear();
-
-                // Set message
-                msgLoginTv.setText("User is not registered. Click signup button.");
-                msgLoginTv.setVisibility(View.VISIBLE);
-                break;
-            case LOGIN_WRONG_PASSWORD:
-                ((EditText) findViewById(R.id.username_et)).getText().clear();
-                ((EditText) findViewById(R.id.password_et)).getText().clear();
-
-                // Set message
-                msgLoginTv.setText("Username or password incorrect.");
-                msgLoginTv.setVisibility(View.VISIBLE);
-                break;
-            case LOGIN_CONNECTION_FAILED:
-                ((EditText) findViewById(R.id.username_et)).getText().clear();
-                ((EditText) findViewById(R.id.password_et)).getText().clear();
-
-                // Set message
-                msgLoginTv.setText("A problem has occurred");
-                msgLoginTv.setVisibility(View.VISIBLE);
-                break;
-            case LOGIN_NO_INTERNET_CONNECTION:
-                ((EditText) findViewById(R.id.username_et)).getText().clear();
-                ((EditText) findViewById(R.id.password_et)).getText().clear();
-
-                MainActivity.showNoInternetSnackbar(actView, "No internet connection!");
-                break;
-            default:
-                break;
-        }
-    }
 
     /**
      * Runs when signup acitvity is concluded
