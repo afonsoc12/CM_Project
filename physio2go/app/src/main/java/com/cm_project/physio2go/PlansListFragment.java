@@ -47,9 +47,9 @@ public class PlansListFragment extends ListFragment {
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),
                     android.R.layout.simple_list_item_1,
                     extractPlansInfo(plans));
-            setListAdapter(arrayAdapter);
+            //setListAdapter(arrayAdapter);
+            setListAdapter(new PlanListAdapter(getActivity(), plans));
         }
-
 
         return v;
     }

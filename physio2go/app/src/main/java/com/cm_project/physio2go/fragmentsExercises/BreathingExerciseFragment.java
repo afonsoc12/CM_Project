@@ -10,13 +10,12 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import com.cm_project.physio2go.PlanExerciseListFragment;
 import com.cm_project.physio2go.R;
 import com.cm_project.physio2go.classes.Exercise;
 import com.github.florent37.viewanimator.ViewAnimator;
 
 public class BreathingExerciseFragment extends Fragment {
-
+    private final static String CHOSEN_EXERCISE_ARG = "chosen_ex";
     ImageView imgView;
 
     public BreathingExerciseFragment() {
@@ -25,7 +24,7 @@ public class BreathingExerciseFragment extends Fragment {
     public static BreathingExerciseFragment newInstance(Exercise exercise) {
 
         Bundle args = new Bundle();
-        args.putSerializable(PlanExerciseListFragment.CHOSEN_EXERCISE_ARG, exercise);
+        args.putSerializable(CHOSEN_EXERCISE_ARG, exercise);
 
         BreathingExerciseFragment fragment = new BreathingExerciseFragment();
         fragment.setArguments(args);
@@ -37,7 +36,7 @@ public class BreathingExerciseFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_breathe_exercise, container, false);
 
         // Get exercise
-        Exercise exercise = (Exercise) getArguments().getSerializable(PlanExerciseListFragment.CHOSEN_EXERCISE_ARG);
+        Exercise exercise = (Exercise) getArguments().getSerializable(CHOSEN_EXERCISE_ARG);
 
         // Set prescribed number of breathes
         TextView numBreathes = v.findViewById(R.id.n_breathe);

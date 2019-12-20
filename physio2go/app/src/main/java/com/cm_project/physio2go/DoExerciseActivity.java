@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -32,19 +33,29 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_do_exercise);
 
+        this.exercises = (ArrayList<Exercise>) getIntent().getSerializableExtra(PlanExerciseListFragment.EXERCISE_LIST_ARG);
+        this.numberExercise = this.exercises.size();
+
         // Inflate toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Button actionBtn = findViewById(R.id.next_ex_btn);
+        actionBtn.setText("Next");
         showLayouts();
+
     }
 
     public void showLayouts() {
         // Instanciate fragment, depending on the exercise
         Fragment exerciseFragment = null;
-        exercises = (ArrayList<Exercise>) getIntent().getSerializableExtra(PlanExerciseListFragment.CHOSEN_EXERCISE_ARG);
-        numberExercise = exercises.size();
 
-        if (positionExercise < numberExercise) {
+        if (positionExercise == numberExercise - 1) { // Case last exercise
+            Button actionBtn = findViewById(R.id.next_ex_btn);
+            actionBtn.setText("Finish");
+        }
+
+        if (positionExercise < numberExercise) { // Case not all exercises executed
 
             Exercise thisExercise = exercises.get(positionExercise);
             int exerciseID = thisExercise.getId();
@@ -72,6 +83,7 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
             ft.replace(R.id.fragment_list_placeholder, exerciseFragment);
             ft.commit();
         } else {
+            // Set button name
             setResult(RESULT_OK);
             finish();
         }

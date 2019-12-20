@@ -21,12 +21,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.cm_project.physio2go.PlanExerciseListFragment;
 import com.cm_project.physio2go.R;
 import com.cm_project.physio2go.classes.Exercise;
 
 public class ArmExerciseFragment extends Fragment implements SensorEventListener {
 
+    private final static String CHOSEN_EXERCISE_ARG = "chosen_ex";
 
     int reps;
     String body_side;
@@ -51,13 +51,26 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         }
     }
 
+    public static ArmExerciseFragment newInstance(Exercise exercise) {
+
+        Bundle args = new Bundle();
+        args.putSerializable(CHOSEN_EXERCISE_ARG, exercise);
+
+        ArmExerciseFragment fragment = new ArmExerciseFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public ArmExerciseFragment() {
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_arm_exercise, container, false);
 
-        next_btn = (Button) v.findViewById(R.id.next_btn);
+        next_btn = (Button) getActivity().findViewById(R.id.next_ex_btn);
         next_btn.setVisibility(View.INVISIBLE);
 
         //Instancia da classe SensorManager
@@ -67,7 +80,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         acelerometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
 
-        Exercise exercise = (Exercise) this.getArguments().getSerializable(PlanExerciseListFragment.CHOSEN_EXERCISE_ARG);
+        Exercise exercise = (Exercise) this.getArguments().getSerializable(CHOSEN_EXERCISE_ARG);
 
         // todo just to try
         TextView tv1 = v.findViewById(R.id.tv_exname);
@@ -87,19 +100,6 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         setProgressValue(reps_Done);
 
         return v;
-    }
-
-    public ArmExerciseFragment() {
-    }
-
-    public static ArmExerciseFragment newInstance(Exercise exercise) {
-
-        Bundle args = new Bundle();
-        args.putSerializable(PlanExerciseListFragment.CHOSEN_EXERCISE_ARG, exercise);
-
-        ArmExerciseFragment fragment = new ArmExerciseFragment();
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -169,6 +169,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
             next_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     onMessageReadListenner.onMessageRead(true);
                 }
             });

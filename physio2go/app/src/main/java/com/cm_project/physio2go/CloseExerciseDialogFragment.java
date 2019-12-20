@@ -17,7 +17,7 @@ public class CloseExerciseDialogFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-        builder.setTitle("Fall detected")
+        builder.setTitle("Quit Exercise")
                 .setMessage("Are you sure you want to quit the current exercise session?\nYour progress will not be recorded.")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {

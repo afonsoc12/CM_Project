@@ -21,7 +21,7 @@ public class PlanExerciseListFragment extends ListFragment {
 
     public final static String PLAN_EXERCISE_LIST_FRAGMENT_TAG = "plan_exercise_list_fragment";
     private final static String PLAN_ARG = "planChosen";
-    public final static String CHOSEN_EXERCISE_ARG = "chosenExercise";
+    public final static String EXERCISE_LIST_ARG = "exercise_list";
     private final int REQ_DO_EXERCSISE = 1;
     ArrayList<Exercise> exercises;
 
@@ -56,8 +56,17 @@ public class PlanExerciseListFragment extends ListFragment {
                     extractPlanExercisesInfo(plan));
             setListAdapter(arrayAdapter);
         }
-        start_btn = (Button) v.findViewById(R.id.start_btn);
-        startExercices();
+        start_btn = v.findViewById(R.id.start_btn);
+        start_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Start Exercise Activity
+                Intent intentDoExercise = new Intent(getActivity(), DoExerciseActivity.class);
+                intentDoExercise.putExtra(EXERCISE_LIST_ARG, exercises);
+                startActivityForResult(intentDoExercise, REQ_DO_EXERCSISE);
+            }
+        });
         return v;
     }
 
@@ -78,21 +87,6 @@ public class PlanExerciseListFragment extends ListFragment {
         return titles;
     }
 
-    public void startExercices() {
-        start_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Exercise chosenExercise = ((Plan) getArguments().getSerializable(PLAN_ARG)).getExercises().get(0);
-
-                // Start Exercise Activity
-                Intent intentDoExercise = new Intent(getActivity(), DoExerciseActivity.class);
-                intentDoExercise.putExtra(CHOSEN_EXERCISE_ARG, exercises);
-
-                startActivityForResult(intentDoExercise, REQ_DO_EXERCSISE);
-            }
-        });
-
-    }
 
 
 
@@ -117,14 +111,7 @@ public class PlanExerciseListFragment extends ListFragment {
             case REQ_DO_EXERCSISE:
                 if (resultCode == Activity.RESULT_OK) { // Exercise finished successfully
                     // TODO PERSIST DB THE EXERCISE RESULT
-                    start_btn.setText("FINISH");
-                    start_btn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            startActivity(intent);
-                        }
-                    });
+
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     // Dont do anything, since the exercise was aborted
                     Toast.makeText(getContext(), "You did no succeed finishing the exercise. Try again soon!", Toast.LENGTH_SHORT).show();
