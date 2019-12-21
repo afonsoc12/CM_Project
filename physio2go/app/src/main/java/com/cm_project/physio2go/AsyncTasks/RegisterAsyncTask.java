@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
+import android.widget.ProgressBar;
 
+import com.cm_project.physio2go.R;
 import com.cm_project.physio2go.RegisterActivity;
 import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
@@ -36,9 +38,9 @@ public class RegisterAsyncTask extends AsyncTask<Object, Void, Void> {
         super.onPreExecute();
 
         // Enable ProgressBar
-        // ProgressBar spinLogin = view.findViewById(R.id.spin_login_pb);
-        //spinLogin.setVisibility(View.VISIBLE);
-        //spinLogin.setIndeterminate(true);
+        ProgressBar spinRegister = view.findViewById(R.id.spin_register_pb);
+        spinRegister.setVisibility(View.VISIBLE);
+        spinRegister.setIndeterminate(true);
     }
 
     @Override
@@ -47,12 +49,10 @@ public class RegisterAsyncTask extends AsyncTask<Object, Void, Void> {
         RegisterActivity registerActivity = (RegisterActivity) context;
         registerActivity.setResult(Activity.RESULT_OK, registerActivity.getIntent().putExtra(RegisterActivity.NEW_PATIENT_ARG, patient));
         registerActivity.finish();
-        //  LoginActivity loginActivity = (LoginActivity) context;
-        //  View actView = view.findViewById(R.id.login_activity);
 
         // Disable ProgressBar
-        //ProgressBar spinLogin = view.findViewById(R.id.spin_login_pb);
-        ///spinLogin.setVisibility(View.GONE);
+        ProgressBar spinRegister = view.findViewById(R.id.spin_register_pb);
+        spinRegister.setVisibility(View.GONE);
     }
 }
 

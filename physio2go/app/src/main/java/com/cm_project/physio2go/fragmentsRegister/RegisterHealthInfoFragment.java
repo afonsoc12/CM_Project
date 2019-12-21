@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -52,6 +53,10 @@ public class RegisterHealthInfoFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_register_healthinfo, container, false);
+
+        // Set progress bar as GONE
+        ProgressBar spinPb = view.findViewById(R.id.spin_register_pb);
+        spinPb.setVisibility(View.GONE);
 
         // populate radio group with the names of the doctors
         Typeface typeface = ResourcesCompat.getFont(getActivity(), R.font.helvetica);
