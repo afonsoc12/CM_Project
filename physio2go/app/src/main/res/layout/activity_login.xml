@@ -11,38 +11,39 @@
         android:id="@+id/logo_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="198dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.45"
         app:srcCompat="@drawable/physio2go" />
+
 
     <EditText
         android:id="@+id/username_et"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="55dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="55dp"
-        android:layout_marginBottom="320dp"
         android:background="@drawable/input_field"
         android:ems="10"
         android:fontFamily="@font/helvetica"
         android:hint="Username"
         android:textColorHint="@color/gray"
         android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo_img" />
 
     <EditText
         android:id="@+id/password_et"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginStart="55dp"
-        android:layout_marginTop="79dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="55dp"
-        android:layout_marginBottom="80dp"
         android:background="@drawable/input_field"
         android:ems="10"
         android:fontFamily="@font/helvetica"
@@ -50,26 +51,25 @@
         android:inputType="textPassword"
         android:textColorHint="@color/gray"
         android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="@+id/login_btn"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/username_et" />
+        app:layout_constraintTop_toBottomOf="@+id/username_et" />
 
     <Button
         android:id="@+id/login_btn"
         android:layout_width="152dp"
         android:layout_height="42dp"
-        android:layout_marginBottom="48dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/button"
         android:fontFamily="@font/helvetica"
         android:text="Login"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="28dp"
-        app:layout_constraintBottom_toTopOf="@+id/spin_login_pb"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.536"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_et" />
 
     <TextView
         android:id="@+id/member_tv"
@@ -117,7 +117,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/login_btn"
+        app:layout_constraintVertical_bias="0.32" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
