@@ -10,6 +10,7 @@ import com.cm_project.physio2go.classes.Plan;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class ServerDatabaseDriver implements Runnable {
@@ -113,6 +114,11 @@ public class ServerDatabaseDriver implements Runnable {
                         "('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');", PATIENTS, newPatient.getUsername(), newPatient.getDoctor().getName(), newPatient.getPassword(),
                 newPatient.getName(), newPatient.getSurname(), newPatient.getDob(), newPatient.getAddress(), newPatient.getHeight(), newPatient.getWeight(), newPatient.getCondition());
 
+        try {
+            this.conn.createStatement().executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         this.disconectar();
     }

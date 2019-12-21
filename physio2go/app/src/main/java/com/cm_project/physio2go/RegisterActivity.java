@@ -13,6 +13,7 @@ import com.cm_project.physio2go.fragmentsRegister.RegisterHealthInfoFragment;
 
 public class RegisterActivity extends AppCompatActivity implements RegisterBasicInfoFragment.RegisterBasicInfoListener, RegisterHealthInfoFragment.RegisterHealthInfoListener {
 
+    final static String NEW_PATIENT_ARG = "new_patient_arg";
     private String name;
     private String surname;
     private String password;
@@ -73,8 +74,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
 
         System.out.println(name + " " + surname + " " + password + " " + dateOfBirth + " " + address + " " + condition + " " + height + " " + weight + " " + doctor.getName());
 
-        server = new ServerDatabaseDriver();
-        server.insertNewPatient(newMember);
+        getIntent().putExtra(NEW_PATIENT_ARG, newMember);
         setResult(RESULT_OK);
         finish();
     }

@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cm_project.physio2go.AsyncTasks.LoginAsyncTask;
+import com.cm_project.physio2go.classes.Patient;
+import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -74,11 +76,17 @@ public class LoginActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case REQ_SIGNUP:
-                if (resultCode == 1) {
+                if (resultCode == RESULT_OK) {
                     if (intent != null) {
-                        String newUsername = intent.getStringExtra("username");
-                        String newPassword = intent.getStringExtra("password");
+                        Patient newPatient = (Patient) intent.getSerializableExtra(RegisterActivity.NEW_PATIENT_ARG);
 
+                        // Save to database
+                        ServerDatabaseDriver db = new ServerDatabaseDriver();
+                        db.insertNewPatient(newPatient);
+
+                        // Get username and password
+                        String newUsername = newPatient.getUsername();
+                        String newPassword = newPatient.getPassword();
 
                         // Autofill login fields
                         if (newUsername != null && newPassword != null) {
