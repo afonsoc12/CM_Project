@@ -80,10 +80,6 @@ public class LoginActivity extends AppCompatActivity {
                     if (intent != null) {
                         Patient newPatient = (Patient) intent.getSerializableExtra(RegisterActivity.NEW_PATIENT_ARG);
 
-                        // Save to database
-                        ServerDatabaseDriver db = new ServerDatabaseDriver();
-                        db.insertNewPatient(newPatient);
-
                         // Get username and password
                         String newUsername = newPatient.getUsername();
                         String newPassword = newPatient.getPassword();
@@ -93,6 +89,10 @@ public class LoginActivity extends AppCompatActivity {
                             ((EditText) findViewById(R.id.username_et)).setText(newUsername);
                             ((EditText) findViewById(R.id.password_et)).setText(newPassword);
                         }
+
+                        // Save to database
+                        ServerDatabaseDriver db = new ServerDatabaseDriver();
+                        db.insertNewPatient(newPatient);
 
                     }
                 }

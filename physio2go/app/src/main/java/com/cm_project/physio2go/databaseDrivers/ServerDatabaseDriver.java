@@ -111,7 +111,7 @@ public class ServerDatabaseDriver implements Runnable {
     public void insertNewPatient(Patient newPatient) {
         this.conectar();
         String query = String.format("INSERT INTO %s (username,id_doctor,password,name,surname,dob,address,height,weight,condition) VALUES " +
-                        "('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s');", PATIENTS, newPatient.getUsername(), newPatient.getDoctor().getName(), newPatient.getPassword(),
+                        "('%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s');", PATIENTS, newPatient.getUsername(), newPatient.getDoctor().getName(), newPatient.getPassword(),
                 newPatient.getName(), newPatient.getSurname(), newPatient.getDob(), newPatient.getAddress(), newPatient.getHeight(), newPatient.getWeight(), newPatient.getCondition());
 
         try {

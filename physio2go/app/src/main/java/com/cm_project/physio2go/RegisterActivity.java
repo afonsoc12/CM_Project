@@ -16,6 +16,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
     final static String NEW_PATIENT_ARG = "new_patient_arg";
     private String name;
     private String surname;
+    private String username;
     private String password;
     private String dateOfBirth;
     private String address;
@@ -43,6 +44,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
 
         this.name = name;
         this.surname = surname;
+        this.username = username;
         this.password = password;
         this.dateOfBirth = dateOfBirth;
         this.address = address;
@@ -64,6 +66,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
         newMember = new Patient();
         newMember.setName(name);
         newMember.setSurname(surname);
+        newMember.setUsername(username);
         newMember.setPassword(password);
         newMember.setDob(dateOfBirth);
         newMember.setAddress(address);
@@ -72,10 +75,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
         newMember.setWeight(weight);
         newMember.setDoctor(doctor);
 
-        System.out.println(name + " " + surname + " " + password + " " + dateOfBirth + " " + address + " " + condition + " " + height + " " + weight + " " + doctor.getName());
-
-        getIntent().putExtra(NEW_PATIENT_ARG, newMember);
-        setResult(RESULT_OK);
+        setResult(RESULT_OK, getIntent().putExtra(NEW_PATIENT_ARG, newMember));
         finish();
     }
 
