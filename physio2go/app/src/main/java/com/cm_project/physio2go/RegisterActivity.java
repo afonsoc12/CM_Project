@@ -13,7 +13,7 @@ import com.cm_project.physio2go.fragmentsRegister.RegisterHealthInfoFragment;
 
 public class RegisterActivity extends AppCompatActivity implements RegisterBasicInfoFragment.RegisterBasicInfoListener, RegisterHealthInfoFragment.RegisterHealthInfoListener {
 
-    final static String NEW_PATIENT_ARG = "new_patient_arg";
+    public final static String NEW_PATIENT_ARG = "new_patient_arg";
     private String name;
     private String surname;
     private String username;
@@ -35,7 +35,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
 
         RegisterBasicInfoFragment registerBasicInfoFragment = RegisterBasicInfoFragment.newInstance();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.layout, registerBasicInfoFragment, "registerBasicInfoFragment");
+        fragmentTransaction.replace(R.id.register_activity, registerBasicInfoFragment, "registerBasicInfoFragment");
         fragmentTransaction.commit();
     }
 
@@ -51,12 +51,12 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
 
         RegisterHealthInfoFragment registerHealthInfoFragment = RegisterHealthInfoFragment.newInstance();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.layout, registerHealthInfoFragment, "registerHealthInfoFragment");
+        fragmentTransaction.replace(R.id.register_activity, registerHealthInfoFragment, "registerHealthInfoFragment");
         fragmentTransaction.commit();
     }
 
     @Override
-    public void newMemberHealthInfo(String condition, double height, double weight, Doctor doctor) {
+    public Patient newMemberHealthInfo(String condition, double height, double weight, Doctor doctor) {
 
         this.condition = condition;
         this.height = height;
@@ -75,8 +75,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
         newMember.setWeight(weight);
         newMember.setDoctor(doctor);
 
-        setResult(RESULT_OK, getIntent().putExtra(NEW_PATIENT_ARG, newMember));
-        finish();
+        return newMember;
     }
 
 }

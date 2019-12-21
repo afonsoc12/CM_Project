@@ -18,8 +18,10 @@ import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
+import com.cm_project.physio2go.AsyncTasks.RegisterAsyncTask;
 import com.cm_project.physio2go.R;
 import com.cm_project.physio2go.classes.Doctor;
+import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
 
 import java.util.ArrayList;
@@ -123,7 +125,11 @@ public class RegisterHealthInfoFragment extends Fragment {
                             chosenDoctor = doctor;
                         }
                     }
-                    listener.newMemberHealthInfo(condition, height, weight, chosenDoctor);
+
+                    Patient newPatient = listener.newMemberHealthInfo(condition, height, weight, chosenDoctor);
+
+                    View view = getActivity().findViewById(R.id.register_activity);
+                    new RegisterAsyncTask(getActivity(), view).execute(newPatient);
                 }
             }
         });
@@ -143,7 +149,7 @@ public class RegisterHealthInfoFragment extends Fragment {
     }
 
     public interface RegisterHealthInfoListener {
-        void newMemberHealthInfo(String condition, double height, double weight, Doctor doctor);
+        Patient newMemberHealthInfo(String condition, double height, double weight, Doctor doctor);
     }
 
 }
