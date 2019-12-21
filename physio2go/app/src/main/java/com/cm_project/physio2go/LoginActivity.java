@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cm_project.physio2go.AsyncTasks.LoginAsyncTask;
 import com.cm_project.physio2go.classes.Patient;
-import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -91,8 +90,8 @@ public class LoginActivity extends AppCompatActivity {
                         }
 
                         // Save to database
-                        ServerDatabaseDriver db = new ServerDatabaseDriver();
-                        db.insertNewPatient(newPatient);
+                        //ServerDatabaseDriver db = new ServerDatabaseDriver();
+                        //db.insertNewPatient(newPatient);
 
                     }
                 }
