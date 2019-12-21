@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
+
 import com.cm_project.physio2go.R;
 import com.cm_project.physio2go.classes.Doctor;
 import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
@@ -122,15 +123,11 @@ public class RegisterHealthInfoFragment extends Fragment {
                             chosenDoctor = doctor;
                         }
                     }
-
                     listener.newMemberHealthInfo(condition, height, weight, chosenDoctor);
                 }
             }
         });
-
-
         return view;
-
     }
 
     @Override

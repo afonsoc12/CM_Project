@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.cm_project.physio2go.classes.Doctor;
 import com.cm_project.physio2go.classes.Patient;
+import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
 import com.cm_project.physio2go.fragmentsRegister.RegisterBasicInfoFragment;
 import com.cm_project.physio2go.fragmentsRegister.RegisterHealthInfoFragment;
 
@@ -22,6 +23,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
     private double weight;
     private Doctor doctor;
     private Patient newMember;
+    private ServerDatabaseDriver server;
 
 
     @Override
@@ -71,6 +73,10 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
 
         System.out.println(name + " " + surname + " " + password + " " + dateOfBirth + " " + address + " " + condition + " " + height + " " + weight + " " + doctor.getName());
 
+        server = new ServerDatabaseDriver();
+        server.insertNewPatient(newMember);
+        setResult(RESULT_OK);
+        finish();
     }
 
 }
