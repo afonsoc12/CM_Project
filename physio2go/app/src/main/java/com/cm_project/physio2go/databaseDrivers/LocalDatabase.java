@@ -31,6 +31,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
     private static final String TABLE_EXERCISES = "exercises";
     private static final String TABLE_PATIENT = "patient";
     private static final String TABLE_DOCTOR = "doctor";
+    private static final String TABLE_TMP_PLAN = "tmp_plan";
     //Database Fields for Plans Table
     private static final String PLAN_ID = "plan_id";
     private static final String PLAN_ID_PATIENT = "plan_id_patient";
@@ -66,6 +67,9 @@ public class LocalDatabase extends SQLiteOpenHelper {
     private static final String DOC_HOSPITAL = "doc_hospital";
     private static final String DOC_BIO = "doc_bio";
 
+    //Database fields for Plans done but not synced with server
+    private static final String TMP_PLAN_ID = "tmp_plan_id";
+
     SQLiteDatabase database;
 
     public LocalDatabase(Context context)
@@ -82,6 +86,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE " + TABLE_EXERCISES + " ( " + EX_ID_EX + " INTEGER PRIMARY KEY, " + EX_NAME + " VARCHAR, " + EX_BODY_SIDE + " VARCHAR, " + EX_DESCRIPTION_EXERCISE + " VARCHAR)");
         db.execSQL("CREATE TABLE " + TABLE_PATIENT + " ( " + PAT_USERNAME + " VARCHAR PRIMARY KEY, " + PAT_ID_DOCTOR + " VARCHAR, " + PAT_NAME + " VARCHAR, " + PAT_SURNAME + " VARCHAR, " + PAT_DOB + " VARCHAR, " + PAT_ADDRESS + " VARCHAR, " + PAT_HEIGHT + " FLOAT4, " + PAT_WEIGHT + " FLOAT4, " + PAT_CONDITION + " VARCHAR)");
         db.execSQL("CREATE TABLE " + TABLE_DOCTOR + " ( " + DOC_USERNAME + " VARCHAR PRIMARY KEY, " + DOC_NAME + " VARCHAR, " + DOC_SURNAME + " VARCHAR, " + DOC_SPECIALITY + " VARCHAR, " + DOC_HOSPITAL + " VARCHAR, " + DOC_BIO + " VARCHAR)");
+        db.execSQL("CREATE TABLE " + TABLE_TMP_PLAN + " ( " + TMP_PLAN_ID + " INTEGER);");
     }
 
     @Override
@@ -97,6 +102,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         database.execSQL("delete from " + TABLE_EXERCISES);
         database.execSQL("delete from " + TABLE_PATIENT);
         database.execSQL("delete from " + TABLE_DOCTOR);
+        //database.execSQL("delete from " + TABLE_TMP_PLAN);
     }
 
 
@@ -353,5 +359,34 @@ public class LocalDatabase extends SQLiteOpenHelper {
         }
 
         return patient;
+    }
+
+    public void updatePlanOffline(Plan plan) {
+        ContentValues planCV = new ContentValues();
+
+        database = this.getWritableDatabase();
+
+        // Insert in table Patient
+        planCV.put(TMP_PLAN_ID, plan.getId());
+
+        database.insert(TABLE_TMP_PLAN, null, planCV);
+    }
+
+    public ArrayList<Integer> getOfflinePlans() {
+        ArrayList<Integer> planIDs = new ArrayList<>();
+        Cursor cursor = database.rawQuery(String.format("select %s from %s;", TABLE_TMP_PLAN, TMP_PLAN_ID), null);
+        int thisPlanID;
+
+        if (cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+
+                //get the field id_exercise and repetitions from Plans_Exercise table
+                thisPlanID = cursor.getInt(cursor.getColumnIndex(TMP_PLAN_ID));
+                planIDs.add(thisPlanID);
+
+                cursor.moveToNext();
+            }
+        }
+        return planIDs;
     }
 }

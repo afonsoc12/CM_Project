@@ -37,18 +37,16 @@ public class MainActivity extends AppCompatActivity {
     final int REQ_LOGIN = 1;
     LocalDatabase local;
 
-    public static void showNoInternetSnackbar(View v, String message) {
-
-        Snackbar snackBar = Snackbar
-                .make(v, message, Snackbar.LENGTH_INDEFINITE)
-                .setAction("Dismiss", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
-                });
-        snackBar.show();
+    public static boolean isNetworkAvilable(Context context) {
+        boolean isNetworkAvilable = false;
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        if (info != null && info.isAvailable() && info.isConnected()) {
+            isNetworkAvilable = true;
+        }
+        return isNetworkAvilable;
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,6 +63,40 @@ public class MainActivity extends AppCompatActivity {
         //ab.setTitle("Example");
 
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public static void showNoInternetSnackbar(View v, String message) {
+
+        Snackbar snackBar = Snackbar
+                .make(v, message, Snackbar.LENGTH_INDEFINITE)
+                .setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
+        snackBar.show();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        //TODO logout;
+        //deleteLoggedInUsername();
+
+        this.loggedInUsername = checkLoggedInUsername();
+
+        // There is no login
+        if (loggedInUsername == null) {
+            // Start login activity
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivityForResult(intent, REQ_LOGIN);
+        } else {
+            updateOffilePlans();
+            boolean serverUpdated = updateLocalDatabase(this.loggedInUsername);
+            inflateMainActivity(serverUpdated);
+        }
     }
 
     /**
@@ -84,6 +116,13 @@ public class MainActivity extends AppCompatActivity {
         Fragment repeatedFragment;
 
         switch (id) {
+            case R.id.refresh_btn:
+                //TODO refresh routines to update listfragment
+                updateOffilePlans();
+                boolean serverUpdated = updateLocalDatabase(this.loggedInUsername);
+                fm = getSupportFragmentManager();
+                fm.findFragmentByTag()
+                break;
             case R.id.logout_btn: // Removes login from sharedprefs and prompts login activity
                 deleteLoggedInUsername();
                 Intent loginAgain = new Intent(getBaseContext(), LoginActivity.class);
@@ -126,30 +165,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void saveLoggedInUsername(String username) {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(LOGIN_NAME, username);
-        editor.apply();
-    }
-
-    public String checkLoggedInUsername() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        loggedInUsername = sharedPreferences.getString(LOGIN_NAME, null);
-        System.out.println(loggedInUsername);
-        return loggedInUsername;
-    }
-
-    protected static boolean isNetworkAvilable(Context context) {
-        boolean isNetworkAvilable = false;
-        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info = manager.getActiveNetworkInfo();
-        if (info != null && info.isAvailable() && info.isConnected()) {
-            isNetworkAvilable = true;
-        }
-        return isNetworkAvilable;
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -160,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
                     if (intent != null) {
                         this.loggedInUsername = intent.getStringExtra("username");
                         saveLoggedInUsername(this.loggedInUsername);
+                        updateOffilePlans();
                         boolean serverUpdated = updateLocalDatabase(this.loggedInUsername);
                         inflateMainActivity(serverUpdated);
                     }
@@ -193,35 +209,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    /**
+     * Sends the offline plans to the server, if any.
+     */
+    private void updateOffilePlans() {
+        local = new LocalDatabase(getApplicationContext());
+        ArrayList<Integer> planIDs = local.getOfflinePlans();
 
-        //TODO logout;
-        //deleteLoggedInUsername();
-
-        this.loggedInUsername = checkLoggedInUsername();
-
-        // There is no login
-        if (loggedInUsername == null) {
-            // Start login activity
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivityForResult(intent, REQ_LOGIN);
-        } else {
-            boolean serverUpdated = updateLocalDatabase(this.loggedInUsername);
-            inflateMainActivity(serverUpdated);
+        if (planIDs.size() > 0) {
+            ServerDatabaseDriver server = new ServerDatabaseDriver();
+            server.incrementOfflinePlans(planIDs);
         }
-    }
 
-    public void deleteLoggedInUsername() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear();
-        editor.apply();
     }
 
     /**
-     * Extracts information from the server database and updates the local database
+     * Extracts information from the server database and updates the local database.
      *
      * @param username
      */
@@ -249,5 +252,29 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return false;
         }
+    }
+
+    /*
+     * Shared Preferences Methods.
+     */
+    public String checkLoggedInUsername() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        loggedInUsername = sharedPreferences.getString(LOGIN_NAME, null);
+        System.out.println(loggedInUsername);
+        return loggedInUsername;
+    }
+
+    private void saveLoggedInUsername(String username) {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(LOGIN_NAME, username);
+        editor.apply();
+    }
+
+    public void deleteLoggedInUsername() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.apply();
     }
 }

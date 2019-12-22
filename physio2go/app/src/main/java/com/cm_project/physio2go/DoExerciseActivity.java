@@ -5,7 +5,9 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -14,7 +16,9 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.cm_project.physio2go.AsyncTasks.PlanCompletedAsyncTask;
 import com.cm_project.physio2go.classes.Exercise;
+import com.cm_project.physio2go.classes.Plan;
 import com.cm_project.physio2go.fragmentsExercises.ArmExerciseFragment;
 import com.cm_project.physio2go.fragmentsExercises.BreathingExerciseFragment;
 import com.cm_project.physio2go.fragmentsExercises.LegExerciseFragment;
@@ -24,6 +28,7 @@ import java.util.ArrayList;
 public class DoExerciseActivity extends AppCompatActivity implements ArmExerciseFragment.onMessageReadListenner {
 
     private final String DIALOG_TAG = "close_dialog";
+    private Plan plan;
     ArrayList<Exercise> exercises;
     Boolean exerciseDone = true;
     int positionExercise = 0;
@@ -34,8 +39,13 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_do_exercise);
 
-        this.exercises = (ArrayList<Exercise>) getIntent().getSerializableExtra(PlanExerciseListFragment.EXERCISE_LIST_ARG);
+        this.plan = (Plan) getIntent().getSerializableExtra(PlanExerciseListFragment.PLAN_ARG);
+        this.exercises = plan.getExercises();
         this.numberExercise = this.exercises.size();
+
+        // Set Progress bar as GONE
+        ProgressBar spinFinish = findViewById(R.id.spin_finish_ex_pb);
+        spinFinish.setVisibility(View.GONE);
 
         // Inflate toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -44,7 +54,6 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
         Button actionBtn = findViewById(R.id.next_ex_btn);
         actionBtn.setText("Next");
         showLayouts();
-
     }
 
     public void showLayouts() {
@@ -83,8 +92,9 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_list_placeholder, exerciseFragment);
             ft.commit();
-        } else {
-            // Set button name
+        } else if (positionExercise == numberExercise) {
+            View view = findViewById(R.id.do_exercise_activity);
+            new PlanCompletedAsyncTask(DoExerciseActivity.this, view).execute(plan);
             setResult(RESULT_OK);
             finish();
         }
@@ -133,7 +143,6 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
     }
 
     // Alert diolog when back button is pressed
-
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             exitByBackKey();

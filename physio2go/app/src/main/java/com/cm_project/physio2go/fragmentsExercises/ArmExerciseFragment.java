@@ -79,7 +79,6 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         //Definicao do tipo de sensor que vai ser utilizado
         acelerometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-
         Exercise exercise = (Exercise) this.getArguments().getSerializable(CHOSEN_EXERCISE_ARG);
 
         // todo just to try

@@ -20,9 +20,8 @@ import java.util.ArrayList;
 public class PlanExerciseListFragment extends ListFragment {
 
     public final static String PLAN_EXERCISE_LIST_FRAGMENT_TAG = "plan_exercise_list_fragment";
-    private final static String PLAN_ARG = "planChosen";
-    public final static String EXERCISE_LIST_ARG = "exercise_list";
-    private final int REQ_DO_EXERCSISE = 1;
+    public final static String PLAN_ARG = "planChosen";
+    private final static int REQ_DO_EXERCSISE = 1;
     ArrayList<Exercise> exercises;
 
     // inicializar btn Start
@@ -63,7 +62,7 @@ public class PlanExerciseListFragment extends ListFragment {
 
                 // Start Exercise Activity
                 Intent intentDoExercise = new Intent(getActivity(), DoExerciseActivity.class);
-                intentDoExercise.putExtra(EXERCISE_LIST_ARG, exercises);
+                intentDoExercise.putExtra(PLAN_ARG, plan);
                 startActivityForResult(intentDoExercise, REQ_DO_EXERCSISE);
             }
         });

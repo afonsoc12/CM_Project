@@ -66,7 +66,13 @@ public class ServerDatabaseDriver implements Runnable {
         }
     }
 
-    public ResultSet select(String query) {
+    /**
+     * Performs SELECT SQL queries inside asynchronous tasks.
+     *
+     * @param query
+     * @return
+     */
+    private ResultSet selectQuery(String query) {
         this.conectar();
         ResultSet resultSet = null;
         try {
@@ -82,7 +88,13 @@ public class ServerDatabaseDriver implements Runnable {
         return resultSet;
     }
 
-    public ResultSet selectAsync(String query) {
+    /**
+     * Performs SELECT SQL queries asynchronously, using a AsyncTask.
+     *
+     * @param query
+     * @return
+     */
+    public ResultSet selectAsyncQuery(String query) {
         this.conectar();
         ResultSet resultSet = null;
         try {
@@ -96,24 +108,13 @@ public class ServerDatabaseDriver implements Runnable {
         return resultSet;
     }
 
-    public ResultSet executar(String query) {
+    /**
+     * Performs UPDATE or INSERT SQL queries inside asynchronous tasks.
+     *
+     * @param query
+     */
+    private void updateQuery(String query) {
         this.conectar();
-        ResultSet resultSet = null;
-        try {
-            resultSet = new ServerQueryAsyncTask(this.conn, query).execute().get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        this.disconectar();
-        return resultSet;
-    }
-
-    public void insertNewPatient(Patient newPatient) {
-        this.conectar();
-        String query = String.format("INSERT INTO %s (username,id_doctor,password,name,surname,dob,address,height,weight,condition) VALUES " +
-                        "('%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s');", PATIENTS, newPatient.getUsername(), newPatient.getDoctor().getUsername(), newPatient.getPassword(),
-                newPatient.getName(), newPatient.getSurname(), newPatient.getDob(), newPatient.getAddress(), newPatient.getHeight(), newPatient.getWeight(), newPatient.getCondition());
-
         try {
             this.conn.createStatement().executeUpdate(query);
         } catch (SQLException e) {
@@ -123,6 +124,127 @@ public class ServerDatabaseDriver implements Runnable {
         this.disconectar();
     }
 
+    /**
+     * Returns the Doctor object, provided the doctor ID.
+     *
+     * @param id_doctor
+     * @return
+     */
+    private Doctor getThisPatientDoctor(String id_doctor) {
+        this.conectar();
+
+        Doctor doctor = new Doctor();
+
+        String query = String.format("selectQuery * from %s where username = '%s'", DOCTORS, id_doctor);
+
+        ResultSet resultSet = this.selectAsyncQuery(query);
+
+        try {
+            while (resultSet.next()) {
+                doctor.setUsername(resultSet.getString("username"));
+                doctor.setName(resultSet.getString("name"));
+                doctor.setSurname(resultSet.getString("surname"));
+                doctor.setSpeciality(resultSet.getString("speciality"));
+                doctor.setHospital(resultSet.getString("hospital"));
+                doctor.setBio(resultSet.getString("bio"));
+            }
+
+            this.disconectar();
+
+        } catch (Exception e) {
+            doctor = null;
+            e.printStackTrace();
+        }
+
+        return doctor;
+    }
+
+    /**
+     * Returns the password for the provided username. Returns NULL if the username is not found.
+     *
+     * @param username
+     * @return
+     */
+    private String getPasswordForUsername(String username) {
+        String query = String.format("SELECT password FROM %s WHERE username = '%s';", PATIENTS, username);
+        ResultSet resultSet = this.selectQuery(query);
+
+        String passwordDB = null;
+        try {
+            while (resultSet.next()) {
+                passwordDB = resultSet.getString("password");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return passwordDB;
+    }
+
+    /**
+     * Returns the Exercises that belong to the specified plan ID.
+     *
+     * @param plan_id
+     * @return
+     */
+    private ArrayList<Exercise> getExercisesOfPlan(int plan_id) {
+        ArrayList<Exercise> exercises = new ArrayList<>();
+        Exercise thisExercise;
+
+        String query = String.format("selectQuery pe.id_plan, pe.id_exercise, pe.repetitions, e.* from %s pe " +
+                "join %s as e on pe.id_exercise = e.id " +
+                "where pe.id_plan = %s;", PLAN_EXERCISES, EXERCISES, plan_id);
+
+        ResultSet resultSet = this.selectAsyncQuery(query);
+
+        try {
+            while (resultSet.next()) {
+                thisExercise = new Exercise();
+
+                thisExercise.setId(resultSet.getInt("id_exercise"));
+                thisExercise.setBody_side(resultSet.getString("body_side"));
+                thisExercise.setName(resultSet.getString("name"));
+                thisExercise.setDescription(resultSet.getString("description"));
+                thisExercise.setRepetitions(resultSet.getInt("repetitions"));
+
+                /*thisExercise.setId_patient(resultSet.getString("id_patient"));
+                thisExercise.setId_doctor(resultSet.getString("id_doctor"));
+                thisExercise.setDate_start(resultSet.getString("date_start"));
+                thisExercise.setDate_end(resultSet.getString("date_end"));
+                thisExercise.setTotal_reps(resultSet.getInt("total_reps"));
+                thisExercise.setReps_done(resultSet.getInt("reps_done"));
+                thisExercise.setDescription(resultSet.getString("description"));
+*/
+                exercises.add(thisExercise);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return exercises;
+    }
+
+    /**
+     * Inserts a patient into the database, when the register finishes.
+     *
+     * @param newPatient
+     */
+    public void insertNewPatient(Patient newPatient) {
+        String query = String.format("INSERT INTO %s (username,id_doctor,password,name,surname,dob,address,height,weight,condition) VALUES " +
+                        "('%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s');", PATIENTS, newPatient.getUsername(), newPatient.getDoctor().getUsername(), newPatient.getPassword(),
+                newPatient.getName(), newPatient.getSurname(), newPatient.getDob(), newPatient.getAddress(), newPatient.getHeight(), newPatient.getWeight(), newPatient.getCondition());
+
+        updateQuery(query);
+    }
+
+    /**
+     * Checks the login combination and returns a result code.
+     *
+     * @param username
+     * @param password
+     * @return
+     */
     public int checkLoginCombination(String username, String password) {
         int loginCode;
 
@@ -156,39 +278,19 @@ public class ServerDatabaseDriver implements Runnable {
         return loginCode;
     }
 
-    public String getPasswordForUsername(String username) {
-        this.conectar();
-        String query = String.format("SELECT password FROM %s WHERE username = '%s';", PATIENTS, username);
-        ResultSet resultSet = this.select(query);
-
-        String passwordDB = null;
-        try {
-            while (resultSet.next()) {
-                passwordDB = resultSet.getString("password");
-                this.disconectar();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return passwordDB;
-    }
-
     /**
-     * Retrieves all plans for the specified user
+     * Retrieves all plans for the specified user.
      *
      * @param username
      * @return
      */
     public ArrayList<Plan> getPlansOfUser(String username) {
-        this.conectar();
-
         ArrayList<Plan> plans = new ArrayList<>();
         ArrayList<Exercise> exercises = new ArrayList<>();
         Plan thisPlan;
 
-        String query = String.format("select * from %s where id_patient = '%s'", PLANS, username);
-        ResultSet resultSet = this.selectAsync(query);
+        String query = String.format("selectQuery * from %s where id_patient = '%s'", PLANS, username);
+        ResultSet resultSet = this.selectAsyncQuery(query);
 
         int id_plan;
         try {
@@ -211,67 +313,25 @@ public class ServerDatabaseDriver implements Runnable {
                 plans.add(thisPlan);
             }
 
-            this.disconectar();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        this.disconectar();
 
         return plans;
     }
 
-    private ArrayList<Exercise> getExercisesOfPlan(int plan_id) {
-        this.conectar();
-
-        ArrayList<Exercise> exercises = new ArrayList<>();
-        Exercise thisExercise;
-
-        String query = String.format("select pe.id_plan, pe.id_exercise, pe.repetitions, e.* from %s pe " +
-                "join %s as e on pe.id_exercise = e.id " +
-                "where pe.id_plan = %s;", PLAN_EXERCISES, EXERCISES, plan_id);
-
-        ResultSet resultSet = this.selectAsync(query);
-
-        try {
-            while (resultSet.next()) {
-                thisExercise = new Exercise();
-
-                thisExercise.setId(resultSet.getInt("id_exercise"));
-                thisExercise.setBody_side(resultSet.getString("body_side"));
-                thisExercise.setName(resultSet.getString("name"));
-                thisExercise.setDescription(resultSet.getString("description"));
-                thisExercise.setRepetitions(resultSet.getInt("repetitions"));
-
-                /*thisExercise.setId_patient(resultSet.getString("id_patient"));
-                thisExercise.setId_doctor(resultSet.getString("id_doctor"));
-                thisExercise.setDate_start(resultSet.getString("date_start"));
-                thisExercise.setDate_end(resultSet.getString("date_end"));
-                thisExercise.setTotal_reps(resultSet.getInt("total_reps"));
-                thisExercise.setReps_done(resultSet.getInt("reps_done"));
-                thisExercise.setDescription(resultSet.getString("description"));
-*/
-                exercises.add(thisExercise);
-            }
-
-            this.disconectar();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return exercises;
-    }
-
+    /**
+     * Returns all doctors available in the database.
+     *
+     * @return
+     */
     public ArrayList<Doctor> listOfDoctors() {
-        this.conectar();
-
-        ArrayList<Doctor> doctors = new ArrayList<Doctor>();
+        ArrayList<Doctor> doctors = new ArrayList<>();
         Doctor thisDoctor;
 
-        String query = String.format("select * from %s", DOCTORS);
+        String query = String.format("selectQuery * from %s", DOCTORS);
 
-        ResultSet resultSet = this.selectAsync(query);
+        ResultSet resultSet = this.selectAsyncQuery(query);
 
         try {
             while (resultSet.next()) {
@@ -287,7 +347,6 @@ public class ServerDatabaseDriver implements Runnable {
                 doctors.add(thisDoctor);
             }
 
-            this.disconectar();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -296,14 +355,19 @@ public class ServerDatabaseDriver implements Runnable {
         return doctors;
     }
 
+    /**
+     * Checks if the username provided is already registered.
+     *
+     * @param username
+     * @return
+     */
     public boolean usernameExists(String username) {
-        this.conectar();
 
         boolean exist = false;
 
-        String query = String.format("select username from %s where username = '%s'", PATIENTS, username);
+        String query = String.format("selectQuery username from %s where username = '%s'", PATIENTS, username);
 
-        ResultSet resultSet = this.selectAsync(query);
+        ResultSet resultSet = this.selectAsyncQuery(query);
 
         try {
 
@@ -315,14 +379,18 @@ public class ServerDatabaseDriver implements Runnable {
                 }
             }
 
-            this.disconectar();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         return exist;
     }
 
+    /**
+     * Retrieves all information about the patient, provided the username.
+     *
+     * @param username
+     * @return
+     */
     public Patient getPatientDetails(String username) {
         this.conectar();
 
@@ -330,9 +398,9 @@ public class ServerDatabaseDriver implements Runnable {
 
         Doctor doctor;
 
-        String query = String.format("select * from %s where username = '%s'", PATIENTS, username);
+        String query = String.format("selectQuery * from %s where username = '%s'", PATIENTS, username);
 
-        ResultSet resultSet = this.selectAsync(query);
+        ResultSet resultSet = this.selectAsyncQuery(query);
 
         try {
             while (resultSet.next()) {
@@ -361,32 +429,33 @@ public class ServerDatabaseDriver implements Runnable {
         return patient;
     }
 
-    private Doctor getThisPatientDoctor(String id_doctor) {
-        this.conectar();
+    /**
+     * Increments the Plan, when the database is online.
+     *
+     * @param plan
+     */
+    public void updatePlan(Plan plan) {
+        int planID = plan.getId();
+        int newRepsDone = plan.getReps_done() + 1;
 
-        Doctor doctor = new Doctor();
 
-        String query = String.format("select * from %s where username = '%s'", DOCTORS, id_doctor);
+        String query = String.format("update %s " +
+                "set reps_done = %s " +
+                "where id = %s;", PLANS, newRepsDone, planID);
+        updateQuery(query);
+    }
 
-        ResultSet resultSet = this.selectAsync(query);
-
-        try {
-            while (resultSet.next()) {
-                doctor.setUsername(resultSet.getString("username"));
-                doctor.setName(resultSet.getString("name"));
-                doctor.setSurname(resultSet.getString("surname"));
-                doctor.setSpeciality(resultSet.getString("speciality"));
-                doctor.setHospital(resultSet.getString("hospital"));
-                doctor.setBio(resultSet.getString("bio"));
-            }
-
-            this.disconectar();
-
-        } catch (Exception e) {
-            doctor = null;
-            e.printStackTrace();
+    /**
+     * Migrates the increments to the server, that were previously saved offline.
+     *
+     * @param planIDs
+     */
+    public void incrementOfflinePlans(ArrayList<Integer> planIDs) {
+        for (int thisID : planIDs) {
+            String query = String.format("update %s " +
+                    "set reps_done = reps_done + 1 " +
+                    "where id = %s;", PLANS, thisID);
+            updateQuery(query);
         }
-
-        return doctor;
     }
 }
