@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 updateOffilePlans();
                 boolean serverUpdated = updateLocalDatabase(this.loggedInUsername);
                 fm = getSupportFragmentManager();
-                fm.findFragmentByTag()
+                fm.findFragmentByTag(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
                 break;
             case R.id.logout_btn: // Removes login from sharedprefs and prompts login activity
                 deleteLoggedInUsername();
@@ -216,11 +216,10 @@ public class MainActivity extends AppCompatActivity {
         local = new LocalDatabase(getApplicationContext());
         ArrayList<Integer> planIDs = local.getOfflinePlans();
 
-        if (planIDs.size() > 0) {
+        if (planIDs != null && planIDs.size() > 0) {
             ServerDatabaseDriver server = new ServerDatabaseDriver();
             server.incrementOfflinePlans(planIDs);
         }
-
     }
 
     /**
