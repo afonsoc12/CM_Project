@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.ListFragment;
 
+import com.cm_project.physio2go.AsyncTasks.PlanCompletedAsyncTask;
 import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.classes.Plan;
 
@@ -109,7 +110,9 @@ public class PlanExerciseListFragment extends ListFragment {
         switch (requestCode) {
             case REQ_DO_EXERCSISE:
                 if (resultCode == Activity.RESULT_OK) { // Exercise finished successfully
-                    // TODO PERSIST DB THE EXERCISE RESULT
+                    View view = getActivity().findViewById(R.id.main_activity);
+                    Plan plan = (Plan) data.getSerializableExtra(PlanExerciseListFragment.PLAN_ARG);
+                    new PlanCompletedAsyncTask(getContext(), view).execute(plan);
 
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     // Dont do anything, since the exercise was aborted

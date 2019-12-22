@@ -105,6 +105,10 @@ public class LocalDatabase extends SQLiteOpenHelper {
         //database.execSQL("delete from " + TABLE_TMP_PLAN);
     }
 
+    public void deleteTmpPlanIncrements() {
+        database = this.getWritableDatabase();
+        database.execSQL("delete from " + TABLE_TMP_PLAN);
+    }
 
     public void updatePlans(ArrayList<Plan> plansFromServer){
 
@@ -278,7 +282,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         return plans;
     }
 
-    public ArrayList<Exercise> getExercisesOfPlan(int id_plan){
+    private ArrayList<Exercise> getExercisesOfPlan(int id_plan) {
         ArrayList<Exercise> exercice = new ArrayList<>();
         Exercise thisExercise;
         Cursor cursor = database.rawQuery("select * from " + TABLE_PLANS_EXERCISES + " where " + PLAN_EX_ID_PLAN + " = " + id_plan, null);
@@ -374,7 +378,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
 
     public ArrayList<Integer> getOfflinePlans() {
         ArrayList<Integer> planIDs = new ArrayList<>();
-        Cursor cursor = database.rawQuery(String.format("select %s from %s;", TABLE_TMP_PLAN, TMP_PLAN_ID), null);
+        Cursor cursor = database.rawQuery(String.format("select %s from %s;", TMP_PLAN_ID, TABLE_TMP_PLAN), null);
         int thisPlanID;
 
         if (cursor.moveToFirst()) {
@@ -389,4 +393,6 @@ public class LocalDatabase extends SQLiteOpenHelper {
         }
         return planIDs;
     }
+
+
 }

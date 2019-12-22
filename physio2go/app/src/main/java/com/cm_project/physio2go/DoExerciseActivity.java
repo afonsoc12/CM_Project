@@ -16,7 +16,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.cm_project.physio2go.AsyncTasks.PlanCompletedAsyncTask;
 import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.classes.Plan;
 import com.cm_project.physio2go.fragmentsExercises.ArmExerciseFragment;
@@ -94,8 +93,7 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
             ft.commit();
         } else if (positionExercise == numberExercise) {
             View view = findViewById(R.id.do_exercise_activity);
-            new PlanCompletedAsyncTask(DoExerciseActivity.this, view).execute(plan);
-            setResult(RESULT_OK);
+            setResult(RESULT_OK, getIntent());
             finish();
         }
     }

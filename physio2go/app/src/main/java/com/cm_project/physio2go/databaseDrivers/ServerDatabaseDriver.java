@@ -76,9 +76,6 @@ public class ServerDatabaseDriver implements Runnable {
         this.conectar();
         ResultSet resultSet = null;
         try {
-            //new ServerQueryAsyncTask(this.conn, query).execute();
-
-
             resultSet = this.conn.prepareStatement(query).executeQuery();
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,28 +86,28 @@ public class ServerDatabaseDriver implements Runnable {
     }
 
     /**
-     * Performs SELECT SQL queries asynchronously, using a AsyncTask.
+     * Performs SELECT SQL queries asynchronously, using an AsyncTask.
      *
      * @param query
      * @return
      */
     public ResultSet selectAsyncQuery(String query) {
-        this.conectar();
         ResultSet resultSet = null;
         try {
-            resultSet = new ServerQueryAsyncTask(this.conn, query).execute().get();
+            String[] credentials = {this.url, this.user, this.pass};
+            resultSet = new ServerQueryAsyncTask(credentials, query)
+                    .execute(ServerQueryAsyncTask.SELECT_QUERY)
+                    .get();
 
         } catch (Exception e) {
             e.printStackTrace();
-            this.disconectar();
         }
-        this.disconectar();
+
         return resultSet;
     }
 
     /**
      * Performs UPDATE or INSERT SQL queries inside asynchronous tasks.
-     *
      * @param query
      */
     private void updateQuery(String query) {
@@ -125,19 +122,46 @@ public class ServerDatabaseDriver implements Runnable {
     }
 
     /**
+     * Performs UPDATE or INSERT SQL queries asynchronously, using an AsyncTask.
+     *
+     * @param query
+     * @return
+     */
+    private boolean updateAsyncQuery(String query) {
+
+        boolean status;
+        try {
+            String[] credentials = {this.url, this.user, this.pass};
+            new ServerQueryAsyncTask(credentials, query)
+                    .execute(ServerQueryAsyncTask.UPDATE_QUERY);
+            status = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            status = false;
+        }
+
+        return status;
+    }
+
+    /**
      * Returns the Doctor object, provided the doctor ID.
      *
      * @param id_doctor
      * @return
      */
-    private Doctor getThisPatientDoctor(String id_doctor) {
-        this.conectar();
+    private Doctor getThisPatientDoctor(String id_doctor, String type) {
 
         Doctor doctor = new Doctor();
 
-        String query = String.format("selectQuery * from %s where username = '%s'", DOCTORS, id_doctor);
+        String query = String.format("select * from %s where username = '%s'", DOCTORS, id_doctor);
 
-        ResultSet resultSet = this.selectAsyncQuery(query);
+        ResultSet resultSet;
+        // To avoid AsyncTask inside AsyncTask
+        if (type.equals("async")) {
+            resultSet = this.selectAsyncQuery(query);
+        } else {
+            resultSet = this.selectQuery(query);
+        }
 
         try {
             while (resultSet.next()) {
@@ -148,9 +172,6 @@ public class ServerDatabaseDriver implements Runnable {
                 doctor.setHospital(resultSet.getString("hospital"));
                 doctor.setBio(resultSet.getString("bio"));
             }
-
-            this.disconectar();
-
         } catch (Exception e) {
             doctor = null;
             e.printStackTrace();
@@ -187,15 +208,21 @@ public class ServerDatabaseDriver implements Runnable {
      * @param plan_id
      * @return
      */
-    private ArrayList<Exercise> getExercisesOfPlan(int plan_id) {
+    private ArrayList<Exercise> getExercisesOfPlan(int plan_id, String type) {
         ArrayList<Exercise> exercises = new ArrayList<>();
         Exercise thisExercise;
 
-        String query = String.format("selectQuery pe.id_plan, pe.id_exercise, pe.repetitions, e.* from %s pe " +
+        String query = String.format("select pe.id_plan, pe.id_exercise, pe.repetitions, e.* from %s pe " +
                 "join %s as e on pe.id_exercise = e.id " +
                 "where pe.id_plan = %s;", PLAN_EXERCISES, EXERCISES, plan_id);
 
-        ResultSet resultSet = this.selectAsyncQuery(query);
+        ResultSet resultSet;
+        // To avoid AsyncTask inside AsyncTask
+        if (type.equals("async")) {
+            resultSet = this.selectAsyncQuery(query);
+        } else {
+            resultSet = this.selectQuery(query);
+        }
 
         try {
             while (resultSet.next()) {
@@ -280,24 +307,31 @@ public class ServerDatabaseDriver implements Runnable {
 
     /**
      * Retrieves all plans for the specified user.
-     *
      * @param username
+     * @param type
      * @return
      */
-    public ArrayList<Plan> getPlansOfUser(String username) {
+    public ArrayList<Plan> getPlansOfUser(String username, String type) {
         ArrayList<Plan> plans = new ArrayList<>();
         ArrayList<Exercise> exercises = new ArrayList<>();
         Plan thisPlan;
 
-        String query = String.format("selectQuery * from %s where id_patient = '%s'", PLANS, username);
-        ResultSet resultSet = this.selectAsyncQuery(query);
+        String query = String.format("select * from %s where id_patient = '%s'", PLANS, username);
+
+        ResultSet resultSet;
+        // To avoid AsyncTask inside AsyncTask
+        if (type.equals("async")) {
+            resultSet = this.selectAsyncQuery(query);
+        } else {
+            resultSet = this.selectQuery(query);
+        }
 
         int id_plan;
         try {
             while (resultSet.next()) {
                 thisPlan = new Plan();
                 id_plan = resultSet.getInt("id");
-                exercises = getExercisesOfPlan(id_plan);
+                exercises = getExercisesOfPlan(id_plan, type);
 
                 thisPlan.setId(id_plan);
                 thisPlan.setId_patient(resultSet.getString("id_patient"));
@@ -329,7 +363,7 @@ public class ServerDatabaseDriver implements Runnable {
         ArrayList<Doctor> doctors = new ArrayList<>();
         Doctor thisDoctor;
 
-        String query = String.format("selectQuery * from %s", DOCTORS);
+        String query = String.format("select * from %s", DOCTORS);
 
         ResultSet resultSet = this.selectAsyncQuery(query);
 
@@ -391,22 +425,24 @@ public class ServerDatabaseDriver implements Runnable {
      * @param username
      * @return
      */
-    public Patient getPatientDetails(String username) {
-        this.conectar();
+    public Patient getPatientDetails(String username, String type) {
 
         Patient patient = new Patient();
-
         Doctor doctor;
-
-        String query = String.format("selectQuery * from %s where username = '%s'", PATIENTS, username);
-
-        ResultSet resultSet = this.selectAsyncQuery(query);
+        String query = String.format("select * from %s where username = '%s'", PATIENTS, username);
+        ResultSet resultSet;
+        // To avoid AsyncTask inside AsyncTask
+        if (type.equals("async")) {
+            resultSet = this.selectAsyncQuery(query);
+        } else {
+            resultSet = this.selectQuery(query);
+        }
 
         try {
             while (resultSet.next()) {
 
                 String id_doctor = resultSet.getString("id_doctor");
-                doctor = getThisPatientDoctor(id_doctor);
+                doctor = getThisPatientDoctor(id_doctor, type);
 
                 patient.setUsername(resultSet.getString("username"));
                 patient.setDoctor(doctor);
@@ -418,8 +454,6 @@ public class ServerDatabaseDriver implements Runnable {
                 patient.setWeight(resultSet.getFloat("weight"));
                 patient.setCondition(resultSet.getString("condition"));
             }
-
-            this.disconectar();
 
         } catch (Exception e) {
             patient = null;
@@ -447,15 +481,17 @@ public class ServerDatabaseDriver implements Runnable {
 
     /**
      * Migrates the increments to the server, that were previously saved offline.
-     *
      * @param planIDs
+     * @return
      */
-    public void incrementOfflinePlans(ArrayList<Integer> planIDs) {
+    public boolean incrementOfflinePlans(ArrayList<Integer> planIDs) {
+        boolean status = false;
         for (int thisID : planIDs) {
             String query = String.format("update %s " +
                     "set reps_done = reps_done + 1 " +
                     "where id = %s;", PLANS, thisID);
-            updateQuery(query);
+            status = updateAsyncQuery(query);
         }
+        return status;
     }
 }

@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -19,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.cm_project.physio2go.AsyncTasks.RefreshAsyncTask;
 import com.cm_project.physio2go.classes.Doctor;
 import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.classes.Plan;
@@ -93,9 +95,13 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivityForResult(intent, REQ_LOGIN);
         } else {
-            updateOffilePlans();
-            boolean serverUpdated = updateLocalDatabase(this.loggedInUsername);
-            inflateMainActivity(serverUpdated);
+            local = new LocalDatabase(this);
+            boolean isNetAvailable = isNetworkAvilable(this);
+            if (isNetAvailable) {
+                updateOffilePlans();
+                updateLocalDatabase(this.loggedInUsername);
+            }
+            inflateMainActivity(isNetAvailable);
         }
     }
 
@@ -118,10 +124,15 @@ public class MainActivity extends AppCompatActivity {
         switch (id) {
             case R.id.refresh_btn:
                 //TODO refresh routines to update listfragment
-                updateOffilePlans();
-                boolean serverUpdated = updateLocalDatabase(this.loggedInUsername);
-                fm = getSupportFragmentManager();
-                fm.findFragmentByTag(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
+                boolean isNetAvailable = isNetworkAvilable(this);
+                if (isNetAvailable) {
+                    View view = findViewById(R.id.main_activity);
+                    new RefreshAsyncTask(MainActivity.this, view).execute(local.getPatient());
+                } else {
+                    showNoInternetSnackbar(findViewById(R.id.main_activity), "Could not synchronize with the Server.");
+                }
+                // fm = getSupportFragmentManager();
+                // fm.findFragmentByTag(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
                 break;
             case R.id.logout_btn: // Removes login from sharedprefs and prompts login activity
                 deleteLoggedInUsername();
@@ -175,9 +186,12 @@ public class MainActivity extends AppCompatActivity {
                     if (intent != null) {
                         this.loggedInUsername = intent.getStringExtra("username");
                         saveLoggedInUsername(this.loggedInUsername);
-                        updateOffilePlans();
-                        boolean serverUpdated = updateLocalDatabase(this.loggedInUsername);
-                        inflateMainActivity(serverUpdated);
+                        boolean isNetAvailable = isNetworkAvilable(this);
+                        if (isNetAvailable) {
+                            updateOffilePlans();
+                            updateLocalDatabase(this.loggedInUsername);
+                        }
+                        inflateMainActivity(isNetAvailable);
                     }
                 }
                 break;
@@ -188,6 +202,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void inflateMainActivity(boolean isServerUpdated) {
         setContentView(R.layout.activity_main);
+
+        // Hide refresh progress bar
+        ProgressBar spinRefresh = findViewById(R.id.spin_refresh_pb);
+        spinRefresh.setVisibility(View.GONE);
+        spinRefresh.bringToFront();
 
         // Define a new toolbar for this activity
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -218,7 +237,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (planIDs != null && planIDs.size() > 0) {
             ServerDatabaseDriver server = new ServerDatabaseDriver();
-            server.incrementOfflinePlans(planIDs);
+            boolean incrementSuccess = server.incrementOfflinePlans(planIDs);
+            if (incrementSuccess) {
+                local.deleteTmpPlanIncrements();
+            }
         }
     }
 
@@ -227,30 +249,22 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param username
      */
-    public boolean updateLocalDatabase(String username) {
+    public void updateLocalDatabase(String username) {
         // Persist on local database
         local = new LocalDatabase(getApplicationContext());
+        // todo rever se da para async
+        // Retrieve data from server
+        ServerDatabaseDriver server = new ServerDatabaseDriver();
 
-        boolean isNetAvailable = isNetworkAvilable(this);
+        ArrayList<Plan> plansFromServer = server.getPlansOfUser(username, "async");
+        Patient patient = server.getPatientDetails(username, "async");
 
-        if (isNetAvailable) {
-            // Retrieve data from server
-            ServerDatabaseDriver server = new ServerDatabaseDriver();
+        // Delete files from localDatabase
+        local.delete();
 
-            ArrayList<Plan> plansFromServer = server.getPlansOfUser(username);
-            Patient patient = server.getPatientDetails(username);
-
-            // Delete files from localDatabase
-            local.delete();
-
-            // Updates plans and exercises
-            local.updatePlans(plansFromServer);
-            local.updatePatientDetails(patient);
-
-            return true;
-        } else {
-            return false;
-        }
+        // Updates plans and exercises
+        local.updatePlans(plansFromServer);
+        local.updatePatientDetails(patient);
     }
 
     /*
