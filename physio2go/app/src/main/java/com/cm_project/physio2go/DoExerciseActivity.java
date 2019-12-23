@@ -24,7 +24,7 @@ import com.cm_project.physio2go.fragmentsExercises.LegExerciseFragment;
 
 import java.util.ArrayList;
 
-public class DoExerciseActivity extends AppCompatActivity implements ArmExerciseFragment.onMessageReadListenner {
+public class DoExerciseActivity extends AppCompatActivity implements ArmExerciseFragment.onMessageReadListenner, LegExerciseFragment.onMessageReadListenner, BreathingExerciseFragment.onMessageReadListenner {
 
     private final String DIALOG_TAG = "close_dialog";
     private Plan plan;

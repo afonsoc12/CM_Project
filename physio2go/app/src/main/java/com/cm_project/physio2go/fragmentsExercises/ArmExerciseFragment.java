@@ -38,7 +38,9 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
     private Sensor acelerometro;
     private int count;
     private ProgressBar simpleProgressBar;
+    private ProgressBar movingProgresBar;
     private int progress;
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -98,6 +100,10 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         simpleProgressBar.setMax(reps); // get maximum value of the progress bar
         setProgressValue(reps_Done);
 
+        movingProgresBar = (ProgressBar) v.findViewById(R.id.progressBar3);
+        movingProgresBar.setMax(10); // get maximum value of the progress bar
+        setProgressValueMoving(0);
+
         return v;
     }
 
@@ -125,10 +131,20 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         Float y = event.values[1];
         Float z = event.values[2];
 
+        if (body_side.equals("R")) {
+            if (z >= 0 && z <= 10 && x < 0) {
+                setProgressValueMoving(z);
+            }
+        } else {
+            if (z >= 0 && z <= 10 && x > 0) {
+                setProgressValueMoving(z);
+            }
+        }
 
         if (count % 2 == 0 && reps > reps_Done) {
             if (body_side.equals("R")) {
-                if (x > 8 && y > -2 && y < 2 && z > -2 && z < 2) {
+
+                if (x < -8 && y > -2 && y < 2 && z > -2 && z < 2) {
 
                     // Get instance of Vibrator from current Context
                     v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
@@ -136,7 +152,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
                     count++;
                 }
             } else {
-                if (x < -8 && y > -2 && y < 2 && z > -2 && z < 2) {
+                if (x > 8 && y > -2 && y < 2 && z > -2 && z < 2) {
                     // Get instance of Vibrator from current Context
                     v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                     v.vibrate(300);
@@ -146,7 +162,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         }
 
         if (count % 2 != 0 && reps > reps_Done) {
-            if (z < -8 && y > -2 && y < 2 && x > -2 && x < 2) {
+            if (z > 8 && y > -2 && y < 2 && x > -2 && x < 2) {
                 v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(300);
                 count++;
@@ -174,6 +190,24 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
             });
         }
 
+    }
+
+    private void setProgressValueMoving(float z) {
+        // set the progress
+        int intZ = Math.round(z);
+        movingProgresBar.setProgress(intZ);
+        // thread is used to change the progress value
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread.start();
     }
 
     private void setProgressValue(final int progress) {
