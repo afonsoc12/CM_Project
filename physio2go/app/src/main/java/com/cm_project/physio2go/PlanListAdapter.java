@@ -43,8 +43,8 @@ public class PlanListAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.plan_list_item, null);
             holder = new ViewHolder();
-            holder.planName = convertView.findViewById(R.id.plan_name_tv);
-            holder.planDates = convertView.findViewById(R.id.date_plan_tv);
+            holder.planName = convertView.findViewById(R.id.exercise_name_tv);
+            holder.planDates = convertView.findViewById(R.id.exercise_side_tv);
             holder.planProgress = convertView.findViewById(R.id.progress_plan_pb);
             convertView.setTag(holder);
         } else {

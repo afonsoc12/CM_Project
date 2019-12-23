@@ -13,9 +13,8 @@
         android:text="text"
         android:textStyle="bold"
         android:typeface="sans"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/exercise_img_iv"
+        app:layout_constraintStart_toStartOf="@+id/exercise_side_tv"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -27,21 +26,31 @@
         android:textColor="#343434"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/exercise_name_tv" />
+        app:layout_constraintEnd_toStartOf="@+id/exercise_repetitions_tv"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toEndOf="@+id/exercise_img_iv" />
 
-    <ProgressBar
-        android:id="@+id/progress_plan_pb"
-        style="?android:attr/progressBarStyleHorizontal"
+    <TextView
+        android:id="@+id/exercise_repetitions_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:max="3"
-        android:progress="2"
+        android:layout_below="@id/exercise_name_tv"
+        android:layout_marginEnd="10dp"
+        android:text="Repetitions: "
+        android:textColor="#343434"
+        android:textSize="12sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/exercise_name_tv"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/exercise_img_iv"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.8"
-        app:layout_constraintStart_toEndOf="@+id/exercise_name_tv"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@mipmap/ic_launcher_round" />
 </androidx.constraintlayout.widget.ConstraintLayout>

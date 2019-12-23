@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -44,10 +43,6 @@ public class PlansListFragment extends ListFragment {
         ArrayList<Plan> plans = (ArrayList<Plan>) this.getArguments().getSerializable(PLANS_ARG);
 
         if (plans != null) {
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),
-                    android.R.layout.simple_list_item_1,
-                    extractPlansInfo(plans));
-            //setListAdapter(arrayAdapter);
             setListAdapter(new PlanListAdapter(getActivity(), plans));
         }
 

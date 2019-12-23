@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -49,13 +48,12 @@ public class PlanExerciseListFragment extends ListFragment {
         View v = inflater.inflate(R.layout.fragment_list_plan_exercises, container, false);
 
         Plan plan = (Plan) this.getArguments().getSerializable(PLAN_ARG);
+        ArrayList<Exercise> exercises = plan.getExercises();
 
-        if (plan != null) {
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),
-                    android.R.layout.simple_list_item_1,
-                    extractPlanExercisesInfo(plan));
-            setListAdapter(arrayAdapter);
+        if (exercises != null) {
+            setListAdapter(new PlanExercisesListAdapter(getActivity(), exercises));
         }
+
         start_btn = v.findViewById(R.id.start_btn);
         start_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,26 +68,7 @@ public class PlanExerciseListFragment extends ListFragment {
         return v;
     }
 
-    /**
-     * Extracts the plan exercise titles, to populate the list adapter
-     *
-     * @param plan
-     * @return
-     */
-    private ArrayList<String> extractPlanExercisesInfo(Plan plan) {
-        ArrayList<String> titles = new ArrayList<>();
-        exercises = plan.getExercises();
-
-        for (Exercise thisExercise : exercises) {
-            titles.add(thisExercise.getName());
-        }
-
-        return titles;
-    }
-
-
-
-
+    // todo mostrar info dos planos
     /*@Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
