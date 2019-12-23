@@ -195,6 +195,7 @@ public class LegExerciseFragment extends Fragment implements SensorEventListener
 
     private void setProgressValueMoving(float z) {
         // set the progress
+        System.out.println("ola");
         int intZ = Math.round(z);
         movingProgresBar.setProgress(intZ);
         // thread is used to change the progress value
