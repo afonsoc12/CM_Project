@@ -2,6 +2,7 @@ package com.cm_project.physio2go.fragmentsRegister;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+
 import com.cm_project.physio2go.R;
 import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class RegisterBasicInfoFragment extends Fragment {
 
@@ -54,11 +61,22 @@ public class RegisterBasicInfoFragment extends Fragment {
 
         Button next = view.findViewById(R.id.next_btn);
         next.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View v) {
 
+                TextView msgUsernameTv = view.findViewById(R.id.failed_username_tv);
+                TextView msgPasswordTv = view.findViewById(R.id.failed_password_tv);
+                TextView msgDateOfBirthTv = view.findViewById(R.id.failed_dob_tv);
+                TextView msgEmptyTv = view.findViewById(R.id.failed_empty_tv);
+                msgUsernameTv.setVisibility(View.GONE);
+                msgPasswordTv.setVisibility(View.GONE);
+                msgDateOfBirthTv.setVisibility(View.GONE);
+                msgEmptyTv.setVisibility(View.GONE);
+
                 boolean usernameOk = true;
                 boolean passwordOk = true;
+                boolean dateOfBirthOK = true;
                 boolean notEmpty = true;
 
                 String name = ((EditText) view.findViewById(R.id.name_et)).getText().toString();
@@ -69,12 +87,10 @@ public class RegisterBasicInfoFragment extends Fragment {
                 String dateOfBirth = ((EditText) view.findViewById(R.id.dateOfBirth_et)).getText().toString();
                 String address = ((EditText) view.findViewById(R.id.address_et)).getText().toString();
 
-
                 // checks if username exists
                 boolean usernameExists = server.usernameExists(username);
 
-                if (usernameExists == true) {
-                    TextView msgUsernameTv = view.findViewById(R.id.failed_username_tv);
+                if (usernameExists) {
                     msgUsernameTv.setText("This username already exists.");
                     msgUsernameTv.setVisibility(View.VISIBLE);
                     usernameOk = false;
@@ -82,22 +98,32 @@ public class RegisterBasicInfoFragment extends Fragment {
 
                 // checks if password == confirmPassword
                 if (!password.equals(confirmPassword)) {
-                    TextView msgPasswordTv = view.findViewById(R.id.failed_password_tv);
                     msgPasswordTv.setText("Confirm password must match password.");
                     msgPasswordTv.setVisibility(View.VISIBLE);
                     passwordOk = false;
                 }
 
+                // Checks if date of birth is valid
+                String dateParsed = null;
+                if (!dateOfBirth.isEmpty()) {
+                    try {
+                        dateParsed = LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("[dd/MM/yyyy][dd-MM-yyyy][ddMMyyyy]")).toString();
+                    } catch (Exception e) {
+                        msgDateOfBirthTv.setText("Date is not valid. Use the format dd-mm-yyyy.");
+                        msgDateOfBirthTv.setVisibility(View.VISIBLE);
+                        dateOfBirthOK = false;
+                    }
+                }
+
                 // checks if all inputs are not empty
                 if (name.isEmpty() || surname.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || dateOfBirth.isEmpty() || address.isEmpty()) {
-                    TextView msgEmptyTv = view.findViewById(R.id.failed_empty_tv);
                     msgEmptyTv.setText("All the fields are required.");
                     msgEmptyTv.setVisibility(View.VISIBLE);
                     notEmpty = false;
                 }
 
-                if (usernameOk == true && passwordOk == true && notEmpty == true) {
-                    listener.newMemberBasicInfo(name, surname, username, password, dateOfBirth, address);
+                if (usernameOk && passwordOk && dateOfBirthOK && notEmpty) {
+                    listener.newMemberBasicInfo(name, surname, username, password, dateParsed, address);
                 }
 
             }
@@ -113,7 +139,7 @@ public class RegisterBasicInfoFragment extends Fragment {
         try {
             listener = (RegisterBasicInfoFragment.RegisterBasicInfoListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() +  "must implement RegisterBasicInfoListener");
+            throw new ClassCastException(context.toString() + "must implement RegisterBasicInfoListener");
         }
 
     }
