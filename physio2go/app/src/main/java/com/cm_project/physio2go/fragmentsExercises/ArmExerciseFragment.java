@@ -158,7 +158,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         if (reps == reps_Done && count != 0) {
 
             Context context = getContext().getApplicationContext();
-            CharSequence text = "Exercicio terminado";
+            CharSequence text = "You finished this exercise!";
             int duration = Toast.LENGTH_SHORT;
 
             Toast toast = Toast.makeText(context, text, duration);

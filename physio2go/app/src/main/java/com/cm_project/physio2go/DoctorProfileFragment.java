@@ -34,8 +34,8 @@ public class DoctorProfileFragment extends Fragment {
         Doctor doctor = (Doctor) getArguments().getSerializable(DOCTOR_ARG);
 
         // Set fragment TextViews
-        TextView nameTv = v.findViewById(R.id.exercise_name_tv);
-        TextView usernameTv = v.findViewById(R.id.exercise_side_tv);
+        TextView nameTv = v.findViewById(R.id.doctor_name_tv);
+        TextView usernameTv = v.findViewById(R.id.doctor_username_tv);
         TextView specialityTv = v.findViewById(R.id.speciality_tv);
         TextView hospitalTv = v.findViewById(R.id.hospital_tv);
         TextView bioTv = v.findViewById(R.id.bio_tv);

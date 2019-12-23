@@ -44,7 +44,8 @@ public class PlanListAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(R.layout.plan_list_item, null);
             holder = new ViewHolder();
             holder.planName = convertView.findViewById(R.id.exercise_name_tv);
-            holder.planDates = convertView.findViewById(R.id.exercise_side_tv);
+            holder.planDates = convertView.findViewById(R.id.exercise_date_tv);
+            holder.planDescription = convertView.findViewById(R.id.exercise_description_tv);
             holder.planProgress = convertView.findViewById(R.id.progress_plan_pb);
             convertView.setTag(holder);
         } else {
@@ -52,8 +53,14 @@ public class PlanListAdapter extends BaseAdapter {
         }
 
         holder.planName.setText(plans.get(position).getPlan_name());
-        holder.planDates.setText(String.format("From: %s - %s", plans.get(position).getDate_start(),
-                plans.get(position).getDate_end()));
+
+        String startDate = plans.get(position).getDate_start();
+        String[] arrayStartDate = startDate.split(" ");
+        String endDate = plans.get(position).getDate_end();
+        String[] arrayEndDate = endDate.split(" ");
+        holder.planDates.setText(String.format("From %s to %s", arrayStartDate[0], arrayEndDate[0]));
+
+        holder.planDescription.setText(plans.get(position).getDescription());
         holder.planProgress.setMax(plans.get(position).getTotal_reps());
         holder.planProgress.setProgress(plans.get(position).getReps_done());
         return convertView;
@@ -62,6 +69,7 @@ public class PlanListAdapter extends BaseAdapter {
     static class ViewHolder {
         TextView planName;
         TextView planDates;
+        TextView planDescription;
         ProgressBar planProgress;
     }
 

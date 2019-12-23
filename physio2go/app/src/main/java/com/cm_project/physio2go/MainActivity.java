@@ -210,6 +210,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Define a new toolbar for this activity
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setLogo(R.drawable.logo_toolbar);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
         // Get plans of user from local DB

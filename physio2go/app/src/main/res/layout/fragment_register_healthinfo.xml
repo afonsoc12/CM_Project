@@ -69,6 +69,7 @@
         android:ems="10"
         android:fontFamily="@font/helvetica"
         android:hint="Condition"
+        android:singleLine="true"
         android:textColorHint="@color/gray"
         android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"

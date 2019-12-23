@@ -47,7 +47,11 @@ public class PatientProfileFragment extends Fragment {
 
         nameTv.setText(String.format("%s %s", patient.getName(), patient.getSurname()));
         usernameTv.setText(patient.getUsername());
-        dobTv.setText(patient.getDob());
+
+        String dob = patient.getDob();
+        String[] arrayDob = dob.split(" ");
+        dobTv.setText(arrayDob[0]);
+
         doctorTv.setText(String.format("Dr. %s %s", doctor.getName(), doctor.getSurname()));
         conditionTv.setText(patient.getCondition());
         weightTv.setText(String.format("%s kg", patient.getWeight()));
