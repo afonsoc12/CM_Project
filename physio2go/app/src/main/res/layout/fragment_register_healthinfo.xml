@@ -111,7 +111,7 @@
     <RadioGroup
         android:id="@+id/radiogroup"
         android:layout_width="300dp"
-        android:layout_height="193dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:background="@drawable/input_field"
         android:ems="10"
