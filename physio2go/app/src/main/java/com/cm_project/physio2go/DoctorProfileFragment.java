@@ -11,8 +11,8 @@ import androidx.fragment.app.Fragment;
 import com.cm_project.physio2go.classes.Doctor;
 
 public class DoctorProfileFragment extends Fragment {
-    public static String DOCTOR_ARG = "patient_tag";
-    public static String DOCTOR_PROFILE_FRAGMENT_TAG = "profile_fragment_tag";
+    public static final String DOCTOR_ARG = "patient_tag";
+    public static final String DOCTOR_PROFILE_FRAGMENT_TAG = "doctor_profile_fragment_tag";
 
     public DoctorProfileFragment() {
 

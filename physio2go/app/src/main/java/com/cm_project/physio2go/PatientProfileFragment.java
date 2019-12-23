@@ -11,19 +11,19 @@ import androidx.fragment.app.Fragment;
 import com.cm_project.physio2go.classes.Doctor;
 import com.cm_project.physio2go.classes.Patient;
 
-public class ProfileFragment extends Fragment {
-    public static String PATIENT_ARG = "patient_tag";
-    public static String PROFILE_FRAGMENT_TAG = "profile_fragment_tag";
+public class PatientProfileFragment extends Fragment {
+    public static final String PATIENT_ARG = "patient_tag";
+    public static final String PATIENT_PROFILE_FRAGMENT_TAG = "patient_profile_fragment_tag";
 
-    public ProfileFragment() {
+    public PatientProfileFragment() {
 
     }
 
-    public static ProfileFragment newInstance(Patient patient) {
+    public static PatientProfileFragment newInstance(Patient patient) {
 
         Bundle args = new Bundle();
         args.putSerializable(PATIENT_ARG, patient);
-        ProfileFragment fragment = new ProfileFragment();
+        PatientProfileFragment fragment = new PatientProfileFragment();
         fragment.setArguments(args);
         return fragment;
     }

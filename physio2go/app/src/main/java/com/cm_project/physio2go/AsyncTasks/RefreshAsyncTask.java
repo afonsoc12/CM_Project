@@ -6,6 +6,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.cm_project.physio2go.DoctorProfileFragment;
+import com.cm_project.physio2go.MainActivity;
+import com.cm_project.physio2go.PatientProfileFragment;
+import com.cm_project.physio2go.PlanExerciseListFragment;
+import com.cm_project.physio2go.PlansListFragment;
 import com.cm_project.physio2go.R;
 import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.classes.Plan;
@@ -73,10 +82,67 @@ public class RefreshAsyncTask extends AsyncTask<Object, Void, Void> {
          * the visualisation of the Progressbar.
          */
         try {
-            TimeUnit.SECONDS.sleep(1);
+            TimeUnit.MILLISECONDS.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        /*
+         * Deal with the fragment transactions
+         */
+        LocalDatabase local = new LocalDatabase(context);
+        MainActivity mainAct = (MainActivity) context;
+        Fragment fragment = null;
+        Fragment repeatedFragment;
+        FragmentTransaction ft;
+        FragmentManager fm = mainAct.getSupportFragmentManager();
+
+        ArrayList<Fragment> fragments = (ArrayList<Fragment>) fm.getFragments();
+        String curFragTag = fragments.get(fragments.size() - 1).getTag();
+        switch (curFragTag) {
+            case PlansListFragment.PLAN_LIST_FRAGMENT_TAG:
+                fragment = PlansListFragment.newInstance(local.getPlansOfUser());
+                repeatedFragment = fm.findFragmentByTag(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
+                break;
+            case PlanExerciseListFragment.PLAN_EXERCISE_LIST_FRAGMENT_TAG:
+                repeatedFragment = fm.findFragmentByTag(PlanExerciseListFragment.PLAN_EXERCISE_LIST_FRAGMENT_TAG);
+
+                // Get previous plan ID
+                int prevPlanId = ((Plan) repeatedFragment.getArguments().getSerializable(PlanExerciseListFragment.PLAN_ARG)).getId();
+
+                // Retrieve all plans from local db (already updated and found the plan with the same id) and create the fragment
+                ArrayList<Plan> plans = local.getPlansOfUser();
+                for (Plan thisPlan : plans) {
+                    if (thisPlan.getId() == prevPlanId) {
+                        fragment = PlanExerciseListFragment.newInstance(thisPlan);
+                        break;
+                    }
+                }
+                break;
+            case PatientProfileFragment.PATIENT_PROFILE_FRAGMENT_TAG:
+                fragment = PatientProfileFragment.newInstance(local.getPatient());
+                repeatedFragment = fm.findFragmentByTag(PatientProfileFragment.PATIENT_PROFILE_FRAGMENT_TAG);
+                break;
+            case DoctorProfileFragment.DOCTOR_PROFILE_FRAGMENT_TAG:
+                fragment = DoctorProfileFragment.newInstance(local.getPatient().getDoctor());
+                repeatedFragment = fm.findFragmentByTag(DoctorProfileFragment.DOCTOR_PROFILE_FRAGMENT_TAG);
+                break;
+
+            default:
+                repeatedFragment = null;
+                fragment = null;
+                break;
+        }
+
+        // Start transaction
+        ft = fm.beginTransaction();
+        if (repeatedFragment != null) {
+            ft.remove(repeatedFragment);
+            fm.popBackStack();
+        }
+        ft.replace(R.id.fragment_list_placeholder, fragment, curFragTag);
+        ft.addToBackStack(curFragTag);
+        ft.commit();
 
         // Disable ProgressBar
         ProgressBar spinRegister = view.findViewById(R.id.spin_refresh_pb);

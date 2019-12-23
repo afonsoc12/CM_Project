@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fm;
         FragmentTransaction ft;
-        Fragment fragment;
+        Fragment fragment = null;
         Fragment repeatedFragment;
 
         switch (id) {
@@ -127,12 +127,12 @@ public class MainActivity extends AppCompatActivity {
                 boolean isNetAvailable = isNetworkAvilable(this);
                 if (isNetAvailable) {
                     View view = findViewById(R.id.main_activity);
-                    new RefreshAsyncTask(MainActivity.this, view).execute(local.getPatient());
+                    new RefreshAsyncTask(MainActivity.this, view)
+                            .execute(local.getPatient());
+
                 } else {
                     showNoInternetSnackbar(findViewById(R.id.main_activity), "Could not synchronize with the Server.");
                 }
-                // fm = getSupportFragmentManager();
-                // fm.findFragmentByTag(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
                 break;
             case R.id.logout_btn: // Removes login from sharedprefs and prompts login activity
                 deleteLoggedInUsername();
@@ -142,16 +142,16 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.my_profile_btn:
                 Patient patient = local.getPatient();
-                fragment = ProfileFragment.newInstance(patient);
+                fragment = PatientProfileFragment.newInstance(patient);
                 fm = this.getSupportFragmentManager();
-                repeatedFragment = fm.findFragmentByTag(ProfileFragment.PROFILE_FRAGMENT_TAG);
+                repeatedFragment = fm.findFragmentByTag(PatientProfileFragment.PATIENT_PROFILE_FRAGMENT_TAG);
                 ft = fm.beginTransaction();
                 if (repeatedFragment != null) {
                     ft.remove(repeatedFragment);
                     fm.popBackStack();
                 }
-                ft.replace(R.id.fragment_list_placeholder, fragment, ProfileFragment.PROFILE_FRAGMENT_TAG);
-                ft.addToBackStack(ProfileFragment.PROFILE_FRAGMENT_TAG);
+                ft.replace(R.id.fragment_list_placeholder, fragment, PatientProfileFragment.PATIENT_PROFILE_FRAGMENT_TAG);
+                ft.addToBackStack(PatientProfileFragment.PATIENT_PROFILE_FRAGMENT_TAG);
                 ft.commit();
                 break;
 

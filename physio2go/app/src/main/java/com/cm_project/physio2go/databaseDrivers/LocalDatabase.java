@@ -172,6 +172,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         for (Exercise thisExercise : exercises) {
             ArrayList<Integer> exercises_ids = new ArrayList<Integer>();
             alreadyExists = false;
+            //todo AQUI!!!! porque isto?
             Cursor cursor = database.rawQuery("select * from " + TABLE_EXERCISES, null);
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
@@ -186,7 +187,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
                     alreadyExists = true;
                 }
             }
-            if (!alreadyExists) {
+            if (!alreadyExists) { // Inserts only unique exercises
                 database = this.getWritableDatabase();
 
                 // Insert in table Exercise
@@ -196,14 +197,14 @@ public class LocalDatabase extends SQLiteOpenHelper {
                 cvExercises.put(EX_DESCRIPTION_EXERCISE, thisExercise.getDescription());
 
                 database.insert(TABLE_EXERCISES, null, cvExercises);
-
-                // Insert in table Plan_Exercise
-                cvPlanExercises.put(PLAN_EX_ID_EXERCISE, thisExercise.getId());
-                cvPlanExercises.put(PLAN_EX_ID_PLAN, id_plan);
-                cvPlanExercises.put(PLAN_EX_REPETITIONS, thisExercise.getRepetitions());
-
-                database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercises);
             }
+
+            // Insert in table Plan_Exercise (correspondence between plan and exercise)
+            cvPlanExercises.put(PLAN_EX_ID_EXERCISE, thisExercise.getId());
+            cvPlanExercises.put(PLAN_EX_ID_PLAN, id_plan);
+            cvPlanExercises.put(PLAN_EX_REPETITIONS, thisExercise.getRepetitions());
+
+            database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercises);
         }
     }
 
