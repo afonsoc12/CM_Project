@@ -31,7 +31,7 @@ public class PatientProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        View v = inflater.inflate(R.layout.fragment_patient_profile, container, false);
 
         Patient patient = (Patient) getArguments().getSerializable(PATIENT_ARG);
         Doctor doctor = patient.getDoctor();

@@ -63,17 +63,17 @@ public class PlanExercisesListAdapter extends BaseAdapter {
         }
 
         holder.exerciseRepetitions.setText(String.format("Repetitions: %d", exercises.get(position).getRepetitions()));
-        // todo image depending on exercise id
+
         switch (exercises.get(position).getId()) {
-            case 1:
-            case 2:
+            case 1:     // Left Arm
+            case 2:     // Right Arm (both grouped in case 2)
                 holder.exerciseImg.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arm, null));
                 break;
-            case 3:
-            case 4:
+            case 3:     // Left Leg
+            case 4:     // Right Leg (both grouped in case 4)
                 holder.exerciseImg.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_leg, null));
                 break;
-            case 5:
+            case 5:     // Breathing Exercise
                 holder.exerciseImg.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_breath, null));
                 break;
             default:

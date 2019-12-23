@@ -7,8 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.ListFragment;
 
 import com.cm_project.physio2go.AsyncTasks.PlanCompletedAsyncTask;
@@ -21,6 +24,7 @@ public class PlanExerciseListFragment extends ListFragment {
 
     public final static String PLAN_EXERCISE_LIST_FRAGMENT_TAG = "plan_exercise_list_fragment";
     public final static String PLAN_ARG = "planChosen";
+    public final static String CHOSEN_EXERCISE_ARG = "exerciseToView";
     private final static int REQ_DO_EXERCSISE = 1;
     ArrayList<Exercise> exercises;
 
@@ -68,19 +72,27 @@ public class PlanExerciseListFragment extends ListFragment {
         return v;
     }
 
-    // todo mostrar info dos planos
-    /*@Override
+    /**
+     * Handles exercise click to view its properties and description.
+     *
+     * @param l
+     * @param v
+     * @param position
+     * @param id
+     */
+    @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
 
         Exercise chosenExercise = ((Plan) this.getArguments().getSerializable(PLAN_ARG)).getExercises().get(position);
 
-        // Start Exercise Activity
-        Intent intentDoExercise = new Intent(getActivity(), DoExerciseActivity.class);
-        intentDoExercise.putExtra(CHOSEN_EXERCISE_ARG, chosenExercise);
-
-        startActivityForResult(intentDoExercise, REQ_DO_EXERCSISE);
-    }*/
+        // Start Fragment
+        Fragment exerciseFragment = ExerciseDetailsFragment.newInstance(chosenExercise);
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.fragment_list_placeholder, exerciseFragment, ExerciseDetailsFragment.EXERCISE_DETAILS_FRAGENT_TAG);
+        ft.addToBackStack(ExerciseDetailsFragment.EXERCISE_DETAILS_FRAGENT_TAG);
+        ft.commit();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

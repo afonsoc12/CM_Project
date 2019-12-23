@@ -11,11 +11,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.cm_project.physio2go.DoctorProfileFragment;
+import com.cm_project.physio2go.ExerciseDetailsFragment;
 import com.cm_project.physio2go.MainActivity;
 import com.cm_project.physio2go.PatientProfileFragment;
 import com.cm_project.physio2go.PlanExerciseListFragment;
 import com.cm_project.physio2go.PlansListFragment;
 import com.cm_project.physio2go.R;
+import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.classes.Plan;
 import com.cm_project.physio2go.databaseDrivers.LocalDatabase;
@@ -99,6 +101,12 @@ public class RefreshAsyncTask extends AsyncTask<Object, Void, Void> {
 
         ArrayList<Fragment> fragments = (ArrayList<Fragment>) fm.getFragments();
         String curFragTag = fragments.get(fragments.size() - 1).getTag();
+
+        /* Artifact to deal when the fragment appears even after being popped from backstack.
+         * Get the next fragment instead, if there is no TAG. */
+        if (curFragTag == null) {
+            curFragTag = fragments.get(fragments.size() - 2).getTag();
+        }
         switch (curFragTag) {
             case PlansListFragment.PLAN_LIST_FRAGMENT_TAG:
                 fragment = PlansListFragment.newInstance(local.getPlansOfUser());
@@ -126,6 +134,24 @@ public class RefreshAsyncTask extends AsyncTask<Object, Void, Void> {
             case DoctorProfileFragment.DOCTOR_PROFILE_FRAGMENT_TAG:
                 fragment = DoctorProfileFragment.newInstance(local.getPatient().getDoctor());
                 repeatedFragment = fm.findFragmentByTag(DoctorProfileFragment.DOCTOR_PROFILE_FRAGMENT_TAG);
+                break;
+            case ExerciseDetailsFragment.EXERCISE_DETAILS_FRAGENT_TAG:
+                repeatedFragment = fm.findFragmentByTag(ExerciseDetailsFragment.EXERCISE_DETAILS_FRAGENT_TAG);
+
+                // Get previous exercise ID
+                int prevExerciseID = ((Exercise) repeatedFragment.getArguments().getSerializable(PlanExerciseListFragment.CHOSEN_EXERCISE_ARG)).getId();
+
+                // Retrieve all plans from local db (already updated and found the plan with the same id) and create the fragment
+                plans = local.getPlansOfUser();
+                planLoop:
+                for (Plan thisPlan : plans) {
+                    for (Exercise thisExerciseOfPlan : thisPlan.getExercises()) {
+                        if (thisExerciseOfPlan.getId() == prevExerciseID) {
+                            fragment = ExerciseDetailsFragment.newInstance(thisExerciseOfPlan);
+                            break planLoop;
+                        }
+                    }
+                }
                 break;
 
             default:
