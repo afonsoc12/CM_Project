@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -53,8 +54,17 @@ public class PlanExerciseListFragment extends ListFragment {
 
         Plan plan = (Plan) this.getArguments().getSerializable(PLAN_ARG);
         ArrayList<Exercise> exercises = plan.getExercises();
-
+        TextView noExercisesTv = getActivity().findViewById(R.id.no_plans_tv);
         if (exercises != null) {
+            if (!exercises.isEmpty()) {
+                // Hide the No plans message
+                noExercisesTv.setVisibility(View.GONE);
+            } else {
+                // Show the No plans message and hide start button
+                noExercisesTv.setText("This plan does not have any exercises.");
+                noExercisesTv.setVisibility(View.VISIBLE);
+                v.findViewById(R.id.start_btn).setVisibility(View.GONE);
+            }
             setListAdapter(new PlanExercisesListAdapter(getActivity(), exercises));
         }
 

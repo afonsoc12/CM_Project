@@ -54,7 +54,7 @@
         android:gravity="center"
         android:paddingTop="30dp"
         android:paddingBottom="30dp"
-        android:text="You do not have any plans assigned."
+        android:text="text"
         android:textAlignment="gravity"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

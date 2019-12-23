@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -41,14 +42,15 @@ public class PlansListFragment extends ListFragment {
         View v = inflater.inflate(R.layout.fragment_list_plans, container, false);
 
         ArrayList<Plan> plans = (ArrayList<Plan>) this.getArguments().getSerializable(PLANS_ARG);
-
+        TextView noPlansTv = getActivity().findViewById(R.id.no_plans_tv);
         if (plans != null) {
             if (!plans.isEmpty()) {
                 // Hide the No plans message
-                getActivity().findViewById(R.id.no_plans_tv).setVisibility(View.GONE);
+                noPlansTv.setVisibility(View.GONE);
             } else {
                 // Show the No plans message
-                getActivity().findViewById(R.id.no_plans_tv).setVisibility(View.VISIBLE);
+                noPlansTv.setText("You do not have any plans assigned.");
+                noPlansTv.setVisibility(View.VISIBLE);
             }
             setListAdapter(new PlanListAdapter(getActivity(), plans));
         }
