@@ -43,6 +43,13 @@ public class PlansListFragment extends ListFragment {
         ArrayList<Plan> plans = (ArrayList<Plan>) this.getArguments().getSerializable(PLANS_ARG);
 
         if (plans != null) {
+            if (!plans.isEmpty()) {
+                // Hide the No plans message
+                getActivity().findViewById(R.id.no_plans_tv).setVisibility(View.GONE);
+            } else {
+                // Show the No plans message
+                getActivity().findViewById(R.id.no_plans_tv).setVisibility(View.VISIBLE);
+            }
             setListAdapter(new PlanListAdapter(getActivity(), plans));
         }
 
