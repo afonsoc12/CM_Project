@@ -46,6 +46,9 @@ public class PlansListFragment extends ListFragment {
             if (!plans.isEmpty()) {
                 // Hide the No plans message
                 getActivity().findViewById(R.id.no_plans_tv).setVisibility(View.GONE);
+            } else {
+                // Show the No plans message
+                getActivity().findViewById(R.id.no_plans_tv).setVisibility(View.VISIBLE);
             }
             setListAdapter(new PlanListAdapter(getActivity(), plans));
         }

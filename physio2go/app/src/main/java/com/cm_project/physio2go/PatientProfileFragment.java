@@ -33,6 +33,9 @@ public class PatientProfileFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View v = inflater.inflate(R.layout.fragment_patient_profile, container, false);
 
+        // Hide the No plans message
+        getActivity().findViewById(R.id.no_plans_tv).setVisibility(View.GONE);
+
         Patient patient = (Patient) getArguments().getSerializable(PATIENT_ARG);
         Doctor doctor = patient.getDoctor();
 
