@@ -211,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
         // Define a new toolbar for this activity
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setLogo(R.drawable.logo_toolbar);
+        toolbar.setOverflowIcon(getResources().getDrawable(R.drawable.ic_menu_black_24dp, null));
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
 

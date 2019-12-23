@@ -10,7 +10,6 @@
 
     <item
         android:id="@+id/my_profile_btn"
-        android:icon="@drawable/ic_menu_black_24dp"
         android:title="My Profile"
         app:showAsAction="never" />
     <item
