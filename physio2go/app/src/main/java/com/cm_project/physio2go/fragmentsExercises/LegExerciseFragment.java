@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -133,7 +134,6 @@ public class LegExerciseFragment extends Fragment implements SensorEventListener
             setProgressValueMoving(z);
         }
 
-
         if (count % 2 == 0 && reps > reps_Done) {
             if (x > -2 && x < 2 && y < -8 && z > -2 && z < 2) {
 
@@ -150,6 +150,13 @@ public class LegExerciseFragment extends Fragment implements SensorEventListener
                 v.vibrate(300);
                 count++;
                 reps_Done++;
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.vibrate(1000);
+                    }
+                }, 4000);
                 setProgressValue(reps_Done);
             }
         }
@@ -211,10 +218,8 @@ public class LegExerciseFragment extends Fragment implements SensorEventListener
         });
         thread.start();
     }
-
     // todo mudar nome
     public interface onMessageReadListenner {
         public void onMessageRead(Boolean message);
     }
-
 }
