@@ -164,20 +164,25 @@ public class LegExerciseFragment extends Fragment implements SensorEventListener
         if (reps == reps_Done && count != 0) {
 
             Context context = getContext().getApplicationContext();
-            CharSequence text = "Exercicio terminado";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
             count = 0;
-            next_btn.setVisibility(View.VISIBLE);
-            next_btn.setOnClickListener(new View.OnClickListener() {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
                 @Override
-                public void onClick(View v) {
+                public void run() {
+                    next_btn.setVisibility(View.VISIBLE);
+                    CharSequence text = "Exercicio terminado";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                    next_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                    onMessageReadListenner.onMessageRead(true);
+                            onMessageReadListenner.onMessageRead(true);
+                        }
+                    });
                 }
-            });
+            }, 4000);
         }
 
     }
