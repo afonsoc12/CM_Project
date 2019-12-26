@@ -21,11 +21,11 @@ public class ServerDatabaseDriver implements Runnable {
     private final String EXERCISES = "exercises";
     private final String PLAN_EXERCISES = "plan_exercises";
     private Connection conn;
-    private String host = "acosta-server.ddns.net";
-    private String db = "physio_db";
+    private String host = "157.245.36.217"; //"acosta-server.ddns.net"; -> Pi's DNS
+    private String db = "physio2go";
     private int port = 5432;
-    private String user = "dev_db";
-    private String pass = "123dev321";
+    private String user = "app_user";
+    private String pass = "123user321";
     private String url = "jdbc:postgresql://%s:%d/%s";
 
     public ServerDatabaseDriver() {

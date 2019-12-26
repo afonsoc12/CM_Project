@@ -136,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.logout_btn: // Removes login from sharedprefs and prompts login activity
                 deleteLoggedInUsername();
+                local.deleteTmpPlanIncrements();
+                local.delete(); // Deletes all from local db
                 Intent loginAgain = new Intent(getBaseContext(), LoginActivity.class);
                 startActivityForResult(loginAgain, REQ_LOGIN);
                 break;
