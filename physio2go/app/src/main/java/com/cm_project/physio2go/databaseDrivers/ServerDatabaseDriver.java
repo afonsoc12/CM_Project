@@ -7,6 +7,7 @@ import com.cm_project.physio2go.classes.Exercise;
 import com.cm_project.physio2go.classes.Patient;
 import com.cm_project.physio2go.classes.Plan;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -106,19 +107,19 @@ public class ServerDatabaseDriver implements Runnable {
         return resultSet;
     }
 
-    /**
-     * Performs UPDATE or INSERT SQL queries inside asynchronous tasks.
-     * @param query
-     */
-    private void updateQuery(String query) {
-        this.conectar();
+    public static String encryptSHA(String password) {
+
+        byte[] inputData = password.getBytes();
+        byte[] outputData = new byte[0];
+
         try {
-            this.conn.createStatement().executeUpdate(query);
-        } catch (SQLException e) {
+            outputData = sha.encryptSHA_256(inputData, "SHA-256");
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-        this.disconectar();
+        BigInteger shaData = new BigInteger(1, outputData);
+        String shaEncrypted = shaData.toString();
+        return shaEncrypted;
     }
 
     /**
@@ -253,16 +254,19 @@ public class ServerDatabaseDriver implements Runnable {
     }
 
     /**
-     * Inserts a patient into the database, when the register finishes.
+     * Performs UPDATE or INSERT SQL queries inside asynchronous tasks.
      *
-     * @param newPatient
+     * @param query
      */
-    public void insertNewPatient(Patient newPatient) {
-        String query = String.format("INSERT INTO %s (username,id_doctor,password,name,surname,dob,address,height,weight,condition) VALUES " +
-                        "('%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s');", PATIENTS, newPatient.getUsername(), newPatient.getDoctor().getUsername(), newPatient.getPassword(),
-                newPatient.getName(), newPatient.getSurname(), newPatient.getDob(), newPatient.getAddress(), newPatient.getHeight(), newPatient.getWeight(), newPatient.getCondition());
+    private void updateQuery(String query) {
+        this.conectar();
+        try {
+            this.conn.createStatement().executeUpdate(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
-        updateQuery(query);
+        this.disconectar();
     }
 
     /**
@@ -306,52 +310,17 @@ public class ServerDatabaseDriver implements Runnable {
     }
 
     /**
-     * Retrieves all plans for the specified user.
-     * @param username
-     * @param type
-     * @return
+     * Inserts a patient into the database, when the register finishes.
+     *
+     * @param newPatient
      */
-    public ArrayList<Plan> getPlansOfUser(String username, String type) {
-        ArrayList<Plan> plans = new ArrayList<>();
-        ArrayList<Exercise> exercises = new ArrayList<>();
-        Plan thisPlan;
+    public void insertNewPatient(Patient newPatient) {
+        String passwordEncrypt = encryptSHA(newPatient.getPassword());
+        String query = String.format("INSERT INTO %s (username,id_doctor,password,name,surname,dob,address,height,weight,condition) VALUES " +
+                        "('%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s');", PATIENTS, newPatient.getUsername(), newPatient.getDoctor().getUsername(), passwordEncrypt,
+                newPatient.getName(), newPatient.getSurname(), newPatient.getDob(), newPatient.getAddress(), newPatient.getHeight(), newPatient.getWeight(), newPatient.getCondition());
 
-        String query = String.format("select * from %s where id_patient = '%s'", PLANS, username);
-
-        ResultSet resultSet;
-        // To avoid AsyncTask inside AsyncTask
-        if (type.equals("async")) {
-            resultSet = this.selectAsyncQuery(query);
-        } else {
-            resultSet = this.selectQuery(query);
-        }
-
-        int id_plan;
-        try {
-            while (resultSet.next()) {
-                thisPlan = new Plan();
-                id_plan = resultSet.getInt("id");
-                exercises = getExercisesOfPlan(id_plan, type);
-
-                thisPlan.setId(id_plan);
-                thisPlan.setId_patient(resultSet.getString("id_patient"));
-                thisPlan.setId_doctor(resultSet.getString("id_doctor"));
-                thisPlan.setDate_start(resultSet.getString("date_start"));
-                thisPlan.setDate_end(resultSet.getString("date_end"));
-                thisPlan.setTotal_reps(resultSet.getInt("total_reps"));
-                thisPlan.setReps_done(resultSet.getInt("reps_done"));
-                thisPlan.setDescription(resultSet.getString("description"));
-                thisPlan.setPlan_name(resultSet.getString("plan_name"));
-                thisPlan.setExercises(exercises);
-
-                plans.add(thisPlan);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return plans;
+        updateQuery(query);
     }
 
     /**
@@ -480,7 +449,58 @@ public class ServerDatabaseDriver implements Runnable {
     }
 
     /**
+     * Retrieves all plans for the specified user.
+     *
+     * @param username
+     * @param type
+     * @return
+     */
+    public ArrayList<Plan> getPlansOfUser(String username, String type) {
+        ArrayList<Plan> plans = new ArrayList<>();
+        ArrayList<Exercise> exercises = new ArrayList<>();
+        Plan thisPlan;
+
+        String query = String.format("select * from %s where id_patient = '%s'", PLANS, username);
+
+        ResultSet resultSet;
+        // To avoid AsyncTask inside AsyncTask
+        if (type.equals("async")) {
+            resultSet = this.selectAsyncQuery(query);
+        } else {
+            resultSet = this.selectQuery(query);
+        }
+
+        int id_plan;
+        try {
+            while (resultSet.next()) {
+                thisPlan = new Plan();
+                id_plan = resultSet.getInt("id");
+                exercises = getExercisesOfPlan(id_plan, type);
+
+                thisPlan.setId(id_plan);
+                thisPlan.setId_patient(resultSet.getString("id_patient"));
+                thisPlan.setId_doctor(resultSet.getString("id_doctor"));
+                thisPlan.setDate_start(resultSet.getString("date_start"));
+                thisPlan.setDate_end(resultSet.getString("date_end"));
+                thisPlan.setTotal_reps(resultSet.getInt("total_reps"));
+                thisPlan.setReps_done(resultSet.getInt("reps_done"));
+                thisPlan.setDescription(resultSet.getString("description"));
+                thisPlan.setPlan_name(resultSet.getString("plan_name"));
+                thisPlan.setExercises(exercises);
+
+                plans.add(thisPlan);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return plans;
+    }
+
+    /**
      * Migrates the increments to the server, that were previously saved offline.
+     *
      * @param planIDs
      * @return
      */
@@ -495,3 +515,4 @@ public class ServerDatabaseDriver implements Runnable {
         return status;
     }
 }
+

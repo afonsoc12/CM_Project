@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.cm_project.physio2go.AsyncTasks.LoginAsyncTask;
 import com.cm_project.physio2go.classes.Patient;
+import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -51,8 +52,10 @@ public class LoginActivity extends AppCompatActivity {
                 String username = ((EditText) findViewById(R.id.username_et)).getText().toString();
                 String password = ((EditText) findViewById(R.id.password_et)).getText().toString();
 
+                String passwordEncrypt = ServerDatabaseDriver.encryptSHA(password);
+
                 View view = findViewById(R.id.login_activity);
-                new LoginAsyncTask(LoginActivity.this, view).execute(username, password);
+                new LoginAsyncTask(LoginActivity.this, view).execute(username, passwordEncrypt);
             }
         });
 
