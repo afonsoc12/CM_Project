@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,15 +32,15 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
     int reps;
     String body_side;
     Button next_btn;
-    int reps_Done;
+    TextView finish_tv;
+    TextView doneReps_tv;
+    int repsDone;
     Vibrator v;
-    onMessageReadListenner onMessageReadListenner;
+    armExerciseListenner armExerciseListenner;
     private SensorManager sensorManager;
     private Sensor acelerometro;
     private int count;
-    private ProgressBar simpleProgressBar;
     private ProgressBar movingProgresBar;
-    private int progress;
 
 
     @Override
@@ -47,7 +48,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         super.onAttach(context);
         Activity activity = (Activity) context;
         try {
-            onMessageReadListenner = (onMessageReadListenner) activity;
+            armExerciseListenner = (armExerciseListenner) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + "must override onMessageRead...");
         }
@@ -70,10 +71,13 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.fragment_arm_exercise, container, false);
+        View view = inflater.inflate(R.layout.fragment_arm_leg_exercise, container, false);
 
         next_btn = (Button) getActivity().findViewById(R.id.next_ex_btn);
         next_btn.setVisibility(View.INVISIBLE);
+
+        finish_tv = (TextView) getActivity().findViewById(R.id.finish_ex_tv);
+        finish_tv.setVisibility(View.INVISIBLE);
 
         //Instancia da classe SensorManager
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
@@ -83,28 +87,30 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
 
         Exercise exercise = (Exercise) this.getArguments().getSerializable(CHOSEN_EXERCISE_ARG);
 
-        // todo just to try
-        TextView tv1 = v.findViewById(R.id.tv_exname);
-        TextView tv2 = v.findViewById(R.id.tv_bodyside);
-        TextView tv3 = v.findViewById(R.id.tv_exdesc);
+        TextView exerciseName_tv = view.findViewById(R.id.exercise_name_tv);
+        TextView exerciseSide_tv = view.findViewById(R.id.exercise_side_tv);
+        TextView exerciseReps_tv = view.findViewById(R.id.exercise_repetitions_tv);
+        ImageView exercise_img = view.findViewById(R.id.exercise_img_iv);
 
         reps = exercise.getRepetitions();
         body_side = exercise.getBody_side();
 
-        tv1.setText(exercise.getName());
-        tv2.setText(exercise.getBody_side());
-        tv3.setText(exercise.getDescription());
+        exerciseName_tv.setText(exercise.getName());
+        exerciseSide_tv.setText(String.format("Side: %s", body_side));
+        exerciseReps_tv.setText(String.format("Repetitions: %d", reps));
+        exercise_img.setImageResource(R.drawable.ic_arm);
 
+        TextView totalReps_tv = view.findViewById(R.id.total_reps_tv);
+        totalReps_tv.setText(String.format("/%d", reps));
 
-        simpleProgressBar = (ProgressBar) v.findViewById(R.id.progressBar);
-        simpleProgressBar.setMax(reps); // get maximum value of the progress bar
-        setProgressValue(reps_Done);
+        doneReps_tv = view.findViewById(R.id.reps_done_tv);
+        doneReps_tv.setText(Integer.toString(repsDone));
 
-        movingProgresBar = (ProgressBar) v.findViewById(R.id.progressBar3);
+        movingProgresBar = (ProgressBar) view.findViewById(R.id.doing_ex_pb);
         movingProgresBar.setMax(10); // get maximum value of the progress bar
         setProgressValueMoving(0);
 
-        return v;
+        return view;
     }
 
     @Override
@@ -141,7 +147,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
             }
         }
 
-        if (count % 2 == 0 && reps > reps_Done) {
+        if (count % 2 == 0 && reps > repsDone) {
             if (body_side.equals("R")) {
 
                 if (x < -8 && y > -2 && y < 2 && z > -2 && z < 2) {
@@ -161,31 +167,27 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
             }
         }
 
-        if (count % 2 != 0 && reps > reps_Done) {
+        if (count % 2 != 0 && reps > repsDone) {
             if (z > 8 && y > -2 && y < 2 && x > -2 && x < 2) {
                 v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(300);
                 count++;
-                reps_Done++;
-                setProgressValue(reps_Done);
+                repsDone++;
+                doneReps_tv.setText(Integer.toString(repsDone));
             }
         }
 
-        if (reps == reps_Done && count != 0) {
 
-            Context context = getContext().getApplicationContext();
-            CharSequence text = "You finished this exercise!";
-            int duration = Toast.LENGTH_SHORT;
+        if (reps == repsDone && count != 0) {
 
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
             count = 0;
+            finish_tv.setVisibility(View.VISIBLE);
             next_btn.setVisibility(View.VISIBLE);
             next_btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
-                    onMessageReadListenner.onMessageRead(true);
+                    armExerciseListenner.finishExercise(true);
                 }
             });
         }
@@ -210,26 +212,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         thread.start();
     }
 
-    private void setProgressValue(final int progress) {
-
-        // set the progress
-        simpleProgressBar.setProgress(progress);
-        // thread is used to change the progress value
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-    }
-
-    // todo mudar nome
-    public interface onMessageReadListenner {
-        public void onMessageRead(Boolean message);
+    public interface armExerciseListenner {
+        public void finishExercise(Boolean message);
     }
 }

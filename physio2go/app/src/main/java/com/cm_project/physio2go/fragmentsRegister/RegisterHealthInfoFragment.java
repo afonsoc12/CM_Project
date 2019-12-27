@@ -59,16 +59,13 @@ public class RegisterHealthInfoFragment extends Fragment {
         spinPb.setVisibility(View.GONE);
 
         // populate radio group with the names of the doctors
-        Typeface typeface = ResourcesCompat.getFont(getActivity(), R.font.helvetica);
         RadioGroup radioGroup = view.findViewById(R.id.radiogroup);
         ArrayList<Doctor> doctors = server.listOfDoctors();
 
         for (Doctor doctor : doctors) {
             RadioButton radioButton = new RadioButton(getActivity());
             radioButton.setText(doctor.getName());
-            radioButton.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
             radioButton.setTextColor(getResources().getColor(R.color.gray));
-            radioButton.setTypeface(typeface);
             radioGroup.addView(radioButton);
         }
 

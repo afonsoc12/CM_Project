@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -24,7 +25,7 @@ import com.cm_project.physio2go.fragmentsExercises.LegExerciseFragment;
 
 import java.util.ArrayList;
 
-public class DoExerciseActivity extends AppCompatActivity implements ArmExerciseFragment.onMessageReadListenner, LegExerciseFragment.onMessageReadListenner, BreathingExerciseFragment.onMessageReadListenner {
+public class DoExerciseActivity extends AppCompatActivity implements ArmExerciseFragment.armExerciseListenner, LegExerciseFragment.legExerciseListenner, BreathingExerciseFragment.breathingExerciseListenner {
 
     private final String DIALOG_TAG = "close_dialog";
     private Plan plan;
@@ -50,8 +51,15 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        TextView planName_tv = findViewById(R.id.plan_name_tv);
+        planName_tv.setText(plan.getPlan_name());
+
         Button actionBtn = findViewById(R.id.next_ex_btn);
         actionBtn.setText("Next");
+
+        TextView finish_tv = findViewById(R.id.finish_ex_tv);
+        finish_tv.setText("You finished this exercise!");
+
         showLayouts();
     }
 
@@ -62,6 +70,9 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
         if (positionExercise == numberExercise - 1) { // Case last exercise
             Button actionBtn = findViewById(R.id.next_ex_btn);
             actionBtn.setText("Finish");
+
+            TextView finish_tv = findViewById(R.id.finish_ex_tv);
+            finish_tv.setText("You finished this plan!");
         }
 
         if (positionExercise < numberExercise) { // Case not all exercises executed
@@ -155,11 +166,12 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
     }
 
     @Override
-    public void onMessageRead(Boolean message) {
+    public void finishExercise(Boolean message) {
         positionExercise++;
         showLayouts();
         System.out.println(message);
         System.out.println(positionExercise);
     }
+
 }
 

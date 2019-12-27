@@ -109,7 +109,7 @@ public class RegisterBasicInfoFragment extends Fragment {
                     try {
                         dateParsed = LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("[dd/MM/yyyy][dd-MM-yyyy][ddMMyyyy]")).toString();
                     } catch (Exception e) {
-                        msgDateOfBirthTv.setText("Date is not valid. Use the format dd-mm-yyyy.");
+                        msgDateOfBirthTv.setText("Date is not valid. Use the format dd/mm/yyyy.");
                         msgDateOfBirthTv.setVisibility(View.VISIBLE);
                         dateOfBirthOK = false;
                     }
