@@ -28,16 +28,16 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
 
     private final static String CHOSEN_EXERCISE_ARG = "chosen_ex";
 
-    int reps;
-    String body_side;
-    Button next_btn;
-    TextView finish_tv;
-    TextView doneReps_tv;
-    int repsDone;
-    Vibrator v;
-    armExerciseListenner armExerciseListenner;
+    private int reps;
+    private String body_side;
+    private Button next_btn;
+    private TextView finish_tv;
+    private TextView doneReps_tv;
+    private int repsDone;
+    private Vibrator v;
+    private armExerciseListenner armExerciseListenner;
     private SensorManager sensorManager;
-    private Sensor acelerometro;
+    private Sensor accelerometer;
     private int count;
     private ProgressBar movingProgresBar;
 
@@ -82,7 +82,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
 
         //Definicao do tipo de sensor que vai ser utilizado
-        acelerometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         Exercise exercise = (Exercise) this.getArguments().getSerializable(CHOSEN_EXERCISE_ARG);
 
@@ -116,7 +116,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
     public void onResume() {
         super.onResume();
         //Parameto Sensor_delay_normal define a velocidade da captura das informações
-        sensorManager.registerListener(this, acelerometro, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
     }
 

@@ -2,7 +2,6 @@ package com.cm_project.physio2go.AsyncTasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -26,7 +25,10 @@ import com.cm_project.physio2go.R;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * This AsyncTask refreshes the local database, updates the UI and sends to the server the locally
+ * stored plans, after the refresh button is pressed.
+ */
 public class RefreshAsyncTask extends AsyncTask<Object, Void, Void> {
 
     private Context context;
@@ -39,7 +41,7 @@ public class RefreshAsyncTask extends AsyncTask<Object, Void, Void> {
 
     @Override
     protected Void doInBackground(Object... obj) {
-        Log.v("~~~~~~~~~~~~", "doInBackground");
+
         Patient patient = (Patient) obj[0];
         LocalDatabase local = new LocalDatabase(context);
         ArrayList<Integer> planIDs = local.getOfflinePlans();
@@ -57,7 +59,7 @@ public class RefreshAsyncTask extends AsyncTask<Object, Void, Void> {
 
         // Delete files from localDatabase
         local.delete();
-        Log.v("~~~~~~~~~~~~", "SAIU doInBackground");
+
         // Updates plans and exercises
         local.updatePlans(plansFromServer);
         local.updatePatientDetails(patient);
@@ -175,5 +177,3 @@ public class RefreshAsyncTask extends AsyncTask<Object, Void, Void> {
         spinRegister.setVisibility(View.GONE);
     }
 }
-
-

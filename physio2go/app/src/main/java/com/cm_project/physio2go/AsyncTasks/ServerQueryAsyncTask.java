@@ -6,6 +6,11 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 
+/**
+ * This Asynctask executes a SELECT query, asynchronously.
+ * It is invoked only from the main thread and not inside other Asynctasks, otherwise this could lead
+ * to errors.
+ */
 public class ServerQueryAsyncTask extends AsyncTask<Integer, Void, ResultSet> {
 
     public final static int SELECT_QUERY = 1;
@@ -15,7 +20,6 @@ public class ServerQueryAsyncTask extends AsyncTask<Integer, Void, ResultSet> {
     private String url;
     private String user;
     private String pass;
-
 
     public ServerQueryAsyncTask(String[] credentials, String query) {
         this.url = credentials[0];
@@ -35,12 +39,12 @@ public class ServerQueryAsyncTask extends AsyncTask<Integer, Void, ResultSet> {
                     connect();
                     resultSet = connection.prepareStatement(query).executeQuery();
                     this.connection.close();
-                } catch (Exception e) {
+                } catch (Exception ignored) {
 
                 } finally {
                     try {
                         connection.close();
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
 
                     }
                 }
@@ -55,7 +59,7 @@ public class ServerQueryAsyncTask extends AsyncTask<Integer, Void, ResultSet> {
                 } finally {
                     try {
                         connection.close();
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
 
                     }
                 }

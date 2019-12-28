@@ -11,7 +11,9 @@ import com.cm_project.physio2go.Objects.Patient;
 import com.cm_project.physio2go.R;
 import com.cm_project.physio2go.Register.RegisterActivity;
 
-
+/**
+ * AsyncTask that handles the signup operations
+ */
 public class RegisterAsyncTask extends AsyncTask<Object, Void, Void> {
 
     private Patient patient;
@@ -55,5 +57,3 @@ public class RegisterAsyncTask extends AsyncTask<Object, Void, Void> {
         spinRegister.setVisibility(View.GONE);
     }
 }
-
-

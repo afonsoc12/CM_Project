@@ -13,17 +13,17 @@ import com.cm_project.physio2go.Login.LoginActivity;
 import com.cm_project.physio2go.MainActivity.MainActivity;
 import com.cm_project.physio2go.R;
 
-
+/**
+ * This AsyncTask is used to perform login routines, and not block the user interface. It checks if
+ * the login is correct and if afirmative, downloads a copy of the database to the local SQLite db,
+ */
 public class LoginAsyncTask extends AsyncTask<String, Void, Integer> {
 
     private String username;
-    private String password;
     private Context context;
     private View view;
 
     public LoginAsyncTask(Context context, View view) {
-        this.username = username;
-        this.password = password;
         this.context = context;
         this.view = view;
     }
@@ -32,7 +32,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, Integer> {
     protected Integer doInBackground(String... string) {
         Integer loginCode;
         this.username = string[0];
-        this.password = string[1];
+        String password = string[1];
 
         ServerDatabaseDriver db = new ServerDatabaseDriver();
         loginCode = db.checkLoginCombination(username, password);
@@ -101,5 +101,3 @@ public class LoginAsyncTask extends AsyncTask<String, Void, Integer> {
         spinLogin.setVisibility(View.GONE);
     }
 }
-
-
