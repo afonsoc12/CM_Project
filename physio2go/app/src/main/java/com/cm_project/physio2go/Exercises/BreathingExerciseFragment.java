@@ -1,4 +1,4 @@
-package com.cm_project.physio2go.fragmentsExercises;
+package com.cm_project.physio2go.Exercises;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,13 +10,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.cm_project.physio2go.Objects.Exercise;
 import com.cm_project.physio2go.R;
-import com.cm_project.physio2go.classes.Exercise;
 import com.github.florent37.viewanimator.ViewAnimator;
 
 public class BreathingExerciseFragment extends Fragment {
@@ -49,10 +48,10 @@ public class BreathingExerciseFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_breathe_exercise, container, false);
 
-        next_btn = (Button) getActivity().findViewById(R.id.next_ex_btn);
+        next_btn = getActivity().findViewById(R.id.next_ex_btn);
         next_btn.setVisibility(View.INVISIBLE);
 
-        finish_tv = (TextView) getActivity().findViewById(R.id.finish_ex_tv);
+        finish_tv = getActivity().findViewById(R.id.finish_ex_tv);
         finish_tv.setVisibility(View.INVISIBLE);
 
         // Get exercise
@@ -148,6 +147,6 @@ public class BreathingExerciseFragment extends Fragment {
     }
 
     public interface breathingExerciseListenner {
-        public void finishExercise(Boolean message);
+        void finishExercise(Boolean message);
     }
 }

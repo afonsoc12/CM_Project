@@ -1,4 +1,4 @@
-package com.cm_project.physio2go;
+package com.cm_project.physio2go.Exercises;
 
 import android.app.Activity;
 import android.app.AlertDialog;

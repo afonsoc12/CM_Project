@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.cm_project.physio2go.MainActivity.MainActivity;
+
 public class SplashActivity extends AppCompatActivity {
 
     @Override

@@ -1,4 +1,4 @@
-package com.cm_project.physio2go;
+package com.cm_project.physio2go.MainActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,11 +21,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.cm_project.physio2go.AsyncTasks.RefreshAsyncTask;
-import com.cm_project.physio2go.classes.Doctor;
-import com.cm_project.physio2go.classes.Patient;
-import com.cm_project.physio2go.classes.Plan;
-import com.cm_project.physio2go.databaseDrivers.LocalDatabase;
-import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
+import com.cm_project.physio2go.DatabaseDrivers.LocalDatabase;
+import com.cm_project.physio2go.DatabaseDrivers.ServerDatabaseDriver;
+import com.cm_project.physio2go.Login.LoginActivity;
+import com.cm_project.physio2go.Objects.Doctor;
+import com.cm_project.physio2go.Objects.Patient;
+import com.cm_project.physio2go.Objects.Plan;
+import com.cm_project.physio2go.R;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;

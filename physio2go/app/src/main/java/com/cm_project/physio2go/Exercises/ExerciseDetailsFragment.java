@@ -1,4 +1,4 @@
-package com.cm_project.physio2go;
+package com.cm_project.physio2go.Exercises;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,7 +9,9 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import com.cm_project.physio2go.classes.Exercise;
+import com.cm_project.physio2go.MainActivity.PlanExerciseListFragment;
+import com.cm_project.physio2go.Objects.Exercise;
+import com.cm_project.physio2go.R;
 
 public class ExerciseDetailsFragment extends Fragment {
 

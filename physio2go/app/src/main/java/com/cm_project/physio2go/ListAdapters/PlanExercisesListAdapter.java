@@ -1,4 +1,4 @@
-package com.cm_project.physio2go;
+package com.cm_project.physio2go.ListAdapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,7 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.cm_project.physio2go.classes.Exercise;
+import com.cm_project.physio2go.Objects.Exercise;
+import com.cm_project.physio2go.R;
 
 import java.util.ArrayList;
 

@@ -6,10 +6,10 @@ import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import com.cm_project.physio2go.DatabaseDrivers.ServerDatabaseDriver;
+import com.cm_project.physio2go.Objects.Patient;
 import com.cm_project.physio2go.R;
-import com.cm_project.physio2go.RegisterActivity;
-import com.cm_project.physio2go.classes.Patient;
-import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
+import com.cm_project.physio2go.Register.RegisterActivity;
 
 
 public class RegisterAsyncTask extends AsyncTask<Object, Void, Void> {

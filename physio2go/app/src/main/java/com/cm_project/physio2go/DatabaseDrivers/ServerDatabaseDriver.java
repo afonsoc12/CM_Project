@@ -1,13 +1,12 @@
-package com.cm_project.physio2go.databaseDrivers;
+package com.cm_project.physio2go.DatabaseDrivers;
 
 import com.cm_project.physio2go.AsyncTasks.ServerQueryAsyncTask;
-import com.cm_project.physio2go.LoginActivity;
-import com.cm_project.physio2go.classes.Doctor;
-import com.cm_project.physio2go.classes.Exercise;
-import com.cm_project.physio2go.classes.Patient;
-import com.cm_project.physio2go.classes.Plan;
+import com.cm_project.physio2go.Login.LoginActivity;
+import com.cm_project.physio2go.Objects.Doctor;
+import com.cm_project.physio2go.Objects.Exercise;
+import com.cm_project.physio2go.Objects.Patient;
+import com.cm_project.physio2go.Objects.Plan;
 
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -107,20 +106,7 @@ public class ServerDatabaseDriver implements Runnable {
         return resultSet;
     }
 
-    public static String encryptSHA(String password) {
 
-        byte[] inputData = password.getBytes();
-        byte[] outputData = new byte[0];
-
-        try {
-            outputData = sha.encryptSHA_256(inputData, "SHA-256");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        BigInteger shaData = new BigInteger(1, outputData);
-        String shaEncrypted = shaData.toString();
-        return shaEncrypted;
-    }
 
     /**
      * Performs UPDATE or INSERT SQL queries asynchronously, using an AsyncTask.
@@ -315,7 +301,7 @@ public class ServerDatabaseDriver implements Runnable {
      * @param newPatient
      */
     public void insertNewPatient(Patient newPatient) {
-        String passwordEncrypt = encryptSHA(newPatient.getPassword());
+        String passwordEncrypt = EncriptionUtils.encryptSHA(newPatient.getPassword());
         String query = String.format("INSERT INTO %s (username,id_doctor,password,name,surname,dob,address,height,weight,condition) VALUES " +
                         "('%s','%s','%s','%s','%s','%s','%s',%s,%s,'%s');", PATIENTS, newPatient.getUsername(), newPatient.getDoctor().getUsername(), passwordEncrypt,
                 newPatient.getName(), newPatient.getSurname(), newPatient.getDob(), newPatient.getAddress(), newPatient.getHeight(), newPatient.getWeight(), newPatient.getCondition());

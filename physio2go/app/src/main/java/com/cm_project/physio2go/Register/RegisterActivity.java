@@ -1,15 +1,14 @@
-package com.cm_project.physio2go;
+package com.cm_project.physio2go.Register;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.cm_project.physio2go.classes.Doctor;
-import com.cm_project.physio2go.classes.Patient;
-import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
-import com.cm_project.physio2go.fragmentsRegister.RegisterBasicInfoFragment;
-import com.cm_project.physio2go.fragmentsRegister.RegisterHealthInfoFragment;
+import com.cm_project.physio2go.DatabaseDrivers.ServerDatabaseDriver;
+import com.cm_project.physio2go.Objects.Doctor;
+import com.cm_project.physio2go.Objects.Patient;
+import com.cm_project.physio2go.R;
 
 public class RegisterActivity extends AppCompatActivity implements RegisterBasicInfoFragment.RegisterBasicInfoListener, RegisterHealthInfoFragment.RegisterHealthInfoListener {
 

@@ -4,10 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 
-import com.cm_project.physio2go.MainActivity;
-import com.cm_project.physio2go.classes.Plan;
-import com.cm_project.physio2go.databaseDrivers.LocalDatabase;
-import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
+import com.cm_project.physio2go.DatabaseDrivers.LocalDatabase;
+import com.cm_project.physio2go.DatabaseDrivers.ServerDatabaseDriver;
+import com.cm_project.physio2go.MainActivity.MainActivity;
+import com.cm_project.physio2go.Objects.Plan;
 
 
 public class PlanCompletedAsyncTask extends AsyncTask<Object, Void, Void> {

@@ -1,4 +1,4 @@
-package com.cm_project.physio2go.fragmentsRegister;
+package com.cm_project.physio2go.Register;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,8 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import com.cm_project.physio2go.DatabaseDrivers.ServerDatabaseDriver;
 import com.cm_project.physio2go.R;
-import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

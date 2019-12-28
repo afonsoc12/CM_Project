@@ -1,4 +1,4 @@
-package com.cm_project.physio2go.classes;
+package com.cm_project.physio2go.Objects;
 
 import java.io.Serializable;
 import java.util.ArrayList;

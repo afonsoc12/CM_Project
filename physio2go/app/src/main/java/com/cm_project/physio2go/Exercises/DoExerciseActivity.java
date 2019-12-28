@@ -1,4 +1,4 @@
-package com.cm_project.physio2go;
+package com.cm_project.physio2go.Exercises;
 
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -17,11 +17,10 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.cm_project.physio2go.classes.Exercise;
-import com.cm_project.physio2go.classes.Plan;
-import com.cm_project.physio2go.fragmentsExercises.ArmExerciseFragment;
-import com.cm_project.physio2go.fragmentsExercises.BreathingExerciseFragment;
-import com.cm_project.physio2go.fragmentsExercises.LegExerciseFragment;
+import com.cm_project.physio2go.MainActivity.PlanExerciseListFragment;
+import com.cm_project.physio2go.Objects.Exercise;
+import com.cm_project.physio2go.Objects.Plan;
+import com.cm_project.physio2go.R;
 
 import java.util.ArrayList;
 

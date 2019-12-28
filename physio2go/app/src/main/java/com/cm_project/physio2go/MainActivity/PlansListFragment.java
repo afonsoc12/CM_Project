@@ -1,4 +1,4 @@
-package com.cm_project.physio2go;
+package com.cm_project.physio2go.MainActivity;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.ListFragment;
 
-import com.cm_project.physio2go.classes.Plan;
+import com.cm_project.physio2go.ListAdapters.PlanListAdapter;
+import com.cm_project.physio2go.Objects.Plan;
+import com.cm_project.physio2go.R;
 
 import java.util.ArrayList;
 

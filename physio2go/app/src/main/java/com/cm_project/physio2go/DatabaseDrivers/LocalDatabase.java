@@ -1,4 +1,4 @@
-package com.cm_project.physio2go.databaseDrivers;
+package com.cm_project.physio2go.DatabaseDrivers;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,10 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.cm_project.physio2go.classes.Doctor;
-import com.cm_project.physio2go.classes.Exercise;
-import com.cm_project.physio2go.classes.Patient;
-import com.cm_project.physio2go.classes.Plan;
+import com.cm_project.physio2go.Objects.Doctor;
+import com.cm_project.physio2go.Objects.Exercise;
+import com.cm_project.physio2go.Objects.Patient;
+import com.cm_project.physio2go.Objects.Plan;
 
 import java.util.ArrayList;
 

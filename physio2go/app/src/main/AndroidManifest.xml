@@ -15,10 +15,10 @@
         android:roundIcon="@mipmap/p2g_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".DoExerciseActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".Login.LoginActivity" />
+        <activity android:name=".Register.RegisterActivity" />
+        <activity android:name=".Exercises.DoExerciseActivity" />
+        <activity android:name=".MainActivity.MainActivity" />
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">

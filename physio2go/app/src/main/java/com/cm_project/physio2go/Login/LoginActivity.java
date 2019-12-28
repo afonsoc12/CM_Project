@@ -1,4 +1,4 @@
-package com.cm_project.physio2go;
+package com.cm_project.physio2go.Login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.cm_project.physio2go.AsyncTasks.LoginAsyncTask;
-import com.cm_project.physio2go.classes.Patient;
-import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
+import com.cm_project.physio2go.DatabaseDrivers.EncriptionUtils;
+import com.cm_project.physio2go.MainActivity.MainActivity;
+import com.cm_project.physio2go.Objects.Patient;
+import com.cm_project.physio2go.R;
+import com.cm_project.physio2go.Register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -52,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
                 String username = ((EditText) findViewById(R.id.username_et)).getText().toString();
                 String password = ((EditText) findViewById(R.id.password_et)).getText().toString();
 
-                String passwordEncrypt = ServerDatabaseDriver.encryptSHA(password);
+                String passwordEncrypt = EncriptionUtils.encryptSHA(password);
 
                 View view = findViewById(R.id.login_activity);
                 new LoginAsyncTask(LoginActivity.this, view).execute(username, passwordEncrypt);

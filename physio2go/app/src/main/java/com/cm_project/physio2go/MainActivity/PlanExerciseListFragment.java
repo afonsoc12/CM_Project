@@ -1,4 +1,4 @@
-package com.cm_project.physio2go;
+package com.cm_project.physio2go.MainActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,8 +16,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.fragment.app.ListFragment;
 
 import com.cm_project.physio2go.AsyncTasks.PlanCompletedAsyncTask;
-import com.cm_project.physio2go.classes.Exercise;
-import com.cm_project.physio2go.classes.Plan;
+import com.cm_project.physio2go.Exercises.DoExerciseActivity;
+import com.cm_project.physio2go.Exercises.ExerciseDetailsFragment;
+import com.cm_project.physio2go.ListAdapters.PlanExercisesListAdapter;
+import com.cm_project.physio2go.Objects.Exercise;
+import com.cm_project.physio2go.Objects.Plan;
+import com.cm_project.physio2go.R;
 
 import java.util.ArrayList;
 

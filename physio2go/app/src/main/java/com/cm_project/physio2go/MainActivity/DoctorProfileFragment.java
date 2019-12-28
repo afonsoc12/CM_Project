@@ -1,4 +1,4 @@
-package com.cm_project.physio2go;
+package com.cm_project.physio2go.MainActivity;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,7 +8,8 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import com.cm_project.physio2go.classes.Doctor;
+import com.cm_project.physio2go.Objects.Doctor;
+import com.cm_project.physio2go.R;
 
 public class DoctorProfileFragment extends Fragment {
     public static final String DOCTOR_ARG = "patient_tag";

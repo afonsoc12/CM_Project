@@ -8,10 +8,10 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.cm_project.physio2go.LoginActivity;
-import com.cm_project.physio2go.MainActivity;
+import com.cm_project.physio2go.DatabaseDrivers.ServerDatabaseDriver;
+import com.cm_project.physio2go.Login.LoginActivity;
+import com.cm_project.physio2go.MainActivity.MainActivity;
 import com.cm_project.physio2go.R;
-import com.cm_project.physio2go.databaseDrivers.ServerDatabaseDriver;
 
 
 public class LoginAsyncTask extends AsyncTask<String, Void, Integer> {

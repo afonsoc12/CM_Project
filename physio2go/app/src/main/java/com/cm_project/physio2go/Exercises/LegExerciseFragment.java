@@ -1,4 +1,4 @@
-package com.cm_project.physio2go.fragmentsExercises;
+package com.cm_project.physio2go.Exercises;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,55 +17,52 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.cm_project.physio2go.Objects.Exercise;
 import com.cm_project.physio2go.R;
-import com.cm_project.physio2go.classes.Exercise;
 
-public class ArmExerciseFragment extends Fragment implements SensorEventListener {
-
+public class LegExerciseFragment extends Fragment implements SensorEventListener {
     private final static String CHOSEN_EXERCISE_ARG = "chosen_ex";
 
     int reps;
     String body_side;
     Button next_btn;
+    int repsDone;
     TextView finish_tv;
     TextView doneReps_tv;
-    int repsDone;
     Vibrator v;
-    armExerciseListenner armExerciseListenner;
+    legExerciseListenner legExerciseListenner;
     private SensorManager sensorManager;
     private Sensor acelerometro;
     private int count;
     private ProgressBar movingProgresBar;
 
+    public LegExerciseFragment() {
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Activity activity = (Activity) context;
         try {
-            armExerciseListenner = (armExerciseListenner) activity;
+            legExerciseListenner = (legExerciseListenner) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + "must override onMessageRead...");
         }
     }
 
-    public static ArmExerciseFragment newInstance(Exercise exercise) {
+    public static LegExerciseFragment newInstance(Exercise exercise) {
 
         Bundle args = new Bundle();
         args.putSerializable(CHOSEN_EXERCISE_ARG, exercise);
 
-        ArmExerciseFragment fragment = new ArmExerciseFragment();
+        LegExerciseFragment fragment = new LegExerciseFragment();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public ArmExerciseFragment() {
     }
 
     @Nullable
@@ -73,10 +71,10 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_arm_leg_exercise, container, false);
 
-        next_btn = (Button) getActivity().findViewById(R.id.next_ex_btn);
+        next_btn = getActivity().findViewById(R.id.next_ex_btn);
         next_btn.setVisibility(View.INVISIBLE);
 
-        finish_tv = (TextView) getActivity().findViewById(R.id.finish_ex_tv);
+        finish_tv = getActivity().findViewById(R.id.finish_ex_tv);
         finish_tv.setVisibility(View.INVISIBLE);
 
         //Instancia da classe SensorManager
@@ -98,7 +96,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         exerciseName_tv.setText(exercise.getName());
         exerciseSide_tv.setText(String.format("Side: %s", body_side));
         exerciseReps_tv.setText(String.format("Repetitions: %d", reps));
-        exercise_img.setImageResource(R.drawable.ic_arm);
+        exercise_img.setImageResource(R.drawable.ic_leg);
 
         TextView totalReps_tv = view.findViewById(R.id.total_reps_tv);
         totalReps_tv.setText(String.format("/%d", reps));
@@ -106,7 +104,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         doneReps_tv = view.findViewById(R.id.reps_done_tv);
         doneReps_tv.setText(Integer.toString(repsDone));
 
-        movingProgresBar = (ProgressBar) view.findViewById(R.id.doing_ex_pb);
+        movingProgresBar = view.findViewById(R.id.doing_ex_pb);
         movingProgresBar.setMax(10); // get maximum value of the progress bar
         setProgressValueMoving(0);
 
@@ -137,33 +135,17 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         Float y = event.values[1];
         Float z = event.values[2];
 
-        if (body_side.equals("R")) {
-            if (z >= 0 && z <= 10 && x < 0) {
-                setProgressValueMoving(z);
-            }
-        } else {
-            if (z >= 0 && z <= 10 && x > 0) {
-                setProgressValueMoving(z);
-            }
+        if (z >= 0 && z <= 10 && y < 0) {
+            setProgressValueMoving(z);
         }
 
         if (count % 2 == 0 && reps > repsDone) {
-            if (body_side.equals("R")) {
+            if (x > -2 && x < 2 && y < -8 && z > -2 && z < 2) {
 
-                if (x < -8 && y > -2 && y < 2 && z > -2 && z < 2) {
-
-                    // Get instance of Vibrator from current Context
-                    v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-                    v.vibrate(300);
-                    count++;
-                }
-            } else {
-                if (x > 8 && y > -2 && y < 2 && z > -2 && z < 2) {
-                    // Get instance of Vibrator from current Context
-                    v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-                    v.vibrate(300);
-                    count++;
-                }
+                // Get instance of Vibrator from current Context
+                v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                v.vibrate(300);
+                count++;
             }
         }
 
@@ -173,26 +155,39 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
                 v.vibrate(300);
                 count++;
                 repsDone++;
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.vibrate(1000);
+                    }
+                }, 4000);
                 doneReps_tv.setText(Integer.toString(repsDone));
             }
         }
 
-
         if (reps == repsDone && count != 0) {
 
             count = 0;
-            finish_tv.setVisibility(View.VISIBLE);
-            next_btn.setVisibility(View.VISIBLE);
-            next_btn.setOnClickListener(new View.OnClickListener() {
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
                 @Override
-                public void onClick(View v) {
+                public void run() {
+                    finish_tv.setVisibility(View.VISIBLE);
+                    next_btn.setVisibility(View.VISIBLE);
+                    next_btn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                    armExerciseListenner.finishExercise(true);
+                            legExerciseListenner.finishExercise(true);
+                        }
+                    });
                 }
-            });
+            }, 4000);
         }
 
     }
+
 
     private void setProgressValueMoving(float z) {
         // set the progress
@@ -211,8 +206,8 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         });
         thread.start();
     }
-
-    public interface armExerciseListenner {
-        public void finishExercise(Boolean message);
+    // todo mudar nome
+    public interface legExerciseListenner {
+        void finishExercise(Boolean message);
     }
 }
