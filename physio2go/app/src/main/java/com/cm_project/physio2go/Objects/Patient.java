@@ -15,13 +15,7 @@ public class Patient implements Serializable {
     private String condition;
     private Doctor doctor;
 
-    public Patient(String name, String password) {
-        this.username = name;
-        this.password = password;
-    }
-
     public Patient() {
-
     }
 
     public String getUsername() {
@@ -35,7 +29,6 @@ public class Patient implements Serializable {
     public String getPassword() {
         return password;
     }
-
 
     public void setPassword(String password) {
         this.password = password;

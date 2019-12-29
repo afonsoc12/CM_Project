@@ -13,11 +13,11 @@ import com.cm_project.physio2go.Objects.Patient;
 import com.cm_project.physio2go.R;
 
 public class PatientProfileFragment extends Fragment {
+
     public static final String PATIENT_ARG = "patient_tag";
     public static final String PATIENT_PROFILE_FRAGMENT_TAG = "patient_profile_fragment_tag";
 
     public PatientProfileFragment() {
-
     }
 
     public static PatientProfileFragment newInstance(Patient patient) {

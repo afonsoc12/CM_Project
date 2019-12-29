@@ -18,7 +18,6 @@ public class Doctor implements Serializable {
     }
 
     public Doctor() {
-        
     }
 
     public String getUsername() {

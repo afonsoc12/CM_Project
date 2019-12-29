@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -58,14 +57,6 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main_activity, menu);
 
-        ActionBar ab = getSupportActionBar();
-
-        //ab.setHomeAsUpIndicator(R.drawable.ic_action_app);
-
-        //Show the icon - selecting "home" returns a single level
-        //ab.setDisplayHomeAsUpEnabled(true);
-        //ab.setTitle("Example");
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -73,11 +64,7 @@ public class MainActivity extends AppCompatActivity {
 
         Snackbar snackBar = Snackbar
                 .make(v, message, Snackbar.LENGTH_INDEFINITE)
-                .setAction("Dismiss", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                    }
+                .setAction("Dismiss", v1 -> {
                 });
         snackBar.show();
     }
@@ -85,9 +72,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //TODO logout;
-        //deleteLoggedInUsername();
 
         this.loggedInUsername = checkLoggedInUsername();
 
@@ -100,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             local = new LocalDatabase(this);
             boolean isNetAvailable = isNetworkAvilable(this);
             if (isNetAvailable) {
-                updateOffilePlans();
+                updateOfflinePlans();
                 updateLocalDatabase(this.loggedInUsername);
             }
             inflateMainActivity(isNetAvailable);
@@ -108,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles right menu_main_activity options
+     * Handles right menu_main_activity options.
      *
      * @param item
      * @return
@@ -120,12 +104,12 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fm;
         FragmentTransaction ft;
-        Fragment fragment = null;
+        Fragment fragment;
         Fragment repeatedFragment;
 
         switch (id) {
             case R.id.refresh_btn:
-                //TODO refresh routines to update listfragment
+
                 boolean isNetAvailable = isNetworkAvilable(this);
                 if (isNetAvailable) {
                     View view = findViewById(R.id.main_activity);
@@ -192,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                         saveLoggedInUsername(this.loggedInUsername);
                         boolean isNetAvailable = isNetworkAvilable(this);
                         if (isNetAvailable) {
-                            updateOffilePlans();
+                            updateOfflinePlans();
                             updateLocalDatabase(this.loggedInUsername);
                         }
                         inflateMainActivity(isNetAvailable);
@@ -226,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
         Fragment plansFragment = PlansListFragment.newInstance(plansOfUser);
         FragmentTransaction ft = this.getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.fragment_list_placeholder, plansFragment, PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
-        //ft.addToBackStack(PlansListFragment.PLAN_LIST_FRAGMENT_TAG);
         ft.commit();
 
         // If server was not update, show Snackbar
@@ -238,12 +221,12 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Sends the offline plans to the server, if any.
      */
-    private void updateOffilePlans() {
+    private void updateOfflinePlans() {
         local = new LocalDatabase(getApplicationContext());
         ArrayList<Integer> planIDs = local.getOfflinePlans();
 
         if (planIDs != null && planIDs.size() > 0) {
-            ServerDatabaseDriver server = new ServerDatabaseDriver();
+            ServerDatabaseDriver server = new ServerDatabaseDriver(this);
             boolean incrementSuccess = server.incrementOfflinePlans(planIDs);
             if (incrementSuccess) {
                 local.deleteTmpPlanIncrements();
@@ -259,9 +242,9 @@ public class MainActivity extends AppCompatActivity {
     public void updateLocalDatabase(String username) {
         // Persist on local database
         local = new LocalDatabase(getApplicationContext());
-        // todo rever se da para async
+
         // Retrieve data from server
-        ServerDatabaseDriver server = new ServerDatabaseDriver();
+        ServerDatabaseDriver server = new ServerDatabaseDriver(this);
 
         ArrayList<Plan> plansFromServer = server.getPlansOfUser(username, "async");
         Patient patient = server.getPatientDetails(username, "async");
@@ -284,6 +267,12 @@ public class MainActivity extends AppCompatActivity {
         return loggedInUsername;
     }
 
+    /**
+     * Saves the logged in username on SharedPreferences, to avoid login again when application is
+     * launched.
+     *
+     * @param username
+     */
     private void saveLoggedInUsername(String username) {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -291,6 +280,9 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    /**
+     * Deletes the logged in username from SharedPreferences.
+     */
     public void deleteLoggedInUsername() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

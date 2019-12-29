@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.cm_project.physio2go.DatabaseDrivers.ServerDatabaseDriver;
 import com.cm_project.physio2go.Objects.Doctor;
 import com.cm_project.physio2go.Objects.Patient;
 import com.cm_project.physio2go.R;
@@ -19,13 +18,6 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
     private String password;
     private String dateOfBirth;
     private String address;
-    private String condition;
-    private double height;
-    private double weight;
-    private Doctor doctor;
-    private Patient newMember;
-    private ServerDatabaseDriver server;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +49,7 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
     @Override
     public Patient newMemberHealthInfo(String condition, double height, double weight, Doctor doctor) {
 
-        this.condition = condition;
-        this.height = height;
-        this.weight = weight;
-        this.doctor = doctor;
-
-        newMember = new Patient();
+        Patient newMember = new Patient();
         newMember.setName(name);
         newMember.setSurname(surname);
         newMember.setUsername(username);
@@ -76,5 +63,4 @@ public class RegisterActivity extends AppCompatActivity implements RegisterBasic
 
         return newMember;
     }
-
 }

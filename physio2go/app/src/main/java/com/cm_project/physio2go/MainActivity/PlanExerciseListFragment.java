@@ -30,14 +30,9 @@ public class PlanExerciseListFragment extends ListFragment {
     public final static String PLAN_EXERCISE_LIST_FRAGMENT_TAG = "plan_exercise_list_fragment";
     public final static String PLAN_ARG = "planChosen";
     public final static String CHOSEN_EXERCISE_ARG = "exerciseToView";
-    private final static int REQ_DO_EXERCSISE = 1;
-    ArrayList<Exercise> exercises;
-
-    // inicializar btn Start
-    Button start_btn;
+    private final static int REQ_DO_EXERCISE = 1;
 
     public PlanExerciseListFragment() {
-
     }
 
     public static PlanExerciseListFragment newInstance(Plan plan) {
@@ -72,16 +67,13 @@ public class PlanExerciseListFragment extends ListFragment {
             setListAdapter(new PlanExercisesListAdapter(getActivity(), exercises));
         }
 
-        start_btn = v.findViewById(R.id.start_btn);
-        start_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        Button startBtn = v.findViewById(R.id.start_btn);
+        startBtn.setOnClickListener(v1 -> {
 
-                // Start Exercise Activity
-                Intent intentDoExercise = new Intent(getActivity(), DoExerciseActivity.class);
-                intentDoExercise.putExtra(PLAN_ARG, plan);
-                startActivityForResult(intentDoExercise, REQ_DO_EXERCSISE);
-            }
+            // Start Exercise Activity
+            Intent intentDoExercise = new Intent(getActivity(), DoExerciseActivity.class);
+            intentDoExercise.putExtra(PLAN_ARG, plan);
+            startActivityForResult(intentDoExercise, REQ_DO_EXERCISE);
         });
         return v;
     }
@@ -113,17 +105,15 @@ public class PlanExerciseListFragment extends ListFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case REQ_DO_EXERCSISE:
+            case REQ_DO_EXERCISE:
                 if (resultCode == Activity.RESULT_OK) { // Exercise finished successfully
                     View view = getActivity().findViewById(R.id.main_activity);
                     Plan plan = (Plan) data.getSerializableExtra(PlanExerciseListFragment.PLAN_ARG);
                     new PlanCompletedAsyncTask(getContext(), view).execute(plan);
-
+                    Toast.makeText(getContext(), "The current plan session has been finished!", Toast.LENGTH_SHORT).show();
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     // Dont do anything, since the exercise was aborted
                     Toast.makeText(getContext(), "You did no succeed finishing the exercise. Try again soon!", Toast.LENGTH_SHORT).show();
-                } else {
-                    //Toast.makeText(getContext(), "You did no succeed finishing the exercise. Try again soon!", Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:

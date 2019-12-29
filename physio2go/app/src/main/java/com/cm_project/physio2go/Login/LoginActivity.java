@@ -20,7 +20,7 @@ import com.cm_project.physio2go.Register.RegisterActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    final int REQ_SIGNUP = 1;
+    private final int REQ_SIGNUP = 1;
     public final static int LOGIN_OK = 0;
     public final static int LOGIN_USER_NOT_FOUND = 1;
     public final static int LOGIN_WRONG_PASSWORD = 2;
@@ -41,25 +41,19 @@ public class LoginActivity extends AppCompatActivity {
         TextView register = findViewById(R.id.register_btn);
         Button login = findViewById(R.id.login_btn);
 
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent registerIntent = new Intent(getBaseContext(), RegisterActivity.class);
-                startActivityForResult(registerIntent, REQ_SIGNUP);
-            }
+        register.setOnClickListener(v -> {
+            Intent registerIntent = new Intent(getBaseContext(), RegisterActivity.class);
+            startActivityForResult(registerIntent, REQ_SIGNUP);
         });
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String username = ((EditText) findViewById(R.id.username_et)).getText().toString();
-                String password = ((EditText) findViewById(R.id.password_et)).getText().toString();
+        login.setOnClickListener(v -> {
+            String username = ((EditText) findViewById(R.id.username_et)).getText().toString();
+            String password = ((EditText) findViewById(R.id.password_et)).getText().toString();
 
-                String passwordEncrypt = EncriptionUtils.encryptSHA(password);
+            String passwordEncrypt = EncriptionUtils.encryptSHA(password);
 
-                View view = findViewById(R.id.login_activity);
-                new LoginAsyncTask(LoginActivity.this, view).execute(username, passwordEncrypt);
-            }
+            View view = findViewById(R.id.login_activity);
+            new LoginAsyncTask(LoginActivity.this, view).execute(username, passwordEncrypt);
         });
 
         // Disable default Progress Bar
@@ -67,9 +61,8 @@ public class LoginActivity extends AppCompatActivity {
         spinLogin.setVisibility(View.GONE);
     }
 
-
     /**
-     * Runs when signup acitvity is concluded
+     * Runs when signup acitvity is concluded.
      *
      * @param requestCode
      * @param resultCode
@@ -94,11 +87,6 @@ public class LoginActivity extends AppCompatActivity {
                             ((EditText) findViewById(R.id.username_et)).setText(newUsername);
                             ((EditText) findViewById(R.id.password_et)).setText(newPassword);
                         }
-
-                        // Save to database
-                        //ServerDatabaseDriver db = new ServerDatabaseDriver();
-                        //db.insertNewPatient(newPatient);
-
                     }
                 }
                 break;
@@ -106,5 +94,4 @@ public class LoginActivity extends AppCompatActivity {
                 break;
         }
     }
-
 }

@@ -17,7 +17,6 @@ public class Plan implements Serializable {
     private ArrayList<Exercise> exercises;
 
     public Plan() {
-
     }
 
     public int getId() {
@@ -100,5 +99,3 @@ public class Plan implements Serializable {
         this.exercises = exercises;
     }
 }
-
-

@@ -73,21 +73,4 @@ public class PlansListFragment extends ListFragment {
         ft.addToBackStack(PlanExerciseListFragment.PLAN_EXERCISE_LIST_FRAGMENT_TAG);
         ft.commit();
     }
-
-    /**
-     * Extracts plan titles, to populate the list adapter
-     *
-     * @param plans
-     * @return
-     */
-    private ArrayList<String> extractPlansInfo(ArrayList<Plan> plans) {
-
-        ArrayList<String> titles = new ArrayList<>();
-
-        for (Plan thisPlan : plans) {
-            titles.add(thisPlan.getPlan_name());
-        }
-
-        return titles;
-    }
 }
