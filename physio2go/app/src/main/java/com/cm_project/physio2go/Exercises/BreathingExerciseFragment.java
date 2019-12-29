@@ -3,7 +3,6 @@ package com.cm_project.physio2go.Exercises;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,14 +21,10 @@ public class BreathingExerciseFragment extends Fragment {
 
     private final static String CHOSEN_EXERCISE_ARG = "chosen_ex";
 
-    int reps;
-    ImageView imgView;
-    Button next_btn;
-    TextView finish_tv;
-    TextView doneReps_tv;
-    int repsDone = 0;
-    breathingExerciseListenner breathingExerciseListenner;
-
+    private ImageView imgView;
+    private Button nextBtn;
+    private TextView finishTv;
+    private BreathingExerciseListener breathingExerciseListener;
 
     public BreathingExerciseFragment() {
     }
@@ -48,84 +43,65 @@ public class BreathingExerciseFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_breathe_exercise, container, false);
 
-        next_btn = getActivity().findViewById(R.id.next_ex_btn);
-        next_btn.setVisibility(View.INVISIBLE);
+        nextBtn = getActivity().findViewById(R.id.next_ex_btn);
+        nextBtn.setVisibility(View.GONE);
 
-        finish_tv = getActivity().findViewById(R.id.finish_ex_tv);
-        finish_tv.setVisibility(View.INVISIBLE);
+        finishTv = getActivity().findViewById(R.id.finish_ex_tv);
+        finishTv.setVisibility(View.GONE);
 
         // Get exercise
         Exercise exercise = (Exercise) getArguments().getSerializable(CHOSEN_EXERCISE_ARG);
 
         TextView exerciseName_tv = view.findViewById(R.id.exercise_name_tv);
         TextView exerciseSide_tv = view.findViewById(R.id.exercise_side_tv);
-        TextView exerciseReps_tv = view.findViewById(R.id.exercise_repetitions_tv);
+        TextView exerciseRepsTv = view.findViewById(R.id.exercise_repetitions_tv);
         ImageView exercise_img = view.findViewById(R.id.exercise_img_iv);
 
-        reps = exercise.getRepetitions();
+        int reps = exercise.getRepetitions();
 
         exerciseName_tv.setText(exercise.getName());
-        exerciseSide_tv.setText(String.format(""));
-        exerciseReps_tv.setText(String.format("Repetitions: %d", reps));
+        exerciseSide_tv.setText("");
+        exerciseRepsTv.setText(String.format("Repetitions: %d", reps));
         exercise_img.setImageResource(R.drawable.ic_breath);
 
 
         // Set prescribed number of breathes
         TextView numBreathes = view.findViewById(R.id.n_breathe);
-        if (exercise != null) {
-            numBreathes.setText("" + reps);
-        } else {
-            numBreathes.setText("0"); // Default is 0
-        }
+        numBreathes.setText(String.format("%d", reps));
 
         Button plusBtn = view.findViewById(R.id.plus_btn);
-        plusBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView nreps = getView().findViewById(R.id.n_breathe);
-                int nBreths = Integer.parseInt(nreps.getText().toString());
-                nBreths++;
-                nreps.setText("" + nBreths);
-            }
+        plusBtn.setOnClickListener(v -> {
+            TextView nreps = getView().findViewById(R.id.n_breathe);
+            int nBreths = Integer.parseInt(nreps.getText().toString());
+            nBreths++;
+            nreps.setText(String.format("%d", nBreths));
         });
 
         Button minusBtn = view.findViewById(R.id.minus_btn);
-        minusBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView nreps = getView().findViewById(R.id.n_breathe);
-                int nBreths = Integer.parseInt(nreps.getText().toString());
-                nBreths--;
-                nreps.setText("" + nBreths);
-            }
+        minusBtn.setOnClickListener(v -> {
+            TextView nreps = getView().findViewById(R.id.n_breathe);
+            int nBreths = Integer.parseInt(nreps.getText().toString());
+            nBreths--;
+            nreps.setText("" + nBreths);
         });
 
         Button startBtn = view.findViewById(R.id.start_btn);
-        startBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView nreps = getView().findViewById(R.id.n_breathe);
-                int nBreths = Integer.parseInt(nreps.getText().toString());
+        startBtn.setOnClickListener(v -> {
+            TextView nreps = getView().findViewById(R.id.n_breathe);
+            int nBreths = Integer.parseInt(nreps.getText().toString());
 
-                TextView totalReps_tv = getView().findViewById(R.id.total_reps_tv);
-                totalReps_tv.setText(String.format("/%d", nBreths));
-                exerciseReps_tv.setText(String.format("Repetitions: %d", nBreths));
+            exerciseRepsTv.setText(String.format("Repetitions: %d", nBreths));
 
-                doneReps_tv = view.findViewById(R.id.reps_done_tv);
-                doneReps_tv.setText(Integer.toString(repsDone));
-
-                if (nBreths > 0) {
-                    breatheRoutineAnimation(nBreths);
-                }
-
-                numBreathes.setVisibility(View.INVISIBLE);
-                plusBtn.setVisibility(View.INVISIBLE);
-                minusBtn.setVisibility(View.INVISIBLE);
-                startBtn.setVisibility(View.INVISIBLE);
-
-                exerciseReps_tv.setVisibility(View.VISIBLE);
-                doneReps_tv.setVisibility(View.VISIBLE);
+            if (nBreths > 0) {
+                breatheRoutineAnimation(nBreths);
             }
+
+            numBreathes.setVisibility(View.INVISIBLE);
+            plusBtn.setVisibility(View.INVISIBLE);
+            minusBtn.setVisibility(View.INVISIBLE);
+            startBtn.setVisibility(View.INVISIBLE);
+
+            exerciseRepsTv.setVisibility(View.VISIBLE);
         });
 
         this.imgView = view.findViewById(R.id.imageView);
@@ -136,44 +112,17 @@ public class BreathingExerciseFragment extends Fragment {
         return view;
     }
 
+    private void finishExercise() {
+        finishTv.setVisibility(View.VISIBLE);
+        nextBtn.setVisibility(View.VISIBLE);
+        nextBtn.setOnClickListener(v ->
+                breathingExerciseListener.finishExercise(true));
+    }
+
     /**
      * Intro animation routine
      * Source: https://github.com/florent37/ViewAnimator
      */
-
-    public void finishExercie(int nBreath) {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                finish_tv.setVisibility(View.VISIBLE);
-                next_btn.setVisibility(View.VISIBLE);
-                next_btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        breathingExerciseListenner.finishExercise(true);
-                    }
-                });
-            }
-        }, 10100 * nBreath);
-    }
-
-    public void countDoneReps(int nBreath) {
-        final Handler handler = new Handler();
-
-        while (repsDone <= nBreath) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    repsDone++;
-                    doneReps_tv.setText(Integer.toString(repsDone));
-                }
-            }, 10100);
-        }
-    }
-
     private void startIntroAnimation() {
         ViewAnimator
                 .animate(imgView)
@@ -196,6 +145,7 @@ public class BreathingExerciseFragment extends Fragment {
                 .scale(1f, 0.2f, 1f)
                 .repeatCount(nBreaths - 1)
                 .duration(10000) // 5 seconds out, 5 seconds in
+                .onStop(this::finishExercise)
                 .start();
     }
 
@@ -204,13 +154,13 @@ public class BreathingExerciseFragment extends Fragment {
         super.onAttach(context);
         Activity activity = (Activity) context;
         try {
-            breathingExerciseListenner = (breathingExerciseListenner) activity;
+            breathingExerciseListener = (BreathingExerciseListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + "must override onMessageRead...");
         }
     }
 
-    public interface breathingExerciseListenner {
+    public interface BreathingExerciseListener {
         void finishExercise(Boolean message);
     }
 }

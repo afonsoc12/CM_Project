@@ -34,8 +34,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
     private TextView finish_tv;
     private TextView doneReps_tv;
     private int repsDone = 0;
-    private Vibrator v;
-    private armExerciseListenner armExerciseListenner;
+    private ArmExerciseListener armExerciseListener;
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private int count;
@@ -47,7 +46,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         super.onAttach(context);
         Activity activity = (Activity) context;
         try {
-            armExerciseListenner = (armExerciseListenner) activity;
+            armExerciseListener = (ArmExerciseListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + "must override onMessageRead...");
         }
@@ -115,6 +114,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
     @Override
     public void onResume() {
         super.onResume();
+
         //Parameto Sensor_delay_normal define a velocidade da captura das informações
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
@@ -132,9 +132,9 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
     @SuppressLint("WrongViewCast")
     public void onSensorChanged(SensorEvent event) {
 
-        Float x = event.values[0];
-        Float y = event.values[1];
-        Float z = event.values[2];
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
 
         if (body_side.equals("R")) {
             if (z >= 0 && z <= 10 && x < 0) {
@@ -146,21 +146,22 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
             }
         }
 
+        Vibrator v1;
         if (count % 2 == 0 && reps > repsDone) {
             if (body_side.equals("R")) {
 
                 if (x < -8 && y > -2 && y < 2 && z > -2 && z < 2) {
 
                     // Get instance of Vibrator from current Context
-                    v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-                    v.vibrate(300);
+                    v1 = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                    v1.vibrate(300);
                     count++;
                 }
             } else {
                 if (x > 8 && y > -2 && y < 2 && z > -2 && z < 2) {
                     // Get instance of Vibrator from current Context
-                    v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-                    v.vibrate(300);
+                    v1 = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                    v1.vibrate(300);
                     count++;
                 }
             }
@@ -168,8 +169,8 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
 
         if (count % 2 != 0 && reps > repsDone) {
             if (z > 8 && y > -2 && y < 2 && x > -2 && x < 2) {
-                v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
-                v.vibrate(300);
+                v1 = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                v1.vibrate(300);
                 count++;
                 repsDone++;
                 doneReps_tv.setText(Integer.toString(repsDone));
@@ -182,13 +183,8 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
             count = 0;
             finish_tv.setVisibility(View.VISIBLE);
             next_btn.setVisibility(View.VISIBLE);
-            next_btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    armExerciseListenner.finishExercise(true);
-                }
-            });
+            next_btn.setOnClickListener(v ->
+                    armExerciseListener.finishExercise(true));
         }
 
     }
@@ -197,21 +193,19 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
         // set the progress
         int intZ = Math.round(z);
         movingProgresBar.setProgress(intZ);
+
         // thread is used to change the progress value
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        Thread thread = new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         });
         thread.start();
     }
 
-    public interface armExerciseListenner {
+    public interface ArmExerciseListener {
         void finishExercise(Boolean message);
     }
 }

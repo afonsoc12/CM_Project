@@ -24,21 +24,21 @@ import com.cm_project.physio2go.R;
 
 import java.util.ArrayList;
 
-public class DoExerciseActivity extends AppCompatActivity implements ArmExerciseFragment.armExerciseListenner, LegExerciseFragment.legExerciseListenner, BreathingExerciseFragment.breathingExerciseListenner {
+public class DoExerciseActivity extends AppCompatActivity implements ArmExerciseFragment.ArmExerciseListener,
+        LegExerciseFragment.legExerciseListener,
+        BreathingExerciseFragment.BreathingExerciseListener {
 
     private final String DIALOG_TAG = "close_dialog";
-    private Plan plan;
-    ArrayList<Exercise> exercises;
-    Boolean exerciseDone = true;
-    int positionExercise = 0;
-    int numberExercise = 0;
+    private ArrayList<Exercise> exercises;
+    private int positionExercise = 0;
+    private int numberExercise = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_do_exercise);
 
-        this.plan = (Plan) getIntent().getSerializableExtra(PlanExerciseListFragment.PLAN_ARG);
+        Plan plan = (Plan) getIntent().getSerializableExtra(PlanExerciseListFragment.PLAN_ARG);
         this.exercises = plan.getExercises();
         this.numberExercise = this.exercises.size();
 
@@ -102,7 +102,6 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
             ft.replace(R.id.fragment_list_placeholder, exerciseFragment);
             ft.commit();
         } else if (positionExercise == numberExercise) {
-            View view = findViewById(R.id.do_exercise_activity);
             setResult(RESULT_OK, getIntent());
             finish();
         }
@@ -117,11 +116,7 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
 
         ActionBar ab = getSupportActionBar();
 
-        //ab.setHomeAsUpIndicator(R.drawable.ic_action_app);
-
-        //Show the icon - selecting "home" returns a single level
-        //ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("Doing an Exercise");
+        ab.setTitle("Exercise Session");
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -138,7 +133,7 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.quit_exercise_btn: // Confirms quit exerc
+            case R.id.quit_exercise_btn: // Confirms quit exercise
                 CloseExerciseDialogFragment dialog = new CloseExerciseDialogFragment();
                 dialog.show(getSupportFragmentManager(), DIALOG_TAG);
                 break;
@@ -150,7 +145,7 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
         return super.onOptionsItemSelected(item);
     }
 
-    // Alert diolog when back button is pressed
+    // Alert diaolog when back button is pressed
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             exitByBackKey();
@@ -171,6 +166,4 @@ public class DoExerciseActivity extends AppCompatActivity implements ArmExercise
         System.out.println(message);
         System.out.println(positionExercise);
     }
-
 }
-
