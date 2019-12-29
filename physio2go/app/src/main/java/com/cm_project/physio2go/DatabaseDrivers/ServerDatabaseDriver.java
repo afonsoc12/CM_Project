@@ -1,7 +1,10 @@
 package com.cm_project.physio2go.DatabaseDrivers;
 
+import android.content.Context;
+
 import com.cm_project.physio2go.AsyncTasks.ServerQueryAsyncTask;
 import com.cm_project.physio2go.Login.LoginActivity;
+import com.cm_project.physio2go.MainActivity.MainActivity;
 import com.cm_project.physio2go.Objects.Doctor;
 import com.cm_project.physio2go.Objects.Exercise;
 import com.cm_project.physio2go.Objects.Patient;
@@ -15,30 +18,30 @@ import java.util.ArrayList;
 
 public class ServerDatabaseDriver implements Runnable {
 
+    private final String HOST = "157.245.36.217"; //"acosta-server.ddns.net"; -> Pi's DNS
     private final String PATIENTS = "patients";
     private final String DOCTORS = "doctors";
     private final String PLANS = "plans";
     private final String EXERCISES = "exercises";
     private final String PLAN_EXERCISES = "plan_exercises";
     private Connection conn;
-    private String host = "157.245.36.217"; //"acosta-server.ddns.net"; -> Pi's DNS
-    private String db = "physio2go";
-    private int port = 5432;
-    private String user = "app_user";
-    private String pass = "123user321";
+    private final String DB_NAME = "physio2go";
+    private final int PORT = 5432;
+    private final String USER = "app_user";
+    private final String PASSWORD = "123user321";
+    private Context context;
     private String url = "jdbc:postgresql://%s:%d/%s";
 
-    public ServerDatabaseDriver() {
-        this.url = String.format(this.url, this.host, this.port, this.db);
-        //this.conectar();
-        //this.disconectar();
+    public ServerDatabaseDriver(Context context) {
+        this.url = String.format(this.url, this.HOST, this.PORT, this.DB_NAME);
+        this.context = context;
     }
 
     @Override
     public void run() {
         try {
             Class.forName("org.postgresql.Driver");
-            this.conn = DriverManager.getConnection(this.url, this.user, this.pass);
+            this.conn = DriverManager.getConnection(this.url, this.USER, this.PASSWORD);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,10 +94,10 @@ public class ServerDatabaseDriver implements Runnable {
      * @param query
      * @return
      */
-    public ResultSet selectAsyncQuery(String query) {
+    private ResultSet selectAsyncQuery(String query) {
         ResultSet resultSet = null;
         try {
-            String[] credentials = {this.url, this.user, this.pass};
+            String[] credentials = {this.url, this.USER, this.PASSWORD};
             resultSet = new ServerQueryAsyncTask(credentials, query)
                     .execute(ServerQueryAsyncTask.SELECT_QUERY)
                     .get();
@@ -118,7 +121,7 @@ public class ServerDatabaseDriver implements Runnable {
 
         boolean status;
         try {
-            String[] credentials = {this.url, this.user, this.pass};
+            String[] credentials = {this.url, this.USER, this.PASSWORD};
             new ServerQueryAsyncTask(credentials, query)
                     .execute(ServerQueryAsyncTask.UPDATE_QUERY);
             status = true;
@@ -138,11 +141,10 @@ public class ServerDatabaseDriver implements Runnable {
      */
     private Doctor getThisPatientDoctor(String id_doctor, String type) {
 
+        ResultSet resultSet;
         Doctor doctor = new Doctor();
-
         String query = String.format("select * from %s where username = '%s'", DOCTORS, id_doctor);
 
-        ResultSet resultSet;
         // To avoid AsyncTask inside AsyncTask
         if (type.equals("async")) {
             resultSet = this.selectAsyncQuery(query);
@@ -204,6 +206,7 @@ public class ServerDatabaseDriver implements Runnable {
                 "where pe.id_plan = %s;", PLAN_EXERCISES, EXERCISES, plan_id);
 
         ResultSet resultSet;
+
         // To avoid AsyncTask inside AsyncTask
         if (type.equals("async")) {
             resultSet = this.selectAsyncQuery(query);
@@ -221,14 +224,6 @@ public class ServerDatabaseDriver implements Runnable {
                 thisExercise.setDescription(resultSet.getString("description"));
                 thisExercise.setRepetitions(resultSet.getInt("repetitions"));
 
-                /*thisExercise.setId_patient(resultSet.getString("id_patient"));
-                thisExercise.setId_doctor(resultSet.getString("id_doctor"));
-                thisExercise.setDate_start(resultSet.getString("date_start"));
-                thisExercise.setDate_end(resultSet.getString("date_end"));
-                thisExercise.setTotal_reps(resultSet.getInt("total_reps"));
-                thisExercise.setReps_done(resultSet.getInt("reps_done"));
-                thisExercise.setDescription(resultSet.getString("description"));
-*/
                 exercises.add(thisExercise);
             }
 
@@ -265,9 +260,7 @@ public class ServerDatabaseDriver implements Runnable {
     public int checkLoginCombination(String username, String password) {
         int loginCode;
 
-        //todo MUDAR ISTO
-        boolean isNetAvailable = true;
-        //boolean isNetAvailable = MainActivity.isNetworkAvilable(this);
+        boolean isNetAvailable = MainActivity.isNetworkAvilable(context);
 
         if (isNetAvailable) {
             try {
@@ -278,10 +271,8 @@ public class ServerDatabaseDriver implements Runnable {
                     loginCode = LoginActivity.LOGIN_OK;
                 } else if (passwordDB == null) {
                     loginCode = LoginActivity.LOGIN_USER_NOT_FOUND;
-                } else if (!password.equals(passwordDB)) {
-                    loginCode = LoginActivity.LOGIN_WRONG_PASSWORD;
                 } else {
-                    loginCode = LoginActivity.LOGIN_CONNECTION_FAILED;
+                    loginCode = LoginActivity.LOGIN_WRONG_PASSWORD;
                 }
 
             } catch (Exception e) {
@@ -386,6 +377,7 @@ public class ServerDatabaseDriver implements Runnable {
         Doctor doctor;
         String query = String.format("select * from %s where username = '%s'", PATIENTS, username);
         ResultSet resultSet;
+
         // To avoid AsyncTask inside AsyncTask
         if (type.equals("async")) {
             resultSet = this.selectAsyncQuery(query);
@@ -435,7 +427,7 @@ public class ServerDatabaseDriver implements Runnable {
     }
 
     /**
-     * Retrieves all plans for the specified user.
+     * Retrieves all plans for the specified USER.
      *
      * @param username
      * @param type
@@ -443,12 +435,13 @@ public class ServerDatabaseDriver implements Runnable {
      */
     public ArrayList<Plan> getPlansOfUser(String username, String type) {
         ArrayList<Plan> plans = new ArrayList<>();
-        ArrayList<Exercise> exercises = new ArrayList<>();
+        ArrayList<Exercise> exercises;
         Plan thisPlan;
 
         String query = String.format("select * from %s where id_patient = '%s'", PLANS, username);
 
         ResultSet resultSet;
+
         // To avoid AsyncTask inside AsyncTask
         if (type.equals("async")) {
             resultSet = this.selectAsyncQuery(query);

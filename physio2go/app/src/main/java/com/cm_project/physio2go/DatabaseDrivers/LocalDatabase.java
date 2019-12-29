@@ -22,9 +22,10 @@ public class LocalDatabase extends SQLiteOpenHelper {
     private static final int SCHEMA = 1;
 
     //Database Fields for Plans_Exercises Table
-    static final String PLAN_EX_ID_PLAN = "plan_ex_id_plan";
-    static final String PLAN_EX_ID_EXERCISE = "plan_ex_id_exercise";
-    static final String PLAN_EX_REPETITIONS = "plan_ex_repetitions";
+    private static final String PLAN_EX_ID_PLAN = "plan_ex_id_plan";
+    private static final String PLAN_EX_ID_EXERCISE = "plan_ex_id_exercise";
+    private static final String PLAN_EX_REPETITIONS = "plan_ex_repetitions";
+
     //Tables Names
     private static final String TABLE_PLANS = "plans";
     private static final String TABLE_PLANS_EXERCISES = "plans_exercises";
@@ -32,6 +33,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
     private static final String TABLE_PATIENT = "patient";
     private static final String TABLE_DOCTOR = "doctor";
     private static final String TABLE_TMP_PLAN = "tmp_plan";
+
     //Database Fields for Plans Table
     private static final String PLAN_ID = "plan_id";
     private static final String PLAN_ID_PATIENT = "plan_id_patient";
@@ -42,6 +44,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
     private static final String PLAN_REPS_DONE = "plan_reps_done";
     private static final String PLAN_DESCRIPTION = "plan_description";
     private static final String PLAN_NAME_PLAN = "plan_name";
+
     //Database Fields for Exercises Table
     private static final String EX_ID_EX = "ex_id_ex";
     private static final String EX_NAME = "ex_name";
@@ -70,17 +73,15 @@ public class LocalDatabase extends SQLiteOpenHelper {
     //Database fields for Plans done but not synced with server
     private static final String TMP_PLAN_ID = "tmp_plan_id";
 
-    SQLiteDatabase database;
+    private SQLiteDatabase database;
 
-    public LocalDatabase(Context context)
-    {
+    public LocalDatabase(Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
         database = getWritableDatabase();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //todo : Verificar a FOREIGN KEYS
         db.execSQL("CREATE TABLE " + TABLE_PLANS + " ( " + PLAN_ID + " INTEGER PRIMARY KEY, " + PLAN_ID_PATIENT + " VARCHAR, " + PLAN_ID_DOCTOR + " VARCHAR, " + PLAN_DATE_START + " DATE, " + PLAN_DATE_END + " DATE, " + PLAN_TOTAL_REPS + " INTEGER, " + PLAN_REPS_DONE + " INTEGER, " + PLAN_DESCRIPTION + " VARCHAR, " + PLAN_NAME_PLAN + " VARCHAR)");
         db.execSQL("CREATE TABLE " + TABLE_PLANS_EXERCISES + " ( " + PLAN_EX_ID_PLAN + " INTEGER, " + PLAN_EX_ID_EXERCISE + " INTEGER, " + PLAN_EX_REPETITIONS + " INTEGER)");
         db.execSQL("CREATE TABLE " + TABLE_EXERCISES + " ( " + EX_ID_EX + " INTEGER PRIMARY KEY, " + EX_NAME + " VARCHAR, " + EX_BODY_SIDE + " VARCHAR, " + EX_DESCRIPTION_EXERCISE + " VARCHAR)");
@@ -94,7 +95,10 @@ public class LocalDatabase extends SQLiteOpenHelper {
         throw new RuntimeException("How did we get here?");
     }
 
-    public void delete(){
+    /**
+     * Deletes the data of all local tables.
+     */
+    public void delete() {
 
         database = this.getWritableDatabase();
         database.execSQL("delete from " + TABLE_PLANS);
@@ -105,22 +109,25 @@ public class LocalDatabase extends SQLiteOpenHelper {
         //database.execSQL("delete from " + TABLE_TMP_PLAN);
     }
 
+    /**
+     * Deletes the data of the temporary plans to be synced, if the plans have been successfully
+     * synchronised or if a logout occurs.
+     */
     public void deleteTmpPlanIncrements() {
         database = this.getWritableDatabase();
         database.execSQL("delete from " + TABLE_TMP_PLAN);
     }
 
-    public void updatePlans(ArrayList<Plan> plansFromServer){
+    /**
+     * Updates the local database plans.
+     *
+     * @param plansFromServer
+     */
+    public void updatePlans(ArrayList<Plan> plansFromServer) {
 
-        ArrayList<Exercise> exercises;
         ContentValues cv = new ContentValues();
 
-        //delete field from table plans
-        //database.execSQL("delete from "+ TABLE_PLANS);
-
         database = this.getWritableDatabase();
-        //todo : delete
-        //database.insert(TABLE_PLANS, null, cv);
 
         // get data from all plans associated to user
         for (Plan plan : plansFromServer) {
@@ -153,26 +160,25 @@ public class LocalDatabase extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Updates the exercises of a plan.
+     *
+     * @param exercises
+     * @param id_plan
+     */
     private void updateExercisesOfPlan(ArrayList<Exercise> exercises, int id_plan) {
 
         ContentValues cvExercises = new ContentValues();
         ContentValues cvPlanExercises = new ContentValues();
 
-        //delete field from table plans
-        //database.execSQL("delete from " + TABLE_PLANS_EXERCISES);
-        //database.execSQL("delete from " + TABLE_EXERCISES);
-
         database = this.getWritableDatabase();
-        //todo: delete
-        //database.insert(TABLE_PLANS_EXERCISES, null, cvPlanExercises);
-        //database.insert(TABLE_EXERCISES, null, cvExercises);
 
         boolean alreadyExists;
         // get data from all plans associated to user
         for (Exercise thisExercise : exercises) {
-            ArrayList<Integer> exercises_ids = new ArrayList<Integer>();
+            ArrayList<Integer> exercises_ids = new ArrayList<>();
             alreadyExists = false;
-            //todo AQUI!!!! porque isto?
+
             Cursor cursor = database.rawQuery("select * from " + TABLE_EXERCISES, null);
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
@@ -180,10 +186,11 @@ public class LocalDatabase extends SQLiteOpenHelper {
                     exercises_ids.add(id);
                     cursor.moveToNext();
                 }
+                cursor.close();
             }
             // Check if exercise is already on database
-            for (int id : exercises_ids){
-                if (id == thisExercise.getId()){
+            for (int id : exercises_ids) {
+                if (id == thisExercise.getId()) {
                     alreadyExists = true;
                 }
             }
@@ -208,6 +215,11 @@ public class LocalDatabase extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Updates the patient details.
+     *
+     * @param patient
+     */
     public void updatePatientDetails(Patient patient) {
         ContentValues cvPatient = new ContentValues();
         ContentValues cvDoctor = new ContentValues();
@@ -238,7 +250,27 @@ public class LocalDatabase extends SQLiteOpenHelper {
         database.insert(TABLE_DOCTOR, null, cvDoctor);
     }
 
-    public ArrayList<Plan> getPlansOfUser(){
+    /**
+     * Writes the progress of a plan to be later synced with server.
+     *
+     * @param plan
+     */
+    public void updatePlanOffline(Plan plan) {
+        ContentValues planCV = new ContentValues();
+        database = this.getWritableDatabase();
+
+        // Insert in table Patient
+        planCV.put(TMP_PLAN_ID, plan.getId());
+
+        database.insert(TABLE_TMP_PLAN, null, planCV);
+    }
+
+    /**
+     * Queries the local database and returns an ArrayList of plans that belong to the current user.
+     *
+     * @return
+     */
+    public ArrayList<Plan> getPlansOfUser() {
         ArrayList<Plan> plans = new ArrayList<>();
         Plan thisPlan;
         Cursor cursor = database.rawQuery("select * from " + TABLE_PLANS, null);
@@ -246,7 +278,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
 
-                ArrayList<Exercise> exercises = new ArrayList<>();
+                ArrayList<Exercise> exercises;
                 //get the fields from every row in table plans
                 int id_plan = cursor.getInt(cursor.getColumnIndex(PLAN_ID));
                 String id_patient = cursor.getString(cursor.getColumnIndex(PLAN_ID_PATIENT));
@@ -259,8 +291,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
                 String plan_name = cursor.getString(cursor.getColumnIndex(PLAN_NAME_PLAN));
                 exercises = getExercisesOfPlan(id_plan);
 
-
-                //create a obkect plan with all the fields set
+                //create an object plan with all the fields set
                 thisPlan = new Plan();
                 thisPlan.setId(id_plan);
                 thisPlan.setId_patient(id_patient);
@@ -277,12 +308,18 @@ public class LocalDatabase extends SQLiteOpenHelper {
 
                 cursor.moveToNext();
             }
+            cursor.close();
         }
-        //fixme: nao esta a dar
-        // Collections.sort(plans, Comparator.comparingLong(Plan::getId));
+
         return plans;
     }
 
+    /**
+     * Queries the local database and returns an ArrayList of exercises of a plan.
+     *
+     * @param id_plan
+     * @return
+     */
     private ArrayList<Exercise> getExercisesOfPlan(int id_plan) {
         ArrayList<Exercise> exercice = new ArrayList<>();
         Exercise thisExercise;
@@ -300,6 +337,7 @@ public class LocalDatabase extends SQLiteOpenHelper {
                 //search for every field in exercice table
                 Cursor cursorExercise = database.rawQuery("select * from " + TABLE_EXERCISES + " where " + EX_ID_EX + " = " + id_exercise, null);
                 cursorExercise.moveToFirst();
+
                 //get the fields from every column in exercise table
                 String name = cursorExercise.getString(cursorExercise.getColumnIndex(EX_NAME));
                 String body_side = cursorExercise.getString(cursorExercise.getColumnIndex(EX_BODY_SIDE));
@@ -316,14 +354,20 @@ public class LocalDatabase extends SQLiteOpenHelper {
                 // add elements
                 exercice.add(thisExercise);
 
+                cursorExercise.close();
                 cursor.moveToNext();
             }
+            cursor.close();
         }
-        //fixme : nao funciona
-        //Collections.sort(exercice, Comparator.comparingLong(Exercise::getId));
+
         return exercice;
     }
 
+    /**
+     * Queries the local database and returns a Patient Object.
+     *
+     * @return
+     */
     public Patient getPatient() {
 
         Patient patient = new Patient();
@@ -362,21 +406,17 @@ public class LocalDatabase extends SQLiteOpenHelper {
             // Assign Doctor to Patient
             patient.setDoctor(doctor);
         }
+        cursor.close();
 
         return patient;
     }
 
-    public void updatePlanOffline(Plan plan) {
-        ContentValues planCV = new ContentValues();
 
-        database = this.getWritableDatabase();
-
-        // Insert in table Patient
-        planCV.put(TMP_PLAN_ID, plan.getId());
-
-        database.insert(TABLE_TMP_PLAN, null, planCV);
-    }
-
+    /**
+     * Returns all plans that need to be synced with the server.
+     *
+     * @return
+     */
     public ArrayList<Integer> getOfflinePlans() {
         ArrayList<Integer> planIDs = new ArrayList<>();
         Cursor cursor = database.rawQuery(String.format("select %s from %s;", TMP_PLAN_ID, TABLE_TMP_PLAN), null);
@@ -391,9 +431,8 @@ public class LocalDatabase extends SQLiteOpenHelper {
 
                 cursor.moveToNext();
             }
+            cursor.close();
         }
         return planIDs;
     }
-
-
 }
