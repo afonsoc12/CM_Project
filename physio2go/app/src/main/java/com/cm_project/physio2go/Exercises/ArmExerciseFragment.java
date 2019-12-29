@@ -33,7 +33,7 @@ public class ArmExerciseFragment extends Fragment implements SensorEventListener
     private Button next_btn;
     private TextView finish_tv;
     private TextView doneReps_tv;
-    private int repsDone;
+    private int repsDone = 0;
     private Vibrator v;
     private armExerciseListenner armExerciseListenner;
     private SensorManager sensorManager;

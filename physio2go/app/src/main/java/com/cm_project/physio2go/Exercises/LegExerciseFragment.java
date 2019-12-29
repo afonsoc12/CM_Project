@@ -31,7 +31,7 @@ public class LegExerciseFragment extends Fragment implements SensorEventListener
     int reps;
     String body_side;
     Button next_btn;
-    int repsDone;
+    int repsDone = 0;
     TextView finish_tv;
     TextView doneReps_tv;
     Vibrator v;

@@ -27,7 +27,7 @@ public class BreathingExerciseFragment extends Fragment {
     Button next_btn;
     TextView finish_tv;
     TextView doneReps_tv;
-    int repsDone;
+    int repsDone = 0;
     breathingExerciseListenner breathingExerciseListenner;
 
 
@@ -67,21 +67,70 @@ public class BreathingExerciseFragment extends Fragment {
         exerciseName_tv.setText(exercise.getName());
         exerciseSide_tv.setText(String.format(""));
         exerciseReps_tv.setText(String.format("Repetitions: %d", reps));
-        exercise_img.setImageResource(R.drawable.ic_arm);
+        exercise_img.setImageResource(R.drawable.ic_breath);
 
-        TextView totalReps_tv = view.findViewById(R.id.total_reps_tv);
+        TextView totalReps_tv = getView().findViewById(R.id.total_reps_tv);
         totalReps_tv.setText(String.format("/%d", reps));
 
         doneReps_tv = view.findViewById(R.id.reps_done_tv);
         doneReps_tv.setText(Integer.toString(repsDone));
 
-        this.imgView = view.findViewById(R.id.imageView);
-        startIntroAnimation();
-
-        if (reps > 0) {
-            breatheRoutineAnimation(reps);
-            finishExercie(reps);
+        // Set prescribed number of breathes
+        TextView numBreathes = view.findViewById(R.id.n_breathe);
+        if (exercise != null) {
+            numBreathes.setText("" + reps);
+        } else {
+            numBreathes.setText("0"); // Default is 0
         }
+
+        Button plusBtn = view.findViewById(R.id.plus_btn);
+        plusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView nreps = getView().findViewById(R.id.n_breathe);
+                int nBreths = Integer.parseInt(nreps.getText().toString());
+                nBreths++;
+                nreps.setText("" + nBreths);
+            }
+        });
+
+        Button minusBtn = view.findViewById(R.id.minus_btn);
+        minusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView nreps = getView().findViewById(R.id.n_breathe);
+                int nBreths = Integer.parseInt(nreps.getText().toString());
+                nBreths--;
+                nreps.setText("" + nBreths);
+            }
+        });
+
+        Button startBtn = view.findViewById(R.id.start_btn);
+        startBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView nreps = getView().findViewById(R.id.n_breathe);
+                int nBreths = Integer.parseInt(nreps.getText().toString());
+
+                TextView totalReps_tv = getView().findViewById(R.id.total_reps_tv);
+                totalReps_tv.setText(String.format("/%d", nBreths));
+                exerciseReps_tv.setText(String.format("Repetitions: %d", nBreths));
+
+                if (nBreths > 0) {
+                    breatheRoutineAnimation(nBreths);
+                }
+
+                numBreathes.setVisibility(View.INVISIBLE);
+                plusBtn.setVisibility(View.INVISIBLE);
+                minusBtn.setVisibility(View.INVISIBLE);
+                startBtn.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        this.imgView = view.findViewById(R.id.imageView);
+        this.imgView.setVisibility(View.VISIBLE);
+
+        startIntroAnimation();
 
         return view;
     }
@@ -108,6 +157,20 @@ public class BreathingExerciseFragment extends Fragment {
                 });
             }
         }, 10100 * nBreath);
+    }
+
+    public void countDoneReps(int nBreath) {
+        final Handler handler = new Handler();
+
+        while (repsDone <= nBreath) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    repsDone++;
+                    doneReps_tv.setText(Integer.toString(repsDone));
+                }
+            }, 10100);
+        }
     }
 
     private void startIntroAnimation() {
