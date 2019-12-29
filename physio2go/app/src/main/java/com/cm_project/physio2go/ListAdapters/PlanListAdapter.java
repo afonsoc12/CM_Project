@@ -13,6 +13,9 @@ import com.cm_project.physio2go.R;
 
 import java.util.ArrayList;
 
+/**
+ * Handles the definition of the ListAdapter of each Plan.
+ */
 public class PlanListAdapter extends BaseAdapter {
 
     private ArrayList<Plan> plans;
@@ -73,5 +76,4 @@ public class PlanListAdapter extends BaseAdapter {
         TextView planDescription;
         ProgressBar planProgress;
     }
-
 }

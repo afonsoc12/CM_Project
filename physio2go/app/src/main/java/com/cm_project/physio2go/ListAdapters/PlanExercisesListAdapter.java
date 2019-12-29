@@ -13,6 +13,9 @@ import com.cm_project.physio2go.R;
 
 import java.util.ArrayList;
 
+/**
+ * Handles the definition of the ListAdapter of the Exercises of each Plan.
+ */
 public class PlanExercisesListAdapter extends BaseAdapter {
 
     private Context context;
@@ -60,7 +63,7 @@ public class PlanExercisesListAdapter extends BaseAdapter {
         if (side == null) {
             holder.exerciseSide.setText("");
         } else {
-            holder.exerciseSide.setText("Side: " + exercises.get(position).getBody_side());
+            holder.exerciseSide.setText(String.format("Side: %s", exercises.get(position).getBody_side()));
         }
 
         holder.exerciseRepetitions.setText(String.format("Repetitions: %d", exercises.get(position).getRepetitions()));
@@ -79,7 +82,6 @@ public class PlanExercisesListAdapter extends BaseAdapter {
                 break;
             default:
                 break;
-
         }
 
         return convertView;
@@ -91,5 +93,4 @@ public class PlanExercisesListAdapter extends BaseAdapter {
         TextView exerciseSide;
         TextView exerciseRepetitions;
     }
-
 }
