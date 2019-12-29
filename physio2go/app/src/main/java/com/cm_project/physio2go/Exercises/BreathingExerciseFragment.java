@@ -82,7 +82,12 @@ public class BreathingExerciseFragment extends Fragment {
             TextView nreps = getView().findViewById(R.id.n_breathe);
             int nBreths = Integer.parseInt(nreps.getText().toString());
             nBreths--;
-            nreps.setText("" + nBreths);
+            if (nBreths >= 1) {
+                nreps.setText(String.format("%d", nBreths));
+            } else {
+                nBreths = 1;
+                nreps.setText(String.format("%d", nBreths));
+            }
         });
 
         Button startBtn = view.findViewById(R.id.start_btn);
