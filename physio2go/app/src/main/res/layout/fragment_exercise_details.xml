@@ -70,7 +70,7 @@
         android:fontFamily="@font/helvetica"
         android:text="TextView"
         android:textColor="@color/gray"
-        android:textSize="20dp"
+        android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
