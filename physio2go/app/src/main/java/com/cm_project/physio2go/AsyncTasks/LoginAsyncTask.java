@@ -34,7 +34,7 @@ public class LoginAsyncTask extends AsyncTask<String, Void, Integer> {
         this.username = string[0];
         String password = string[1];
 
-        ServerDatabaseDriver db = new ServerDatabaseDriver();
+        ServerDatabaseDriver db = new ServerDatabaseDriver(context);
         loginCode = db.checkLoginCombination(username, password);
 
         return loginCode;

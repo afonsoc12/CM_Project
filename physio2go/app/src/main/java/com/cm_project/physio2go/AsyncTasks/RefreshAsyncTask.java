@@ -46,7 +46,7 @@ public class RefreshAsyncTask extends AsyncTask<Object, Void, Void> {
         LocalDatabase local = new LocalDatabase(context);
         ArrayList<Integer> planIDs = local.getOfflinePlans();
 
-        ServerDatabaseDriver server = new ServerDatabaseDriver();
+        ServerDatabaseDriver server = new ServerDatabaseDriver(context);
 
         if (planIDs != null && planIDs.size() > 0) {
             server.incrementOfflinePlans(planIDs);  // Increment on server

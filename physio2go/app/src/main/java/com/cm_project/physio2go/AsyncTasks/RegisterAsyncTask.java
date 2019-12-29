@@ -29,7 +29,7 @@ public class RegisterAsyncTask extends AsyncTask<Object, Void, Void> {
     protected Void doInBackground(Object... obj) {
         this.patient = (Patient) obj[0];
 
-        ServerDatabaseDriver db = new ServerDatabaseDriver();
+        ServerDatabaseDriver db = new ServerDatabaseDriver(context);
         db.insertNewPatient(patient);
 
         return null;

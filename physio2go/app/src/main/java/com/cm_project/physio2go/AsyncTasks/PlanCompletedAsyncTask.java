@@ -30,7 +30,7 @@ public class PlanCompletedAsyncTask extends AsyncTask<Object, Void, Void> {
         boolean hasConnection = MainActivity.isNetworkAvilable(context);
 
         if (hasConnection) {
-            ServerDatabaseDriver db = new ServerDatabaseDriver();
+            ServerDatabaseDriver db = new ServerDatabaseDriver(context);
             db.updatePlan(plan);
         } else {
             LocalDatabase local = new LocalDatabase(context);
