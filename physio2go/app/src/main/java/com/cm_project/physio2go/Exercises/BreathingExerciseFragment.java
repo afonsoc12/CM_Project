@@ -69,11 +69,6 @@ public class BreathingExerciseFragment extends Fragment {
         exerciseReps_tv.setText(String.format("Repetitions: %d", reps));
         exercise_img.setImageResource(R.drawable.ic_breath);
 
-        TextView totalReps_tv = getView().findViewById(R.id.total_reps_tv);
-        totalReps_tv.setText(String.format("/%d", reps));
-
-        doneReps_tv = view.findViewById(R.id.reps_done_tv);
-        doneReps_tv.setText(Integer.toString(repsDone));
 
         // Set prescribed number of breathes
         TextView numBreathes = view.findViewById(R.id.n_breathe);
@@ -116,6 +111,9 @@ public class BreathingExerciseFragment extends Fragment {
                 totalReps_tv.setText(String.format("/%d", nBreths));
                 exerciseReps_tv.setText(String.format("Repetitions: %d", nBreths));
 
+                doneReps_tv = view.findViewById(R.id.reps_done_tv);
+                doneReps_tv.setText(Integer.toString(repsDone));
+
                 if (nBreths > 0) {
                     breatheRoutineAnimation(nBreths);
                 }
@@ -124,6 +122,9 @@ public class BreathingExerciseFragment extends Fragment {
                 plusBtn.setVisibility(View.INVISIBLE);
                 minusBtn.setVisibility(View.INVISIBLE);
                 startBtn.setVisibility(View.INVISIBLE);
+
+                exerciseReps_tv.setVisibility(View.VISIBLE);
+                doneReps_tv.setVisibility(View.VISIBLE);
             }
         });
 
