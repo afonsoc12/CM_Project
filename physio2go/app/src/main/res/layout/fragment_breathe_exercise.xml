@@ -83,36 +83,6 @@
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
         app:srcCompat="@drawable/circles" />
 
-    <TextView
-        android:id="@+id/reps_done_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
-        android:fontFamily="@font/helvetica_bold"
-        android:text="8"
-        android:textColor="@color/gray"
-        android:textSize="45dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/total_reps_tv"
-        app:layout_constraintEnd_toStartOf="@+id/total_reps_tv"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/total_reps_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:fontFamily="@font/helvetica_bold"
-        android:text="/5"
-        android:textColor="@color/blue"
-        android:textSize="60dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/n_breathe"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.56"
-        app:layout_constraintStart_toStartOf="parent" />
-
 
     <Button
         android:id="@+id/start_btn"
