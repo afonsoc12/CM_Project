@@ -45,7 +45,11 @@ public class ExerciseDetailsFragment extends Fragment {
         ImageView exerciseThumbnail = v.findViewById(R.id.exercise_img_iv);
 
         name.setText(exercise.getName());
-        side.setText(String.format("Side: %s", exercise.getBody_side()));
+        if (exercise.getBody_side() != null) {
+            side.setText(String.format("Side: %s", exercise.getBody_side()));
+        } else {
+            side.setVisibility(View.INVISIBLE);
+        }
         repetitions.setText(String.format("Repetitions: %d", exercise.getRepetitions()));
         description.setText(exercise.getDescription());
 
