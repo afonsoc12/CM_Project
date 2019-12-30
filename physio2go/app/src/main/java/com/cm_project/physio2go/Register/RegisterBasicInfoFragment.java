@@ -2,7 +2,6 @@ package com.cm_project.physio2go.Register;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,14 +11,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.cm_project.physio2go.DatabaseDrivers.ServerDatabaseDriver;
 import com.cm_project.physio2go.R;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+
 
 public class RegisterBasicInfoFragment extends Fragment {
 
@@ -38,7 +36,6 @@ public class RegisterBasicInfoFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -99,8 +96,20 @@ public class RegisterBasicInfoFragment extends Fragment {
             // Checks if date of birth is valid
             String dateParsed = null;
             if (!dateOfBirth.isEmpty()) {
+                SimpleDateFormat dateFormater = new SimpleDateFormat("dd/MM/yyyy");
+                dateFormater.setLenient(false); // Not allow misformated dates
                 try {
-                    dateParsed = LocalDate.parse(dateOfBirth, DateTimeFormatter.ofPattern("[dd/MM/yyyy][dd-MM-yyyy][ddMMyyyy]")).toString();
+                    if (dateOfBirth.length() == 8) { // If date is together
+                        dateParsed = String.format("%s/%s/%s", dateOfBirth.substring(0, 2), dateOfBirth.substring(2, 4), dateOfBirth.substring(4, 8));
+                        dateFormater.parse(dateParsed);
+                    } else if (dateOfBirth.length() == 10) { // If date has a separator
+                        dateParsed = String.format("%s/%s/%s", dateOfBirth.substring(0, 2), dateOfBirth.substring(3, 5), dateOfBirth.substring(6, 10));
+                        dateFormater.parse(dateParsed);
+                    } else {
+                        msgDateOfBirthTv.setText("Date is not valid. Use the format dd/mm/yyyy.");
+                        msgDateOfBirthTv.setVisibility(View.VISIBLE);
+                        dateOfBirthOK = false;
+                    }
                 } catch (Exception e) {
                     msgDateOfBirthTv.setText("Date is not valid. Use the format dd/mm/yyyy.");
                     msgDateOfBirthTv.setVisibility(View.VISIBLE);
